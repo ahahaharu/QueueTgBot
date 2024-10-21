@@ -9,7 +9,7 @@ bot.command('start', async (ctx) => {
 })
 
 bot.on('message', async (ctx) => {
-    await ctx.reply ('...');
+    console.log(ctx.msg);
 })
 
 bot.catch((err) => {
