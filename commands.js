@@ -1,6 +1,7 @@
 const { regKeyboard, yesOrNoKeyboard } = require('./keyboards'); // Импорт клавиатур
 
 const { students } = require('./students');
+const { insertIntoDatabase, isRegistered } = require('./database');
 
 function commands(bot) {
     bot.command('start', async (ctx) => {
@@ -12,9 +13,17 @@ function commands(bot) {
         }
 
         await ctx.reply('Привет! Это бот для записи на сдачу лабораторных работ.');
-        await ctx.reply('Давай пройдём регистрацию:', {
-            reply_markup: regKeyboard // Используем клавиатуру
-        });
+        
+        try {
+            let isUserRegistered = await isRegistered(ctx.msg.from.id);
+            if (!isUserRegistered) {
+            await ctx.reply('Давай пройдём регистрацию:', {
+                reply_markup: regKeyboard // Используем клавиатуру
+            });
+            }
+        } catch (error) {
+            console.error('Ошибка при проверке регистрации:', error);
+        }
     });
 
     bot.callbackQuery('reg', async (ctx) => {
@@ -29,7 +38,8 @@ function commands(bot) {
         if (ctx.session.step === 'waiting_for_name') {
             let fullName = ctx.message.text;
             
-            fullName = fullName[0].toUpperCase() + fullName.substr(1).toLowerCase();
+            let name = fullName.split(" ")[0];
+            fullName = name[0].toUpperCase() + name.substr(1).toLowerCase();
 
             if (!students.has(fullName)) {
                 await ctx.reply('*Такого студента нет в группе\\!* Введите корректную фамилию:', {
@@ -38,6 +48,8 @@ function commands(bot) {
                 return;
             }
         
+            insertIntoDatabase(fullName, ctx.msg.from.id.toString());
+
             await ctx.reply(`Отлично, ${students.get(fullName).name}! Вы зарегистрированы!`)
             
             // Очистка шага регистрации
