@@ -1,0 +1,90 @@
+const students = new Map();
+
+students.set("Антонова", {
+    name: "Лидия", 
+    subgroup: 1});
+students.set("Богданович", {
+    name: "Андрей", 
+    subgroup: 1});
+students.set("Валиуллин", {
+    name: "Констанстин", 
+    subgroup: 1});
+students.set("Васьковский", {
+    name: "Захар", 
+    subgroup: 2});
+students.set("Войно", {
+    name: "Никита", 
+    subgroup: 1});
+students.set("Гаевский", {
+    name: "Ростислав", 
+    subgroup: 1});
+students.set("Гордашук", {
+    name: "Владислав", 
+    subgroup: 1});
+students.set("Гринко", {
+    name: "Егор", 
+    subgroup: 1});
+students.set("Гусенцова", {
+    name: "Екатерина", 
+    subgroup: 2});
+students.set("Данилов", {
+    name: "Никита", 
+    subgroup: 2});
+students.set("Коваленко", {
+    name: "Александр", 
+    subgroup: 2});
+students.set("Ковальчук", {
+    name: "Фёдор", 
+    subgroup: 2});
+students.set("Козлова", {
+    name: "Татьяна", 
+    subgroup: 2});
+students.set("Кузьмич", {
+    name: "Владислав", 
+    subgroup: 1});
+students.set("Лебедева", {
+    name: "Милана", 
+    subgroup: 2});
+students.set("Левшуков", {
+    name: "Дмитрий", 
+    subgroup: 2});
+students.set("Литвинова", {
+    name: "Таисия", 
+    subgroup: 2});
+students.set("Новак", {
+    name: "Ксения", 
+    subgroup: 2});
+students.set("Свидинский", {
+    name: "Александр", 
+    subgroup: 1});
+students.set("Сильченко", {
+    name: "Анна", 
+    subgroup: 2});
+students.set("Сильчук", {
+    name: "Виталий", 
+    subgroup: 2});
+students.set("Синяков", {
+    name: "Артём", 
+    subgroup: 1});
+students.set("Специан", {
+    name: "Макар", 
+    subgroup: 2});
+students.set("Стецурин", {
+    name: "Елисей", 
+    subgroup: 1});
+students.set("Чуешов", {
+    name: "Александр", 
+    subgroup: 2});
+students.set("Шавейко", {
+    name: "Ксения", 
+    subgroup: 2});
+students.set("Шилов", {
+    name: "Андрей", 
+    subgroup: 2});
+students.set("Щеперко", {
+    name: "Павел", 
+    subgroup: 1});
+
+module.exports = {
+    students
+};
