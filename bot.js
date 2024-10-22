@@ -2,7 +2,7 @@ const { Bot, GrammyError, HttpError } = require('grammy');
 const { hydrate } = require('@grammyjs/hydrate');
 const { session, MemorySessionStorage } = require('grammy');
 const { commands } = require('./commands');
-const { students } = require('./students');
+
 
 const bot = new Bot(process.env.BOT_API_KEY);
 bot.use(hydrate());
@@ -10,6 +10,12 @@ bot.use(session({
     initial: () => ({ step: null }),
     storage: new MemorySessionStorage()
 }));
+
+bot.api.setMyCommands([
+    { command: "start", description: "Начало работы с ботом"  },
+    { command: "menu", description: "Меню"}
+    
+  ]);
 
 commands(bot);
 
