@@ -1,4 +1,4 @@
-const { regKeyboard, menuKeyboard, returnToMenuKeyboard } = require('./keyboards'); // Импорт клавиатур
+const { regKeyboard, menuKeyboard, returnToMenuKeyboard, queueKeyboard, returnToQueueKeyboard } = require('./keyboards'); // Импорт клавиатур
 
 const { students } = require('./students');
 const { insertIntoDatabase, isRegistered, getInfoById } = require('./database');
@@ -37,6 +37,7 @@ function commands(bot) {
         showMenu(ctx);
     })
 
+
     bot.callbackQuery('reg', async (ctx) => {
         await ctx.answerCallbackQuery();
         await ctx.callbackQuery.message.editText('Чтобы пройти регистрацию, введите вашу фамилию:\n\n_Например: Иванов_', {
@@ -72,6 +73,55 @@ function commands(bot) {
             reply_markup: menuKeyboard
         })
     })
+
+    bot.callbackQuery('queue', async (ctx) => {
+        await ctx.answerCallbackQuery();
+        await ctx.callbackQuery.message.editText(`📒 *Очереди на предметы*`, {
+            parse_mode: 'MarkdownV2',
+            reply_markup: queueKeyboard
+        })
+    });
+
+    bot.callbackQuery('kprog', async (ctx) => {
+        await ctx.answerCallbackQuery();
+        await ctx.callbackQuery.message.editText(`*В разработке*`, {
+            parse_mode: 'MarkdownV2',
+            reply_markup: returnToQueueKeyboard
+        })
+    });
+
+    bot.callbackQuery('isp', async (ctx) => {
+        await ctx.answerCallbackQuery();
+        await ctx.callbackQuery.message.editText(`*В разработке*`, {
+            parse_mode: 'MarkdownV2',
+            reply_markup: returnToQueueKeyboard
+        })
+    });
+
+    bot.callbackQuery('pzma', async (ctx) => {
+        await ctx.answerCallbackQuery();
+        await ctx.callbackQuery.message.editText(`*В разработке*`, {
+            parse_mode: 'MarkdownV2',
+            reply_markup: returnToQueueKeyboard
+        })
+    });
+
+    bot.callbackQuery('mcha', async (ctx) => {
+        await ctx.answerCallbackQuery();
+        await ctx.callbackQuery.message.editText(`*В разработке*`, {
+            parse_mode: 'MarkdownV2',
+            reply_markup: returnToQueueKeyboard
+        })
+    });
+
+    bot.callbackQuery('bzch', async (ctx) => {
+        await ctx.answerCallbackQuery();
+        await ctx.callbackQuery.message.editText(`*В разработке*`, {
+            parse_mode: 'MarkdownV2',
+            reply_markup: returnToQueueKeyboard
+        })
+    });
+     
 
     bot.on('message', async (ctx) => {
         if (ctx.session.step === 'waiting_for_name') {
