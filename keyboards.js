@@ -17,14 +17,22 @@ const queueKeyboard = new InlineKeyboard()
     .text('🌡БЖЧ', 'bzch').row()
     .text('↩️Вернуться в меню', 'returnToMenu').row()
 
+const kprogPriorityKeyBoard = new InlineKeyboard()
+    .text("📝Приоритеты", "priorityInfo").row()
+    .text('↩️Вернуться к очередям', 'queue').row()
+
 const returnToMenuKeyboard = new InlineKeyboard().text('↩️Вернуться в меню', 'returnToMenu');
 
 const returnToQueueKeyboard = new InlineKeyboard().text('↩️Вернуться к очередям ', 'queue');
+
+const returnToKProg = new InlineKeyboard().text('↩️Вернуться к КПрог ', 'kprog');
 
 module.exports = {
     regKeyboard,
     menuKeyboard,
     returnToMenuKeyboard,
     queueKeyboard,
-    returnToQueueKeyboard
+    returnToQueueKeyboard,
+    kprogPriorityKeyBoard,
+    returnToKProg
 };
