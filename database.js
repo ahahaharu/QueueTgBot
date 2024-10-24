@@ -2,7 +2,7 @@ const con = require('./dbConnect');
 const { students } = require('./students');
 
 function insertIntoDatabase(name, tg_id) {
-    let data = [students.get(name).name, name, tg_id, students.get(name).subgroup, "none"];
+    let data = [students.get(name).name, name, tg_id, students.get(name).subgroup, "Зелёный"];
     let qry = `INSERT INTO Users (name, surname, tg_id, subgroup, priority) VALUES (?,?,?,?,?);`;
 
     con.query(qry, data, function (err, result) {
@@ -40,4 +40,20 @@ function getInfoById(id) {
     });
 }
 
-module.exports = { insertIntoDatabase, isRegistered, getInfoById }
+function getAllUsers() {
+    return new Promise((resolve, reject) => {
+        let query = `SELECT * FROM Users`;
+
+        con.query(query, function (err, result) {
+            if (err) return reject(err);
+
+            if (result.length > 0) {
+                resolve(result);
+            } else {
+                resolve(null); 
+            }
+        })
+    })
+}
+
+module.exports = { insertIntoDatabase, isRegistered, getInfoById, getAllUsers }
