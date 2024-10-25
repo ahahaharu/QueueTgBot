@@ -2,6 +2,10 @@ const { Bot, GrammyError, HttpError } = require('grammy');
 const { hydrate } = require('@grammyjs/hydrate');
 const { session, MemorySessionStorage } = require('grammy');
 const { commands } = require('./commands');
+const { sendMessages } = require('./delayedMsgs')
+
+
+
 
 
 const bot = new Bot(process.env.BOT_API_KEY);
@@ -18,6 +22,7 @@ bot.api.setMyCommands([
   ]);
 
 commands(bot);
+sendMessages(bot);
 
 bot.catch((err) => {
     const ctx = err.ctx;
@@ -31,5 +36,7 @@ bot.catch((err) => {
         console.error("Unknown error:", e);
     }
 });
+
+
 
 module.exports = { bot };

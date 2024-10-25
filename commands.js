@@ -6,6 +6,8 @@ const { insertIntoDatabase, isRegistered, getInfoById, getAllUsers } = require('
 const { showMenu } = require('./menu');
 const { generatePriorityTable } = require('./tables') 
 
+
+
 let photoMessageId = undefined;
 
 function commands(bot) {
@@ -100,7 +102,7 @@ function commands(bot) {
             photoMessageId = undefined;
         }
 
-        let status = "_Пока никакой очереди нет_"
+        let status = "_Пока никакой очереди нет_";
         await ctx.callbackQuery.message.editText(`💻 *Очередь на КПрог\n\n*`+status, {
             parse_mode: 'MarkdownV2',
             reply_markup: kprogPriorityKeyBoard
@@ -144,7 +146,9 @@ function commands(bot) {
 
     bot.callbackQuery('isp', async (ctx) => {
         await ctx.answerCallbackQuery();
-        await ctx.callbackQuery.message.editText(`*В разработке*`, {
+
+        let status = "_Пока никакой очереди нет_";
+        await ctx.callbackQuery.message.editText(`*🖥 Очередь на ИСП\n\n*`+status, {
             parse_mode: 'MarkdownV2',
             reply_markup: returnToQueueKeyboard
         })
@@ -152,7 +156,9 @@ function commands(bot) {
 
     bot.callbackQuery('pzma', async (ctx) => {
         await ctx.answerCallbackQuery();
-        await ctx.callbackQuery.message.editText(`*В разработке*`, {
+
+        let status = "_Пока никакой очереди нет_";
+        await ctx.callbackQuery.message.editText(`📈 *Очередь на ПЗМА\n\n*`+status, {
             parse_mode: 'MarkdownV2',
             reply_markup: returnToQueueKeyboard
         })
@@ -160,7 +166,9 @@ function commands(bot) {
 
     bot.callbackQuery('mcha', async (ctx) => {
         await ctx.answerCallbackQuery();
-        await ctx.callbackQuery.message.editText(`*В разработке*`, {
+
+        let status = "_Пока никакой очереди нет_";
+        await ctx.callbackQuery.message.editText(`👴🏻 *Очередь на МЧА\n\n*`+status, {
             parse_mode: 'MarkdownV2',
             reply_markup: returnToQueueKeyboard
         })
@@ -168,12 +176,22 @@ function commands(bot) {
 
     bot.callbackQuery('bzch', async (ctx) => {
         await ctx.answerCallbackQuery();
-        await ctx.callbackQuery.message.editText(`*В разработке*`, {
+
+        let status = "_Пока никакой очереди нет_";
+        await ctx.callbackQuery.message.editText(`🌡 *Очередь на БЖЧ\n\n*`+status, {
             parse_mode: 'MarkdownV2',
             reply_markup: returnToQueueKeyboard
         })
     });
      
+    bot.callbackQuery('signKProg', async (ctx) => {
+        await ctx.answerCallbackQuery();
+
+        await ctx.callbackQuery.message.editText(`*Запись на КПрог*\n\nВведите номер лаборатной \\(лабораторных\\), которую вы будете сдавать\\:`, {
+            parse_mode: 'MarkdownV2',
+        })
+        ctx.session.step = "waiting_for_KProgLab";
+    });
 
     bot.on('message', async (ctx) => {
         if (ctx.session.step === 'waiting_for_name') {
@@ -196,10 +214,21 @@ function commands(bot) {
             
             // Очистка шага регистрации
             ctx.session.step = null; 
+        } else if (ctx.session.step === "waiting_for_KProgLab") {
+            let lab = ctx.message.text;
+
+            await ctx.reply(`✅ Отлично! Вы записаны!`, {
+                reply_markup: returnToKProg
+            });
+            
         } else {
             await ctx.reply('❓ Я не понимаю это сообщение. Для начала нажмите /start или перейдите в меню /menu');
         }
     });
+
+    
+
+
 }
 
 module.exports = { commands };
