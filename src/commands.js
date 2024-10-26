@@ -122,7 +122,7 @@ function commands(bot) {
         await generatePriorityTable(data);
     
         // Отправляем изображение
-        let photoMessage = await ctx.replyWithPhoto(new InputFile("./priorityTable.png"));
+        let photoMessage = await ctx.replyWithPhoto(new InputFile("./src/tables/priorityTable.png"));
         photoMessageId = photoMessage.message_id;
     
         // Отправляем текст

@@ -73,9 +73,9 @@ async function generatePriorityTable(data) {
 
     // Сохранение изображения
     const buffer = canvas.toBuffer('image/png');
-    fs.writeFileSync('./priorityTable.png', buffer);
+    fs.writeFileSync('./src/tables/priorityTable.png', buffer);
 
-    return './priorityTable.png'; // Путь к файлу
+    return './src/tables/priorityTable.png'; // Путь к файлу
 }
 
 module.exports = { generatePriorityTable };
