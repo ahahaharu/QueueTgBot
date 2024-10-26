@@ -1,11 +1,11 @@
 const { regKeyboard, menuKeyboard, returnToMenuKeyboard, queueKeyboard, returnToQueueKeyboard, kprogPriorityKeyBoard, returnToKProg } = require('./keyboards'); // Импорт клавиатур
 
 const { InputFile } = require('grammy');
-const { students } = require('./students');
-const { insertIntoDatabase, isRegistered, getInfoById, getAllUsers } = require('./database');
+const { students } = require('./students/students');
+const { insertIntoDatabase, isRegistered, getInfoById, getAllUsers } = require('./database/database');
 const { showMenu } = require('./menu');
-const { generatePriorityTable } = require('./tables') 
-const { lessons } = require ('./lessons')
+const { generatePriorityTable } = require('./tables/tables') 
+const { lessons } = require ('./lessons/lessons')
 
 
 

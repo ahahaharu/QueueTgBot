@@ -1,4 +1,4 @@
-const { sendMessages } = require('./delayedMsgs')
+const { sendMessages } = require('../../delayedMsgs')
 
 const KProgShedule = new Array();
 

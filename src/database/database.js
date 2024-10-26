@@ -1,5 +1,5 @@
 const con = require('./dbConnect');
-const { students } = require('./students');
+const { students } = require('../students/students');
 
 function insertIntoDatabase(name, tg_id) {
     let data = [students.get(name).name, name, tg_id, students.get(name).subgroup, "Зелёный"];

@@ -1,8 +1,8 @@
-const { getAllUsers } = require('./database');
+const { getAllUsers } = require('./database/database');
 const cron = require('node-cron');
 const { createSignButton } = require('./keyboards');
 const config = require('./config.json');
-const { lessons } = require ('./lessons')
+const { lessons } = require ('./lessons/lessons')
 
 function sendMessages(bot, dateTime, lesson, type) {
 
