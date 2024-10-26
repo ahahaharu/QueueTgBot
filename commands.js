@@ -5,6 +5,7 @@ const { students } = require('./students');
 const { insertIntoDatabase, isRegistered, getInfoById, getAllUsers } = require('./database');
 const { showMenu } = require('./menu');
 const { generatePriorityTable } = require('./tables') 
+const { lessons } = require ('./lessons')
 
 
 
@@ -184,14 +185,24 @@ function commands(bot) {
         })
     });
      
-    bot.callbackQuery('signKProg', async (ctx) => {
+    bot.callbackQuery(/signLesson:(.+)/, async (ctx) => {
         await ctx.answerCallbackQuery();
-
-        await ctx.callbackQuery.message.editText(`*Запись на КПрог*\n\nВведите номер лаборатной \\(лабораторных\\), которую вы будете сдавать\\:`, {
-            parse_mode: 'MarkdownV2',
-        })
-        ctx.session.step = "waiting_for_KProgLab";
+        
+        // Извлекаем тип занятия из callback_data
+        const lessonType = ctx.match[1]; // "kprog", "isp", и т.д.
+        
+        // Отправляем сообщение с динамическим текстом
+        await ctx.callbackQuery.message.editText(
+            `*Запись на ${lessons.get(lessonType)}*\n\nВведите номер лаборатной \\(лабораторных\\), которую вы будете сдавать\\:`,
+            {
+                parse_mode: 'MarkdownV2',
+            }
+        );
+    
+        // Задаём шаг с учётом типа занятия
+        ctx.session.step = `waiting_for_${lessonType}Lab`;
     });
+    
 
     bot.on('message', async (ctx) => {
         if (ctx.session.step === 'waiting_for_name') {
@@ -214,7 +225,7 @@ function commands(bot) {
             
             // Очистка шага регистрации
             ctx.session.step = null; 
-        } else if (ctx.session.step === "waiting_for_KProgLab") {
+        } else if (ctx.session.step === "waiting_for_kprogLab") {
             let lab = ctx.message.text;
 
             await ctx.reply(`✅ Отлично! Вы записаны!`, {
