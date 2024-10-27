@@ -10,7 +10,7 @@ const KProgShedule = new Array();
 
 //test
 KProgShedule.push({
-    time: '2024-10-26 18:02',
+    time: '2024-10-27 16:18',
     type: 0
 });
 

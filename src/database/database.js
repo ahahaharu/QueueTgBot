@@ -1,7 +1,7 @@
 const con = require('./dbConnect');
 const { students } = require('../students/students');
 
-function insertIntoDatabase(name, tg_id) {
+async function insertIntoDatabase(name, tg_id) {
     let data = [students.get(name).name, name, tg_id, students.get(name).subgroup, "Зелёный"];
     let qry = `INSERT INTO Users (name, surname, tg_id, subgroup, priority) VALUES (?,?,?,?,?);`;
 
@@ -56,4 +56,39 @@ function getAllUsers() {
     })
 }
 
-module.exports = { insertIntoDatabase, isRegistered, getInfoById, getAllUsers }
+function getKProgQueue() {
+    return new Promise((resolve, reject) => {
+        let query = `SELECT * FROM KProg`;
+
+        con.query(query, function (err, result) {
+            if (err) return reject(err);
+
+            if (result.length > 0) {
+                resolve(result);
+            } else {
+                resolve(null); 
+            }
+        })
+    })
+}
+
+async function insertToKProg(queue) {
+    try {
+        // Очищаем таблицу KProg
+        await con.query('TRUNCATE TABLE KProg');
+
+        // Подготовка SQL-запроса для вставки данных
+        let insertQuery = 'INSERT INTO KProg (tg_id, surname, labs, priority, subgroup) VALUES ?';
+        
+        // Преобразуем newData в массив массивов (каждая строка — отдельная запись)
+        const values = queue.map(item => [item.tg_id, item.surname, item.labs, item.priority, item.subgroup]);
+
+        // Выполняем запрос на вставку данных
+        await con.query(insertQuery, [values]);
+        console.log('Таблица KProg была успешно перезаписана.');
+    } catch (err) {
+        console.error('Ошибка при перезаписи таблицы KProg:', err);
+    }
+}
+
+module.exports = { insertIntoDatabase, isRegistered, getInfoById, getAllUsers, insertToKProg, getKProgQueue }

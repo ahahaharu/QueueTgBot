@@ -2,19 +2,22 @@ const { regKeyboard, menuKeyboard, returnToMenuKeyboard, queueKeyboard, returnTo
 
 const { InputFile } = require('grammy');
 const { students } = require('./students/students');
-const { insertIntoDatabase, isRegistered, getInfoById, getAllUsers } = require('./database/database');
+const { insertIntoDatabase, isRegistered, getInfoById, getAllUsers, insertToKProg, getKProgQueue } = require('./database/database');
 const { showMenu } = require('./menu');
-const { generatePriorityTable } = require('./tables/tables') 
+const { generatePriorityTable, generateQueueTable } = require('./tables/tables') 
 const { lessons } = require ('./lessons/lessons')
 
 
-
-let photoMessageId = undefined;
-
 function commands(bot) {
+
     bot.command('start', async (ctx) => {
         // Проверка состояния регистрации
         if (ctx.session.step === 'waiting_for_name') {
+
+            // Убедитесь, что в ctx.session есть необходимые поля
+            ctx.session.photoMessageId = ctx.session.photoMessageId || undefined;
+            ctx.session.KProgPhotoMessageId = ctx.session.KProgPhotoMessageId || undefined;
+
             await ctx.reply('❗Вы ещё не завершили регистрацию. Пожалуйста, введите фамилию и имя.');
             return;
         }
@@ -88,6 +91,11 @@ function commands(bot) {
     })
 
     bot.callbackQuery('queue', async (ctx) => {
+        if (ctx.session.KProgPhotoMessageId) {
+            await ctx.api.deleteMessage(ctx.chat.id, ctx.session.KProgPhotoMessageId);
+            ctx.session.KProgPhotoMessageId = undefined; // Сбрасываем ID
+        }
+
         await ctx.answerCallbackQuery();
         await ctx.callbackQuery.message.editText(`📒 *Очереди на предметы*`, {
             parse_mode: 'MarkdownV2',
@@ -98,13 +106,25 @@ function commands(bot) {
     bot.callbackQuery('kprog', async (ctx) => {
         await ctx.answerCallbackQuery();
 
-        if (photoMessageId) {
-            await ctx.api.deleteMessage(ctx.chat.id, photoMessageId);
-            photoMessageId = undefined;
+        if (ctx.session.photoMessageId) {
+            await ctx.api.deleteMessage(ctx.chat.id, ctx.session.photoMessageId);
+            ctx.session.photoMessageId = undefined; // Сбрасываем ID
         }
+        await ctx.deleteMessage();
 
-        let status = "_Пока никакой очереди нет_";
-        await ctx.callbackQuery.message.editText(`💻 *Очередь на КПрог\n\n*`+status, {
+        let status = "";
+        const queue = await getKProgQueue();
+        if (queue?.length) {
+            await generateQueueTable(queue);
+            let photoMessage = await ctx.replyWithPhoto(new InputFile("./src/tables/KProgTable.png"));
+            ctx.session.KProgPhotoMessageId = photoMessage.message_id;
+        } else {
+            status = "_Пока никакой очереди нет_";
+        }
+        
+
+        
+        await ctx.reply(`💻 *Очередь на КПрог\n\n*`+status, {
             parse_mode: 'MarkdownV2',
             reply_markup: kprogPriorityKeyBoard
         })
@@ -114,6 +134,10 @@ function commands(bot) {
         await ctx.answerCallbackQuery();
     
         // Удаляем предыдущее сообщение
+        if (ctx.session.KProgPhotoMessageId) {
+            await ctx.api.deleteMessage(ctx.chat.id, ctx.session.KProgPhotoMessageId);
+            ctx.session.KProgPhotoMessageId = undefined; // Сбрасываем ID
+        }
         await ctx.deleteMessage();
     
         // Получаем данные и создаём таблицу
@@ -128,7 +152,7 @@ function commands(bot) {
     
         // Отправляем изображение
         let photoMessage = await ctx.replyWithPhoto(new InputFile("./src/tables/priorityTable.png"));
-        photoMessageId = photoMessage.message_id;
+        ctx.session.photoMessageId = photoMessage.message_id;
     
         // Отправляем текст
         await ctx.reply(
@@ -223,7 +247,7 @@ function commands(bot) {
                 return;
             }
             
-            insertIntoDatabase(fullName, ctx.msg.from.id.toString());
+            await insertIntoDatabase(fullName, ctx.msg.from.id.toString());
 
             await ctx.reply(`✅ Отлично, ${students.get(fullName).name}! Вы зарегистрированы!`);
             showMenu(ctx);
@@ -232,6 +256,37 @@ function commands(bot) {
             ctx.session.step = null; 
         } else if (ctx.session.step === "waiting_for_kprogLab") { // TODO: сделать логику для записи в очередь КПрог
             let lab = ctx.message.text;
+
+            const KProgQueue = await getKProgQueue();
+            const queue = [
+                [[],[],[]],
+                [[],[],[]]
+            ]
+
+            priorityIndex = new Map();
+            priorityIndex.set("Красный", 0);
+            priorityIndex.set("Жёлтый", 1);
+            priorityIndex.set("Зелёный", 2);
+            priorityIndex.set("Санкции", 2);
+           
+            if (KProgQueue?.length) {
+                KProgQueue.forEach(item => {
+                    queue[item.subgroup-1][priorityIndex.get(item.priority)].push(item); 
+                });
+            }
+            const userInfo = await getInfoById(ctx.from.id.toString());
+
+
+
+            queue[userInfo.subgroup-1][priorityIndex.get(userInfo.priority)].push({
+                tg_id: userInfo.tg_id,
+                surname: userInfo.surname,
+                labs: lab,
+                priority: userInfo.priority,
+                subgroup: userInfo.subgroup
+            });
+
+            insertToKProg(queue.flat(2));
 
             await ctx.reply(`✅ Отлично! Вы записаны!`, {
                 reply_markup: returnToKProg

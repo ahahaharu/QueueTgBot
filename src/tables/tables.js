@@ -18,7 +18,7 @@ async function generatePriorityTable(data) {
 
     // Настройки таблицы
     const colWidthSurname = 200;
-    const colWidthPriority = 150;
+    const colWidthLabs = 150;
     const rowHeight = 40;
 
     // Начальные координаты для рисования таблицы
@@ -29,7 +29,7 @@ async function generatePriorityTable(data) {
     ctx.font = '16px Arial';
     ctx.fillStyle = '#000000';
     ctx.fillText('Фамилия', startX + colWidthSurname / 2 - 30, startY + 25);
-    ctx.fillText('Приоритет', startX + colWidthSurname + colWidthPriority / 2 - 40, startY + 25);
+    ctx.fillText('Приоритет', startX + colWidthSurname + colWidthLabs / 2 - 40, startY + 25);
 
     // Рисуем данные
     data.forEach((item, i) => {
@@ -56,13 +56,13 @@ async function generatePriorityTable(data) {
 
         // Цвет фона строки
         ctx.fillStyle = priorityColor;
-        ctx.fillRect(startX, startY, colWidthSurname + colWidthPriority, rowHeight);
+        ctx.fillRect(startX, startY, colWidthSurname + colWidthLabs, rowHeight);
 
         // Рисуем границы ячеек
         ctx.strokeStyle = '#000000';
         ctx.lineWidth = 1;
         ctx.strokeRect(startX, startY, colWidthSurname, rowHeight); // Граница для фамилии
-        ctx.strokeRect(startX + colWidthSurname, startY, colWidthPriority, rowHeight); // Граница для приоритета
+        ctx.strokeRect(startX + colWidthSurname, startY, colWidthLabs, rowHeight); // Граница для приоритета
 
         // Вписываем текст в ячейки
         ctx.fillStyle = '#000000';
@@ -78,4 +78,64 @@ async function generatePriorityTable(data) {
     return './src/tables/priorityTable.png'; // Путь к файлу
 }
 
-module.exports = { generatePriorityTable };
+async function generateQueueTable(data) {
+    console.log("generateQueueTable called");
+    const width = 420;  // Ширина холста
+    const height = 50 + (data.length+1) * 40 + 20; // Высота холста зависит от количества строк
+    const canvas = createCanvas(width, height);
+    const ctx = canvas.getContext('2d');
+
+    // Фон холста
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, width, height);
+
+    // Заголовок таблицы
+    ctx.fillStyle = '#000000';
+    ctx.font = '20px Arial';
+    ctx.fillText('Очередь КПрог', 10, 30);
+
+    // Настройки таблицы
+    const colWidthSurname = 200;
+    const colWidthLabs = 150;
+    const rowHeight = 40;
+
+    // Начальные координаты для рисования таблицы
+    let startX = 30;
+    let startY = 50;
+
+    // Рисуем заголовки колонок
+    ctx.font = '16px Arial';
+    ctx.fillStyle = '#000000';
+    ctx.fillText('Фамилия', startX + colWidthSurname / 2 - 30, startY + 25);
+    ctx.fillText('Лаба', startX + colWidthSurname + colWidthLabs / 2 - 40, startY + 25);
+
+    // Рисуем данные
+    data.forEach((item, i) => {
+        startY += rowHeight;
+
+
+        // Цвет фона строки
+        // ctx.fillStyle = priorityColor;
+        // ctx.fillRect(startX, startY, colWidthSurname + colWidthLabs, rowHeight);
+
+        // Рисуем границы ячеек
+        ctx.strokeStyle = '#000000';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(startX, startY, colWidthSurname, rowHeight);
+        ctx.strokeRect(startX + colWidthSurname, startY, colWidthLabs, rowHeight); 
+
+        // Вписываем текст в ячейки
+        ctx.fillStyle = '#000000';
+        ctx.font = '14px Arial';
+        ctx.fillText(item.surname, startX + 10, startY + 25);
+        ctx.fillText(item.labs, startX + colWidthSurname + 10, startY + 25);
+    });
+
+    // Сохранение изображения
+    const buffer = canvas.toBuffer('image/png');
+    fs.writeFileSync('./src/tables/KProgTable.png', buffer);
+
+    return './src/tables/KProgTable.png'; // Путь к файлу
+}
+
+module.exports = { generatePriorityTable, generateQueueTable };
