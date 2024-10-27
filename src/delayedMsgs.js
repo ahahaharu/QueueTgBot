@@ -30,7 +30,7 @@ function sendMessages(bot, dateTime, lesson, type) {
 
                 console.log(userId);
                 try {
-                    let lessonType = type === 0 ? "" : type == 1 ? "(1 подгруппа)" : "(2 подгруппа)"
+                    let lessonType = type === 0 ? "" : type == 1 ? "\\(1 подгруппа)" : "\\(2 подгруппа\\)"
                     await bot.api.sendMessage(userId, `*Запись на ${lessons.get(lesson)} ${day+1}\\.${month} ${lessonType}*\n\n_Нажмите кнопку ниже, чтобы записаться_`, {
                         parse_mode: 'MarkdownV2',
                         reply_markup: createSignButton(lesson)
