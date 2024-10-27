@@ -6,6 +6,8 @@ const { insertIntoDatabase, isRegistered, getInfoById, getAllUsers, insertToKPro
 const { showMenu } = require('./menu');
 const { generatePriorityTable, generateQueueTable } = require('./tables/tables') 
 const { lessons } = require ('./lessons/lessons')
+const config = require('./config.json');
+
 
 
 function commands(bot) {
@@ -239,7 +241,33 @@ function commands(bot) {
         // Задаём шаг с учётом типа занятия
         ctx.session.step = `waiting_for_${lessonType}Lab`;
     });
-    
+
+    bot.callbackQuery('passed', async (ctx) => {
+        await ctx.answerCallbackQuery();
+
+        await ctx.callbackQuery.message.editText(`*🎉 Поздравляю со сдачей\\!*\n\n_🟩 Вам выдан зелёный приоритет_`, {
+            parse_mode: 'MarkdownV2',
+            reply_markup: kprogPriorityKeyBoard
+        })
+    });
+
+    bot.callbackQuery('notPassed', async (ctx) => {
+        await ctx.answerCallbackQuery();
+
+        await ctx.callbackQuery.message.editText(`*😔 Ничего страшного\\!*\nНа следующей паре вы сможете сдать чуть первее других\n\n🟨 _Вам выдан жёлтый приоритет_`, {
+            parse_mode: 'MarkdownV2',
+            reply_markup: kprogPriorityKeyBoard
+        })
+    });
+
+    bot.callbackQuery('notPsbl', async (ctx) => {
+        await ctx.answerCallbackQuery();
+
+        await ctx.callbackQuery.message.editText(`*☹️ Очень жаль, что вы не успели\\.*\nНа следующей паре вы сможете сдать лабораторную работу одним\\(\\-ой\\) из первых\n\n_🟥 Вам выдан красный приоритет_`, {
+            parse_mode: 'MarkdownV2',
+            reply_markup: kprogPriorityKeyBoard
+        })
+    });
 
     bot.on('message', async (ctx) => {
         if (ctx.session.step === 'waiting_for_name') {
@@ -262,14 +290,25 @@ function commands(bot) {
             
             // Очистка шага регистрации
             ctx.session.step = null; 
-        } else if (ctx.session.step === "waiting_for_kprogLab") { // TODO: сделать логику для записи в очередь КПрог
+        } else if (ctx.session.step === "waiting_for_kprogLab") {
             let lab = ctx.message.text;
 
             const KProgQueue = await getKProgQueue();
+            const userInfo = await getInfoById(ctx.from.id.toString());
             const queue = [
                 [[],[],[]],
                 [[],[],[]]
             ]
+
+            let subgroupIndex, userSubgpoup;
+            if (config.KProgLessonType == 0) {
+                queue.pop();
+                queue.flat(1);
+                userSubgpoup = 0;
+            } else {  
+                userSubgpoup = userInfo.subgroup - 1;
+            }
+
 
             priorityIndex = new Map();
             priorityIndex.set("Красный", 0);
@@ -279,20 +318,26 @@ function commands(bot) {
            
             if (KProgQueue?.length) {
                 KProgQueue.forEach(item => {
-                    queue[item.subgroup-1][priorityIndex.get(item.priority)].push(item); 
+                    if (config.KProgLessonType == 0) {
+                        subgroupIndex = 0;
+                    } else {
+                        subgroupIndex = item.subgroup - 1;
+                    }
+                    queue[subgroupIndex][priorityIndex.get(item.priority)].push(item); 
                 });
             }
-            const userInfo = await getInfoById(ctx.from.id.toString());
-
-
-
-            queue[userInfo.subgroup-1][priorityIndex.get(userInfo.priority)].push({
+            
+            queue[userSubgpoup][priorityIndex.get(userInfo.priority)].push({
                 tg_id: userInfo.tg_id,
                 surname: userInfo.surname,
                 labs: lab,
                 priority: userInfo.priority,
                 subgroup: userInfo.subgroup
             });
+
+            if (config.KProgLessonType == 2) {
+                [queue[0], queue[1]] = [queue[1], queue[0]];
+            }
 
             insertToKProg(queue.flat(2));
 

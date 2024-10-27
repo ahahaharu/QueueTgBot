@@ -1,6 +1,7 @@
-const { sendMessages } = require('../../delayedMsgs')
+const { sendMessages, sendEndMessage } = require('../../delayedMsgs')
 
 const KProgShedule = new Array();
+const KProgEnd = new Array();
 
 /*
     0 - общая пара
@@ -10,7 +11,7 @@ const KProgShedule = new Array();
 
 //test
 KProgShedule.push({
-    time: '2024-10-27 16:36',
+    time: '2024-10-27 17:53',
     type: 0
 });
 
@@ -67,11 +68,33 @@ KProgShedule.push({
     type: 2
 });
 
+// Тест
+KProgEnd.push("2024-10-27 19:12");
+KProgEnd.push('2024-10-28 15:20');
+KProgEnd.push('2024-11-04 15:20');
+KProgEnd.push('2024-11-08 11:55');
+KProgEnd.push('2024-11-11 15:20');
+KProgEnd.push('2024-11-18 15:20');
+KProgEnd.push('2024-11-22 11:55');
+KProgEnd.push('2024-11-25 15:20');
+KProgEnd.push('2024-12-02 15:20');
+KProgEnd.push('2024-12-06 11:55');
+KProgEnd.push('2024-12-09 15:20');
+KProgEnd.push('2024-12-16 15:20');
+KProgEnd.push('2024-12-20 11:55');
+KProgEnd.push('2024-12-23 15:20');
+
 function sendKProgMessages(bot) {
     for (el of KProgShedule) {
         sendMessages(bot, el.time, "kprog", el.type);
     }
 }
 
+function sendKProgEnd(bot) {
+    for (el of KProgEnd) {
+        sendEndMessage(bot, el);
+    }
+}
 
-module.exports = { sendKProgMessages }
+
+module.exports = { sendKProgMessages, sendKProgEnd }

@@ -27,9 +27,15 @@ const returnToQueueKeyboard = new InlineKeyboard().text('↩️Вернутьс�
 
 const returnToKProg = new InlineKeyboard().text('↩️Вернуться к КПрог ', 'kprog');
 
+const kprogStatusKeyboard = new InlineKeyboard()
+    .text("Сдал(-а)", "passed").row()
+    .text("Подошёл(-ла), но не сдал(-а)", "notPassed").row()
+    .text("Не успел(-а) подойти", "notPsbl").row()
+
 function createSignButton(lessonType) {
     return new InlineKeyboard().text('✍️Записаться', `signLesson:${lessonType}`);
 }
+
 
 
 module.exports = {
@@ -40,5 +46,6 @@ module.exports = {
     returnToQueueKeyboard,
     kprogPriorityKeyBoard,
     returnToKProg,
-    createSignButton
+    createSignButton,
+    kprogStatusKeyboard
 };
