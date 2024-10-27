@@ -118,6 +118,11 @@ function commands(bot) {
     
         // Получаем данные и создаём таблицу
         let data = await getAllUsers();
+        data.sort((a, b) => {
+            if (a.surname < b.surname) return -1;
+            if (a.surname > b.surname) return 1;
+            return 0;
+        });
         console.log(data);
         await generatePriorityTable(data);
     
@@ -225,7 +230,7 @@ function commands(bot) {
             
             // Очистка шага регистрации
             ctx.session.step = null; 
-        } else if (ctx.session.step === "waiting_for_kprogLab") {
+        } else if (ctx.session.step === "waiting_for_kprogLab") { // TODO: сделать логику для записи в очередь КПрог
             let lab = ctx.message.text;
 
             await ctx.reply(`✅ Отлично! Вы записаны!`, {
