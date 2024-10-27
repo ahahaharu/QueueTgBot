@@ -2,7 +2,7 @@ const { regKeyboard, menuKeyboard, returnToMenuKeyboard, queueKeyboard, returnTo
 
 const { InputFile } = require('grammy');
 const { students } = require('./students/students');
-const { insertIntoDatabase, isRegistered, getInfoById, getAllUsers, insertToKProg, getKProgQueue } = require('./database/database');
+const { insertIntoDatabase, isRegistered, getInfoById, getAllUsers, insertToKProg, getKProgQueue, isInQueue } = require('./database/database');
 const { showMenu } = require('./menu');
 const { generatePriorityTable, generateQueueTable } = require('./tables/tables') 
 const { lessons } = require ('./lessons/lessons')
@@ -114,7 +114,15 @@ function commands(bot) {
 
         let status = "";
         const queue = await getKProgQueue();
+        
         if (queue?.length) {
+            const index = queue.findIndex(item => item.tg_id == ctx.from.id);
+            if (index !== -1) {
+                status = "Вы записаны в таблицу\\! Ваше место в очереди: "+(+index+1);
+            } else {
+                status = "Вы ещё не записались в таблицу"
+            }
+
             await generateQueueTable(queue);
             let photoMessage = await ctx.replyWithPhoto(new InputFile("./src/tables/KProgTable.png"));
             ctx.session.KProgPhotoMessageId = photoMessage.message_id;
@@ -296,9 +304,6 @@ function commands(bot) {
             await ctx.reply('❓ Я не понимаю это сообщение. Для начала нажмите /start или перейдите в меню /menu');
         }
     });
-
-    
-
 
 }
 

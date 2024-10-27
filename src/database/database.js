@@ -72,6 +72,19 @@ function getKProgQueue() {
     })
 }
 
+function isInQueue(id) {
+    return new Promise((resolve, reject) => {
+        let query = `SELECT tg_id FROM KProg`;
+  
+        con.query(query, function (err, result) {
+            if (err) return reject(err);
+  
+            let tgIds = result.map(row => row.tg_id);
+            resolve(tgIds.includes(id.toString()));
+        });
+    });
+}
+
 async function insertToKProg(queue) {
     try {
         // Очищаем таблицу KProg
@@ -91,4 +104,4 @@ async function insertToKProg(queue) {
     }
 }
 
-module.exports = { insertIntoDatabase, isRegistered, getInfoById, getAllUsers, insertToKProg, getKProgQueue }
+module.exports = { insertIntoDatabase, isRegistered, getInfoById, getAllUsers, insertToKProg, getKProgQueue, isInQueue }
