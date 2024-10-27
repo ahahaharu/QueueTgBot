@@ -1,6 +1,7 @@
 {
-    "KProgLessonType": 2,
+    "KProgLessonType": 0,
     "ISPLessonType": 1,
     "PZMALessonType": 1,
-    "MCHALessonType": 1
+    "MCHALessonType": 1,
+    "isKProgEnd": true
 }

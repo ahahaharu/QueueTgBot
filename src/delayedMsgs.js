@@ -1,4 +1,4 @@
-const { getAllUsers, getKProgQueue } = require('./database/database');
+const { getAllUsers, getKProgQueue, setPriority, clearKProg } = require('./database/database');
 const cron = require('node-cron');
 const { createSignButton, kprogStatusKeyboard } = require('./keyboards');
 const { lessons } = require ('./lessons/lessons');
@@ -16,10 +16,19 @@ function sendMessages(bot, dateTime, lesson, type) {
     const [year, month, day] = date.split('-').map(Number);
     const [hour, minute] = time.split(':').map(Number);
 
+    
+
     // Расписание cron для определённого времени в Минском часовом поясе
     cron.schedule(`${minute} ${hour} ${day} ${month} *`, async () => {
+        await clearKProg()
+
         const currentDate = new Date();
+        const configData = await fs.promises.readFile(configPath, 'utf-8');
+        const config = JSON.parse(configData);
         
+        config.isKProgEnd = false;
+
+        await fs.promises.writeFile(configPath, JSON.stringify(config, null, 4));
         // Проверяем, чтобы дата совпадала с запланированной
         if (
             currentDate.getFullYear() === year &&
@@ -56,13 +65,19 @@ function sendEndMessage(bot, dateTime) {
 
     cron.schedule(`${minute} ${hour} ${day} ${month} *`, async () => {
         const currentDate = new Date();
-        const data = await fs.promises.readFile(configPath, 'utf-8');
-        const config = JSON.parse(data);
+        
+        const configData = await fs.promises.readFile(configPath, 'utf-8');
+        const config = JSON.parse(configData);
         config.KProgLessonType--;
         if (config.KProgLessonType < 0) {
             config.KProgLessonType = 2;
         }
-
+        config.isKProgEnd = true;
+        
+        const data = await getKProgQueue();
+        for (let user of data) {
+            setPriority(user.tg_id, "Зелёный");
+        }
         
         await fs.promises.writeFile(configPath, JSON.stringify(config, null, 4));
         // Проверяем, чтобы дата совпадала с запланированной
@@ -71,8 +86,6 @@ function sendEndMessage(bot, dateTime) {
             currentDate.getMonth() + 1 === month &&
             currentDate.getDate() === day
         ) {
-            const data = await getKProgQueue();
-
             for (const user of data) {
                 const userId = user.tg_id;
 

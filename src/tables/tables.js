@@ -1,5 +1,6 @@
 const { createCanvas } = require('canvas');
 const fs = require('fs');
+const config = require('../config.json');
 
 async function generatePriorityTable(data) {
     const width = 420;  // Ширина холста
@@ -113,7 +114,27 @@ async function generateQueueTable(data) {
     data.forEach((item, i) => {
         startY += rowHeight;
 
-
+        if (config.isKProgEnd) {
+            let priorityColor;
+            switch (item.priority) {
+                case 'Красный':
+                    priorityColor = '#FF6347'; // Красный
+                    break;
+                case 'Жёлтый':
+                    priorityColor = '#FFD700'; // Жёлтый
+                    break;
+                case 'Зелёный':
+                    priorityColor = '#32CD32'; // Зелёный
+                    break;
+                case 'Санкции':
+                    priorityColor = '#8A2BE2'; // Фиолетовый
+                    break;
+                default:
+                    priorityColor = '#FFFFFF'; // Белый по умолчанию
+            }
+            ctx.fillStyle = priorityColor;
+            ctx.fillRect(startX, startY, colWidthSurname + colWidthLabs, rowHeight);
+        }
         // Цвет фона строки
         // ctx.fillStyle = priorityColor;
         // ctx.fillRect(startX, startY, colWidthSurname + colWidthLabs, rowHeight);

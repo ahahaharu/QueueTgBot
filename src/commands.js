@@ -2,7 +2,7 @@ const { regKeyboard, menuKeyboard, returnToMenuKeyboard, queueKeyboard, returnTo
 
 const { InputFile } = require('grammy');
 const { students } = require('./students/students');
-const { insertIntoDatabase, isRegistered, getInfoById, getAllUsers, insertToKProg, getKProgQueue, isInQueue } = require('./database/database');
+const { insertIntoDatabase, isRegistered, getInfoById, getAllUsers, insertToKProg, getKProgQueue, setPriority } = require('./database/database');
 const { showMenu } = require('./menu');
 const { generatePriorityTable, generateQueueTable } = require('./tables/tables') 
 const { lessons } = require ('./lessons/lessons')
@@ -245,6 +245,7 @@ function commands(bot) {
     bot.callbackQuery('passed', async (ctx) => {
         await ctx.answerCallbackQuery();
 
+        await setPriority(ctx.from.id.toString(), "Зелёный");
         await ctx.callbackQuery.message.editText(`*🎉 Поздравляю со сдачей\\!*\n\n_🟩 Вам выдан зелёный приоритет_`, {
             parse_mode: 'MarkdownV2',
             reply_markup: kprogPriorityKeyBoard
@@ -254,6 +255,7 @@ function commands(bot) {
     bot.callbackQuery('notPassed', async (ctx) => {
         await ctx.answerCallbackQuery();
 
+        await setPriority(ctx.from.id.toString(), "Жёлтый");
         await ctx.callbackQuery.message.editText(`*😔 Ничего страшного\\!*\nНа следующей паре вы сможете сдать чуть первее других\n\n🟨 _Вам выдан жёлтый приоритет_`, {
             parse_mode: 'MarkdownV2',
             reply_markup: kprogPriorityKeyBoard
@@ -263,6 +265,7 @@ function commands(bot) {
     bot.callbackQuery('notPsbl', async (ctx) => {
         await ctx.answerCallbackQuery();
 
+        await setPriority(ctx.from.id.toString(), "Красный");
         await ctx.callbackQuery.message.editText(`*☹️ Очень жаль, что вы не успели\\.*\nНа следующей паре вы сможете сдать лабораторную работу одним\\(\\-ой\\) из первых\n\n_🟥 Вам выдан красный приоритет_`, {
             parse_mode: 'MarkdownV2',
             reply_markup: kprogPriorityKeyBoard

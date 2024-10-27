@@ -104,4 +104,28 @@ async function insertToKProg(queue) {
     }
 }
 
-module.exports = { insertIntoDatabase, isRegistered, getInfoById, getAllUsers, insertToKProg, getKProgQueue, isInQueue }
+async function setPriority(id, priority) {
+    try {
+        // Запрос на обновление значения priority для записи с указанным tg_id
+        const updateQuery = 'UPDATE Users SET priority = ? WHERE tg_id = ?';
+        const updateKProgQuery = 'UPDATE KProg SET priority = ? WHERE tg_id = ?';
+        
+        // Выполняем запрос, подставляя новый приоритет и идентификатор tg_id
+        await con.query(updateQuery, [priority, id]);
+        await con.query(updateKProgQuery, [priority, id]);
+        console.log(`Priority для пользователя с id ${id} обновлён на ${newPriority}`);
+    } catch (err) {
+        console.error('Ошибка при обновлении priority:', err);
+    }
+}
+
+async function clearKProg() {
+    try {
+        await con.query("TRUNCATE TABLE KProg");
+        console.log(`Таблица KProg очищена`);
+    } catch (err) {
+        console.error('Ошибка при очистке KProg:', err);
+    }
+}
+
+module.exports = { insertIntoDatabase, isRegistered, getInfoById, getAllUsers, insertToKProg, getKProgQueue, isInQueue, setPriority, clearKProg }
