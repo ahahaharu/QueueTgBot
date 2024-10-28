@@ -28,6 +28,7 @@ const { showMenu } = require('./menu');
 const { generatePriorityTable, generateQueueTable } = require('./tables/tables') 
 const { lessons } = require ('./lessons/lessons')
 const config = require('./config.json');
+const { sendMessageForAll } = require('./delayedMsgs');
 
 
 
@@ -90,6 +91,15 @@ function commands(bot) {
         });
 
         ctx.session.step = 'waiting_for_prioritySurname';
+    })
+
+    bot.callbackQuery('sendMsg', async (ctx) => {
+        await ctx.answerCallbackQuery();
+        await ctx.callbackQuery.message.editText('Введите сообщение', {
+            parse_mode: 'MarkdownV2'
+        });
+
+        ctx.session.step = 'waiting_for_adminMessage';
     })
 
     bot.callbackQuery(/set(.*)Priority/, async (ctx) => {
@@ -384,6 +394,7 @@ function commands(bot) {
             await ctx.reply(`✅ Отлично! Вы записаны!`, {
                 reply_markup: returnToKProg
             });
+            ctx.session.step = null;
             
         } else if (ctx.session.step === "waiting_for_prioritySurname") {
             let surname = ctx.message.text;
@@ -395,6 +406,7 @@ function commands(bot) {
                 await ctx.reply('Какой приоритет выставить?', {
                     reply_markup: setPriorityKeyboard
                 })
+                ctx.session.step = null;
             } else {
                 await ctx.reply('❌ *Такого студента нет в группе\\!* Введите корректную фамилию:', {
                     parse_mode: 'MarkdownV2'
@@ -402,6 +414,10 @@ function commands(bot) {
                 ctx.session.step = null;
             }
 
+        } else if (ctx.session.step === "waiting_for_adminMessage") {
+            let text = ctx.message.text;
+
+            await sendMessageForAll(bot, text);
         } else {
             await ctx.reply('❓ Я не понимаю это сообщение. Для начала нажмите /start или перейдите в меню /menu');
         }

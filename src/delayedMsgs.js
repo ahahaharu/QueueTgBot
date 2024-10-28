@@ -106,4 +106,28 @@ function sendEndMessage(bot, dateTime) {
     });
 }
 
-module.exports = { sendMessages, sendEndMessage }
+async function sendMessageForAll(bot, message) {
+    const data = await getAllUsers();
+
+    
+    for (const user of data) {
+        const userId = user.tg_id;
+
+        await bot.api.sendMessage(userId, message);
+    }
+    
+}
+
+async function sendStickerForAll(bot, stickerID) {
+    const data = await getAllUsers();
+
+    
+    for (const user of data) {
+        const userId = user.tg_id;
+
+        await bot.api.sendSticker(userId, stickerID);
+    }
+    
+}
+
+module.exports = { sendMessages, sendEndMessage, sendMessageForAll, sendStickerForAll }

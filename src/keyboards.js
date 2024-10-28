@@ -34,7 +34,8 @@ const kprogStatusKeyboard = new InlineKeyboard()
 
 
 const adminKeyboard = new InlineKeyboard()
-    .text("Поставить приоритет", "setPr")
+    .text("Поставить приоритет", "setPr").row()
+    .text("Отправить сообщение всем", "sendMsg").row()
 
 const setPriorityKeyboard = new InlineKeyboard()
     .text("🟥 Красный", 'setRedPriority').row()

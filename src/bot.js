@@ -2,7 +2,8 @@ const { Bot, GrammyError, HttpError } = require('grammy');
 const { hydrate } = require('@grammyjs/hydrate');
 const { session, MemorySessionStorage } = require('grammy');
 const { commands } = require('./commands');
-const { sendKProgMessages, sendKProgEnd } = require('./lessons/shedules/KProgShedule')
+const { sendKProgMessages, sendKProgEnd } = require('./lessons/shedules/KProgShedule');
+const { sendMessageForAll, sendStickerForAll } = require('./delayedMsgs');
 
 
 
