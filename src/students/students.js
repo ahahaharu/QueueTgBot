@@ -1,88 +1,116 @@
 const students = new Map();
 
-students.set("Антонова", {
+students.set("VEDIZAntonava", {
     name: "Лидия", 
+    surname: "Антонова",
     subgroup: 1});
-students.set("Богданович", {
+students.set("ahahaharu", {
     name: "Андрей", 
+    surname: "Богданович",
     subgroup: 1});
-students.set("Валиуллин", {
+students.set("pushechnik13", {
     name: "Констанстин", 
+    surname: "Валиуллин",
     subgroup: 1});
-students.set("Васьковский", {
+students.set("panigirik", {
     name: "Захар", 
+    surname: "Васьковский",
     subgroup: 2});
-students.set("Войно", {
+students.set("argonchic", {
     name: "Никита", 
+    surname: "Войно",
     subgroup: 1});
-students.set("Гаевский", {
-    name: "Ростислав", 
+students.set("wkhikaru", {
+    name: "Ростислав",
+    surname: "Гаевский", 
     subgroup: 1});
-students.set("Гордашук", {
+students.set("alcantara019", {
     name: "Владислав", 
+    surname: "Гордашук",
     subgroup: 1});
-students.set("Гринко", {
+students.set("Grin0r", {
     name: "Егор", 
+    surname: "Гринко",
     subgroup: 1});
-students.set("Гусенцова", {
+students.set("kasenhova", {
     name: "Екатерина", 
+    surname: "Гусенцова",
     subgroup: 2});
-students.set("Данилов", {
+students.set("minigunpunk21", {
     name: "Никита", 
+    surname: "Данилов",
     subgroup: 2});
-students.set("Коваленко", {
+students.set("Gernaldiz", {
     name: "Александр", 
+    surname: "Коваленко",
     subgroup: 2});
-students.set("Ковальчук", {
+students.set("Eidanowi", {
     name: "Фёдор", 
+    surname: "Ковальчук",
     subgroup: 2});
-students.set("Козлова", {
+students.set("lymuthien", {
     name: "Татьяна", 
+    surname: "Козлова",
     subgroup: 2});
-students.set("Кузьмич", {
+students.set("Kolz777", {
     name: "Владислав", 
+    surname: "Кузьмич",
     subgroup: 1});
-students.set("Лебедева", {
+students.set("vlk_m6578", {
     name: "Милана", 
+    surname: "Лебедева",
     subgroup: 2});
-students.set("Левшуков", {
+students.set("KirWiChe", {
     name: "Дмитрий", 
+    surname: "Левшуков",
     subgroup: 2});
-students.set("Литвинова", {
+students.set("neitema", {
     name: "Таисия", 
+    surname: "Литвинова",
     subgroup: 2});
-students.set("Новак", {
+students.set("KsuNovak", {
     name: "Ксения", 
+    surname: "Новак",
     subgroup: 2});
-students.set("Свидинский", {
-    name: "Александр", 
+students.set("qwint2ez", {
+    name: "Александр",
+    surname: "Свидинский", 
     subgroup: 1});
-students.set("Сильченко", {
+students.set("sonechkooblachko", {
     name: "Анна", 
+    surname: "Сильченко",
     subgroup: 2});
-students.set("Сильчук", {
+students.set("Vitaly_sil", {
     name: "Виталий", 
+    surname: "Сильчук",
     subgroup: 2});
-students.set("Синяков", {
+students.set("artiom_sin", {
     name: "Артём", 
+    surname: "Синяков",
     subgroup: 1});
-students.set("Специан", {
+students.set("slalalkalalalakajaa", {
     name: "Макар", 
+    surname: "Специан",
     subgroup: 2});
-students.set("Стецурин", {
+students.set("HXPPY0", {
     name: "Елисей", 
+    surname: "Стецурин",
     subgroup: 1});
-students.set("Чуешов", {
+students.set("Al_chuesh", {
     name: "Александр", 
+    surname: "Чуешов",
     subgroup: 2});
-students.set("Шавейко", {
+students.set("few_a_little", {
     name: "Ксения", 
+    surname: "Шавейко",
     subgroup: 2});
-students.set("Шилов", {
+students.set("WiSkill", {
     name: "Андрей", 
+    surname: "Шилов",
     subgroup: 2});
-students.set("Щеперко", {
+students.set("2029286397", {
     name: "Павел", 
+    surname: "Щеперко",
     subgroup: 1});
 
 module.exports = {

@@ -2,8 +2,15 @@ const con = require('./dbConnect');
 const { students } = require('../students/students');
 const config = require('../config.json');
 
-async function insertIntoDatabase(name, tg_id) {
-    let data = [students.get(name).name, name, tg_id, students.get(name).subgroup, "Зелёный"];
+async function insertIntoDatabase(name, surname, username, tg_id) {
+    let subgroup;
+    if (students.has(username)) {
+        subgroup = students.get(username).subgroup;
+    } else {
+        subgroup = students.get(tg_id).subgroup;
+    }
+    
+    let data = [name, surname, tg_id, subgroup, "Зелёный"];
     let qry = `INSERT INTO Users (name, surname, tg_id, subgroup, priority) VALUES (?,?,?,?,?);`;
 
     con.query(qry, data, function (err, result) {
@@ -143,7 +150,7 @@ async function setPriorityBySurname(surname, priority) {
             const updateKProgQuery = 'UPDATE KProg SET priority = ? WHERE surname = ?';
             await con.query(updateKProgQuery, [priority, surname]);
         }
-        
+
         console.log(`Priority для пользователя с id ${surname} обновлён на ${priority}`);
     } catch (err) {
         console.error('Ошибка при обновлении priority:', err);

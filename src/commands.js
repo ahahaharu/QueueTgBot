@@ -34,31 +34,28 @@ const config = require('./config.json');
 function commands(bot) {
 
     bot.command('start', async (ctx) => {
-        // Проверка состояния регистрации
-        if (ctx.session.step === 'waiting_for_name') {
-
-            // Убедитесь, что в ctx.session есть необходимые поля
-            ctx.session.photoMessageId = ctx.session.photoMessageId || undefined;
-            ctx.session.KProgPhotoMessageId = ctx.session.KProgPhotoMessageId || undefined;
-
-            await ctx.reply('❗Вы ещё не завершили регистрацию. Пожалуйста, введите фамилию и имя.');
+        ctx.session.photoMessageId = ctx.session.photoMessageId || undefined;
+        ctx.session.KProgPhotoMessageId = ctx.session.KProgPhotoMessageId || undefined;
+        
+        const isReg = await isRegistered(ctx.from.id);
+        if (isReg) {
+            await ctx.reply('👋 Привет! Это бот для записи на сдачу лабораторных работ.');
+            showMenu(ctx);
             return;
         }
-
-        await ctx.reply('👋 Привет! Это бот для записи на сдачу лабораторных работ.');
-        
-        try {
-            let isUserRegistered = await isRegistered(ctx.msg.from.id);
-            if (!isUserRegistered) {
-            await ctx.reply('📋 Давай пройдём регистрацию:', {
-                reply_markup: regKeyboard // Используем клавиатуру
-            });
-            } else {
-                showMenu(ctx);
-            }
-        } catch (error) {
-            console.error('❗Ошибка при проверке регистрации:', error);
+        if (!(students.has(ctx.from.username) || students.has(ctx.from.id.toString()))) {
+            await ctx.reply('❗Вы не можете быть зарегестрированы! Напишите @ahahaharu, если возникли проблемы.');
+            return;
+        } else if (students.has(ctx.from.username)) {
+            const data = students.get(ctx.from.username);
+            await insertIntoDatabase(data.name, data.surname, ctx.from.username, ctx.msg.from.id.toString());
+        } else {
+            const data = students.get(ctx.from.id.toString());
+            await insertIntoDatabase(data.name, data.surname, "", ctx.msg.from.id.toString());
         }
+
+        await ctx.reply(`✅ Отлично! Вы зарегистрированы!`);
+        showMenu(ctx);
     });
 
     bot.command('menu', async (ctx) => {
@@ -333,27 +330,7 @@ function commands(bot) {
     });
 
     bot.on('message', async (ctx) => {
-        if (ctx.session.step === 'waiting_for_name') {
-            let fullName = ctx.message.text;
-            
-            let name = fullName.split(" ")[0];
-            fullName = name[0].toUpperCase() + name.substr(1).toLowerCase();
-
-            if (!students.has(fullName)) {
-                await ctx.reply('❌ *Такого студента нет в группе\\!* Введите корректную фамилию:', {
-                    parse_mode: 'MarkdownV2'
-                });
-                return;
-            }
-            
-            await insertIntoDatabase(fullName, ctx.msg.from.id.toString());
-
-            await ctx.reply(`✅ Отлично, ${students.get(fullName).name}! Вы зарегистрированы!`);
-            showMenu(ctx);
-            
-            // Очистка шага регистрации
-            ctx.session.step = null; 
-        } else if (ctx.session.step === "waiting_for_kprogLab") {
+        if (ctx.session.step === "waiting_for_kprogLab") {
             let lab = ctx.message.text;
 
             const KProgQueue = await getKProgQueue();
