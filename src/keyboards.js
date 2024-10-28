@@ -32,6 +32,16 @@ const kprogStatusKeyboard = new InlineKeyboard()
     .text("🟨Подошёл(-ла), но не сдал(-а)", "notPassed").row()
     .text("🟥Не успел(-а) подойти", "notPsbl").row()
 
+
+const adminKeyboard = new InlineKeyboard()
+    .text("Поставить приоритет", "setPr")
+
+const setPriorityKeyboard = new InlineKeyboard()
+    .text("🟥 Красный", 'setRedPriority').row()
+    .text("🟨 Жёлтый", 'setYellowPriority').row()
+    .text("🟩 Зелёный", 'setGreenPriority').row()
+    .text("🟪 Санкции", 'setPurplePriority').row()
+
 function createSignButton(lessonType) {
     return new InlineKeyboard().text('✍️Записаться', `signLesson:${lessonType}`);
 }
@@ -47,5 +57,7 @@ module.exports = {
     kprogPriorityKeyBoard,
     returnToKProg,
     createSignButton,
-    kprogStatusKeyboard
+    kprogStatusKeyboard,
+    adminKeyboard,
+    setPriorityKeyboard
 };

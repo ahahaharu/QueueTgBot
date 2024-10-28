@@ -1,8 +1,29 @@
-const { regKeyboard, menuKeyboard, returnToMenuKeyboard, queueKeyboard, returnToQueueKeyboard, kprogPriorityKeyBoard, returnToKProg } = require('./keyboards'); // Импорт клавиатур
+const { 
+    regKeyboard, 
+    menuKeyboard, 
+    returnToMenuKeyboard, 
+    queueKeyboard, 
+    returnToQueueKeyboard, 
+    kprogPriorityKeyBoard, 
+    returnToKProg,
+    adminKeyboard,
+    setPriorityKeyboard
+} = require('./keyboards'); // Импорт клавиатур
 
 const { InputFile } = require('grammy');
 const { students } = require('./students/students');
-const { insertIntoDatabase, isRegistered, getInfoById, getAllUsers, insertToKProg, getKProgQueue, setPriority } = require('./database/database');
+const { 
+    insertIntoDatabase, 
+    isRegistered, 
+    getInfoById, 
+    getAllUsers, 
+    insertToKProg, 
+    getKProgQueue, 
+    setPriority,
+    isInUsers, 
+    setPriorityBySurname
+} = require('./database/database');
+
 const { showMenu } = require('./menu');
 const { generatePriorityTable, generateQueueTable } = require('./tables/tables') 
 const { lessons } = require ('./lessons/lessons')
@@ -55,6 +76,45 @@ function commands(bot) {
         showMenu(ctx);
     })
 
+    bot.command('adminmenu', async (ctx) => {
+        if (ctx.from.id === 755901230) {
+            await ctx.reply("Меню", {
+                reply_markup: adminKeyboard
+            });
+        } else {
+            await ctx.reply("У вас нет прав на эту команду");
+        }
+    });
+
+    bot.callbackQuery('setPr', async (ctx) => {
+        await ctx.answerCallbackQuery();
+        await ctx.callbackQuery.message.editText('Введите фамилию студента, которому нужно поменять приоритет:', {
+            parse_mode: 'MarkdownV2'
+        });
+
+        ctx.session.step = 'waiting_for_prioritySurname';
+    })
+
+    bot.callbackQuery(/set(.*)Priority/, async (ctx) => {
+        const priority = ctx.match[1]; // Получаем цвет из callback данных
+
+        const priorities = {
+            "Red": "Красный",
+            "Yellow": "Жёлтый",
+            "Green": "Зелёный",
+            "Purple": "Санкции"
+        }
+        const surname = ctx.session.surname; // Извлекаем сохраненную фамилию
+        if (surname) {
+            await setPriorityBySurname(surname, priorities[priority]); // Устанавливаем приоритет
+            await ctx.editMessageText(`Приоритет пользователя ${surname} изменён на ${priorities[priority]}`, {
+                reply_markup: kprogPriorityKeyBoard
+            });
+        } else {
+            await ctx.reply('Не удалось найти фамилию. Попробуйте ещё раз.');
+        }
+        ctx.session.step = null; // Завершаем процесс
+    });
 
     bot.callbackQuery('reg', async (ctx) => {
         await ctx.answerCallbackQuery();
@@ -348,6 +408,23 @@ function commands(bot) {
                 reply_markup: returnToKProg
             });
             
+        } else if (ctx.session.step === "waiting_for_prioritySurname") {
+            let surname = ctx.message.text;
+
+            let isUserRegistered = await isInUsers(surname);
+            if (isUserRegistered) {
+                ctx.session.surname = surname;
+                ctx.session.step = 'waiting_for_priority';
+                await ctx.reply('Какой приоритет выставить?', {
+                    reply_markup: setPriorityKeyboard
+                })
+            } else {
+                await ctx.reply('❌ *Такого студента нет в группе\\!* Введите корректную фамилию:', {
+                    parse_mode: 'MarkdownV2'
+                });
+                ctx.session.step = null;
+            }
+
         } else {
             await ctx.reply('❓ Я не понимаю это сообщение. Для начала нажмите /start или перейдите в меню /menu');
         }

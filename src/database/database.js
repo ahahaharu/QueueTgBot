@@ -1,5 +1,6 @@
 const con = require('./dbConnect');
 const { students } = require('../students/students');
+const config = require('../config.json');
 
 async function insertIntoDatabase(name, tg_id) {
     let data = [students.get(name).name, name, tg_id, students.get(name).subgroup, "Зелёный"];
@@ -85,6 +86,19 @@ function isInQueue(id) {
     });
 }
 
+async function isInUsers(surname) {
+    return new Promise((resolve, reject) => {
+        let query = `SELECT surname FROM Users`;
+
+        con.query(query, function(err, result) {
+            if (err) return reject(err);
+  
+            let surnames = result.map(row => row.surname);
+            resolve(surnames.includes(surname));
+        })
+    });
+}
+
 async function insertToKProg(queue) {
     try {
         // Очищаем таблицу KProg
@@ -106,14 +120,31 @@ async function insertToKProg(queue) {
 
 async function setPriority(id, priority) {
     try {
-        // Запрос на обновление значения priority для записи с указанным tg_id
         const updateQuery = 'UPDATE Users SET priority = ? WHERE tg_id = ?';
-        const updateKProgQuery = 'UPDATE KProg SET priority = ? WHERE tg_id = ?';
-        
-        // Выполняем запрос, подставляя новый приоритет и идентификатор tg_id
         await con.query(updateQuery, [priority, id]);
-        await con.query(updateKProgQuery, [priority, id]);
-        console.log(`Priority для пользователя с id ${id} обновлён на ${newPriority}`);
+        
+        if (config.isKProgEnd) {
+            const updateKProgQuery = 'UPDATE KProg SET priority = ? WHERE tg_id = ?';
+            await con.query(updateKProgQuery, [priority, id]);
+        }
+        console.log(`Priority для пользователя с id ${id} обновлён на ${priority}`);
+    } catch (err) {
+        console.error('Ошибка при обновлении priority:', err);
+    }
+}
+
+async function setPriorityBySurname(surname, priority) {
+    try {
+        // Запрос на обновление значения priority для записи с указанным tg_id
+        const updateQuery = 'UPDATE Users SET priority = ? WHERE surname = ?';
+        await con.query(updateQuery, [priority, surname]);
+        
+        if (config.isKProgEnd) {
+            const updateKProgQuery = 'UPDATE KProg SET priority = ? WHERE surname = ?';
+            await con.query(updateKProgQuery, [priority, surname]);
+        }
+        
+        console.log(`Priority для пользователя с id ${surname} обновлён на ${priority}`);
     } catch (err) {
         console.error('Ошибка при обновлении priority:', err);
     }
@@ -128,4 +159,4 @@ async function clearKProg() {
     }
 }
 
-module.exports = { insertIntoDatabase, isRegistered, getInfoById, getAllUsers, insertToKProg, getKProgQueue, isInQueue, setPriority, clearKProg }
+module.exports = { insertIntoDatabase, isRegistered, getInfoById, getAllUsers, insertToKProg, getKProgQueue, isInQueue, setPriority, clearKProg, isInUsers, setPriorityBySurname }
