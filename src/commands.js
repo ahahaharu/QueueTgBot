@@ -82,7 +82,7 @@ function commands(bot) {
                 reply_markup: adminKeyboard
             });
         } else {
-            await ctx.reply("У вас нет прав на эту команду");
+            await ctx.reply("У вас нет прав на эту команду 🤓☝️");
         }
     });
 
