@@ -6,7 +6,13 @@ const { sendKProgMessages, sendKProgEnd } = require('./lessons/shedules/KProgShe
 const { sendMessageForAll, sendStickerForAll } = require('./delayedMsgs');
 
 
+process.on('uncaughtException', (error) => {
+    console.error('Произошло необработанное исключение:', error);
+});
 
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('Необработанное отклонение промиса:', reason);
+});
 
 
 const bot = new Bot(process.env.BOT_API_KEY);

@@ -340,8 +340,18 @@ function commands(bot) {
     });
 
     bot.on('message', async (ctx) => {
+        const regex = /^(?:[1-8](?:[,\s]?[1-8])*)$/;
+
         if (ctx.session.step === "waiting_for_kprogLab") {
             let lab = ctx.message.text;
+
+            if(!(regex.test(lab) && lab.length < 20)) {
+                await ctx.reply("*Неверное значение\\!* Введите номера лаб верно\\!\n\n_Например\\: 1\\, 2_", {
+                    parse_mode: 'MarkdownV2'
+                }
+                );
+                return;
+            }
 
             const KProgQueue = await getKProgQueue();
             const userInfo = await getInfoById(ctx.from.id.toString());
@@ -394,6 +404,8 @@ function commands(bot) {
             await ctx.reply(`✅ Отлично! Вы записаны!`, {
                 reply_markup: returnToKProg
             });
+
+            ctx.session.step = null;
             
         } else if (ctx.session.step === "waiting_for_prioritySurname") {
             let surname = ctx.message.text;
@@ -411,10 +423,14 @@ function commands(bot) {
                 });
             }
 
+            ctx.session.step = null;
+
         } else if (ctx.session.step === "waiting_for_adminMessage") {
             let text = ctx.message.text;
 
             await sendMessageForAll(bot, text);
+
+            ctx.session.step = null;
         } else {
             await ctx.reply('❓ Я не понимаю это сообщение. Для начала нажмите /start или перейдите в меню /menu');
         }
