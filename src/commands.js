@@ -394,7 +394,6 @@ function commands(bot) {
             await ctx.reply(`✅ Отлично! Вы записаны!`, {
                 reply_markup: returnToKProg
             });
-            ctx.session.step = null;
             
         } else if (ctx.session.step === "waiting_for_prioritySurname") {
             let surname = ctx.message.text;
@@ -406,12 +405,10 @@ function commands(bot) {
                 await ctx.reply('Какой приоритет выставить?', {
                     reply_markup: setPriorityKeyboard
                 })
-                ctx.session.step = null;
             } else {
                 await ctx.reply('❌ *Такого студента нет в группе\\!* Введите корректную фамилию:', {
                     parse_mode: 'MarkdownV2'
                 });
-                ctx.session.step = null;
             }
 
         } else if (ctx.session.step === "waiting_for_adminMessage") {

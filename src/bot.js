@@ -26,6 +26,7 @@ commands(bot);
 sendKProgMessages(bot);
 sendKProgEnd(bot);
 
+
 bot.catch((err) => {
     const ctx = err.ctx;
     console.error(`Error while handling update ${ctx.update.update_id}:`);
