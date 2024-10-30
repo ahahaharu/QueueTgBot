@@ -12,6 +12,7 @@
   "dependencies": {
     "@grammyjs/hydrate": "^1.4.1",
     "canvas": "^2.11.2",
+    "crypto": "^1.0.1",
     "dotenv": "^16.4.5",
     "grammy": "^1.30.0",
     "mysql": "^2.18.1",

@@ -85,14 +85,4 @@ KProgEnd.push('2024-12-16 15:20');
 KProgEnd.push('2024-12-20 11:55');
 KProgEnd.push('2024-12-23 15:20');
 
-function sendKProgMessages(bot) {
-    sendScheduledMessages(bot, KProgShedule, "kprog");
-}
-
-function sendKProgEnd(bot) {
-    sendEndScheduledMessages(bot, KProgEnd);
-}
-
-
-
-module.exports = { sendKProgMessages, sendKProgEnd }
+module.exports = { KProgShedule, KProgEnd }

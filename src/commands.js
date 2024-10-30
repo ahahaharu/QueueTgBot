@@ -186,7 +186,7 @@ function commands(bot) {
                 condition = true;
             }
 
-            await generateQueueTable(queue);
+            await generateQueueTable(queue, 'KProgTable');
             let photoMessage = await ctx.replyWithPhoto(new InputFile("./src/tables/KProgTable.png"));
             ctx.session.KProgPhotoMessageId = photoMessage.message_id;
         } else {
