@@ -11,7 +11,7 @@ const KProgEnd = new Array();
 
 //test
 KProgShedule.push({
-    time: '2024-10-29 14:51',
+    time: '2024-10-30 20:36',
     type: 0
 });
 

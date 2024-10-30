@@ -17,9 +17,21 @@ const queueKeyboard = new InlineKeyboard()
     .text('🌡БЖЧ', 'bzch').row()
     .text('↩️Вернуться в меню', 'returnToMenu').row()
 
-const kprogPriorityKeyBoard = new InlineKeyboard()
+
+function getKProgPriorityKeyboard(condition, lessonType) {
+    const kprogPriorityKeyBoard = new InlineKeyboard();
+
+    if (condition) {
+        kprogPriorityKeyBoard.text('✍️Записаться', `signLesson:${lessonType}`).row()
+    }
+
+
+    kprogPriorityKeyBoard
     .text("📝Приоритеты", "priorityInfo").row()
     .text('↩️Вернуться к очередям', 'queue').row()
+
+    return kprogPriorityKeyBoard;
+}
 
 const returnToMenuKeyboard = new InlineKeyboard().text('↩️Вернуться в меню', 'returnToMenu');
 
@@ -55,10 +67,10 @@ module.exports = {
     returnToMenuKeyboard,
     queueKeyboard,
     returnToQueueKeyboard,
-    kprogPriorityKeyBoard,
     returnToKProg,
     createSignButton,
     kprogStatusKeyboard,
     adminKeyboard,
-    setPriorityKeyboard
+    setPriorityKeyboard,
+    getKProgPriorityKeyboard
 };

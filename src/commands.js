@@ -4,10 +4,10 @@ const {
     returnToMenuKeyboard, 
     queueKeyboard, 
     returnToQueueKeyboard, 
-    kprogPriorityKeyBoard, 
     returnToKProg,
     adminKeyboard,
-    setPriorityKeyboard
+    setPriorityKeyboard,
+    getKProgPriorityKeyboard
 } = require('./keyboards'); // Импорт клавиатур
 
 const { InputFile } = require('grammy');
@@ -115,7 +115,7 @@ function commands(bot) {
         if (surname) {
             await setPriorityBySurname(surname, priorities[priority]); // Устанавливаем приоритет
             await ctx.editMessageText(`Приоритет пользователя ${surname} изменён на ${priorities[priority]}`, {
-                reply_markup: kprogPriorityKeyBoard
+                reply_markup: getKProgPriorityKeyboard(false, 'kprog')
             });
         } else {
             await ctx.reply('Не удалось найти фамилию. Попробуйте ещё раз.');
@@ -183,13 +183,15 @@ function commands(bot) {
 
         let status = "";
         const queue = await getKProgQueue();
-        
+        let condition = false;
+
         if (queue?.length) {
             const index = queue.findIndex(item => item.tg_id == ctx.from.id);
             if (index !== -1) {
                 status = "Вы записаны в таблицу\\! Ваше место в очереди: "+(+index+1);
             } else {
                 status = "Вы ещё не записались в таблицу"
+                condition = true;
             }
 
             await generateQueueTable(queue);
@@ -203,7 +205,7 @@ function commands(bot) {
         
         await ctx.reply(`💻 *Очередь на КПрог\n\n*`+status, {
             parse_mode: 'MarkdownV2',
-            reply_markup: kprogPriorityKeyBoard
+            reply_markup: getKProgPriorityKeyboard(condition, 'kprog')
         })
     });
 
@@ -294,10 +296,13 @@ function commands(bot) {
     bot.callbackQuery(/signLesson:(.+)/, async (ctx) => {
         await ctx.answerCallbackQuery();
         
-        // Извлекаем тип занятия из callback_data
-        const lessonType = ctx.match[1]; // "kprog", "isp", и т.д.
+        if (ctx.session.KProgPhotoMessageId) {
+            await ctx.api.deleteMessage(ctx.chat.id, ctx.session.KProgPhotoMessageId);
+            ctx.session.KProgPhotoMessageId = undefined;
+        }
+
+        const lessonType = ctx.match[1];
         
-        // Отправляем сообщение с динамическим текстом
         await ctx.callbackQuery.message.editText(
             `*Запись на ${lessons.get(lessonType)}*\n\nВведите номер лаборатной \\(лабораторных\\), которую вы будете сдавать\\:`,
             {
@@ -305,7 +310,6 @@ function commands(bot) {
             }
         );
     
-        // Задаём шаг с учётом типа занятия
         ctx.session.step = `waiting_for_${lessonType}Lab`;
     });
 
@@ -315,7 +319,7 @@ function commands(bot) {
         await setPriority(ctx.from.id.toString(), "Зелёный");
         await ctx.callbackQuery.message.editText(`*🎉 Поздравляю со сдачей\\!*\n\n_🟩 Вам выдан зелёный приоритет_`, {
             parse_mode: 'MarkdownV2',
-            reply_markup: kprogPriorityKeyBoard
+            reply_markup: getKProgPriorityKeyboard(false, 'kprog')
         })
     });
 
@@ -325,7 +329,7 @@ function commands(bot) {
         await setPriority(ctx.from.id.toString(), "Жёлтый");
         await ctx.callbackQuery.message.editText(`*😔 Ничего страшного\\!*\nНа следующей паре вы сможете сдать чуть первее других\n\n🟨 _Вам выдан жёлтый приоритет_`, {
             parse_mode: 'MarkdownV2',
-            reply_markup: kprogPriorityKeyBoard
+            reply_markup: getKProgPriorityKeyboard(false, 'kprog')
         })
     });
 
@@ -335,7 +339,7 @@ function commands(bot) {
         await setPriority(ctx.from.id.toString(), "Красный");
         await ctx.callbackQuery.message.editText(`*☹️ Очень жаль, что вы не успели\\.*\nНа следующей паре вы сможете сдать лабораторную работу одним\\(\\-ой\\) из первых\n\n_🟥 Вам выдан красный приоритет_`, {
             parse_mode: 'MarkdownV2',
-            reply_markup: kprogPriorityKeyBoard
+            reply_markup: getKProgPriorityKeyboard(false, 'kprog')
         })
     });
 
