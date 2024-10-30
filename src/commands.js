@@ -1,42 +1,34 @@
-const { 
-    regKeyboard, 
-    menuKeyboard, 
-    returnToMenuKeyboard, 
-    queueKeyboard, 
-    returnToQueueKeyboard, 
-    returnToKProg,
-    adminKeyboard,
-    setPriorityKeyboard,
-    getKProgPriorityKeyboard
-} = require('./keyboards'); // Импорт клавиатур
-
 const { InputFile } = require('grammy');
+const config = require('./config.json');
+
+const {
+    menuKeyboard, returnToMenuKeyboard,
+    queueKeyboard, returnToQueueKeyboard, returnToKProg,
+    adminKeyboard, setPriorityKeyboard, getKProgPriorityKeyboard
+} = require('./keyboards'); 
+
 const { students } = require('./students/students');
 const { 
-    insertIntoDatabase, 
-    isRegistered, 
-    getInfoById, 
-    getAllUsers, 
-    insertToKProg, 
-    getKProgQueue, 
-    setPriority,
-    isInUsers, 
-    setPriorityBySurname
+    insertIntoDatabase, isRegistered, getInfoById, getAllUsers, 
+    insertToKProg, getKProgQueue, setPriority, isInUsers, 
+    setPriorityBySurname 
 } = require('./database/database');
 
 const { showMenu } = require('./menu');
-const { generatePriorityTable, generateQueueTable } = require('./tables/tables') 
-const { lessons } = require ('./lessons/lessons')
-const config = require('./config.json');
+const { generatePriorityTable, generateQueueTable } = require('./tables/tables');
+const { lessons } = require ('./lessons/lessons');
 const { sendMessageForAll } = require('./delayedMsgs');
 
 
 
 function commands(bot) {
+    bot.use((ctx, next) => {
+        ctx.session.photoMessageId ??= null;
+        ctx.session.KProgPhotoMessageId ??= null;
+        return next();
+    });
 
     bot.command('start', async (ctx) => {
-        ctx.session.photoMessageId = ctx.session.photoMessageId || undefined;
-        ctx.session.KProgPhotoMessageId = ctx.session.KProgPhotoMessageId || undefined;
         
         const isReg = await isRegistered(ctx.from.id);
         if (isReg) {
