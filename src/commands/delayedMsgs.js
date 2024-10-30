@@ -1,7 +1,7 @@
-const { getAllUsers, getKProgQueue, setPriority, clearKProg } = require('./database/database');
+const { getAllUsers, getKProgQueue, setPriority, clearKProg } = require('../database/database');
 const schedule = require('node-schedule');
-const { createSignButton, kprogStatusKeyboard } = require('./keyboards');
-const { lessons } = require ('./lessons/lessons');
+const { createSignButton, kprogStatusKeyboard } = require('../bot/keyboards');
+const { lessons } = require ('../lessons/lessons');
 const fs = require('fs');
 const path = require('path');
 const configPath = path.join(__dirname, 'config.json');

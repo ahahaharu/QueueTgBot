@@ -1,4 +1,4 @@
-const { menuKeyboard } = require('./keyboards'); 
+const { menuKeyboard } = require('../bot/keyboards'); 
 
 function showMenu(ctx) {
     ctx.reply(`📖 *Меню:*`, {

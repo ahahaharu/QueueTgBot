@@ -1,4 +1,4 @@
-const {} = require("../keyboards")
+const {} = require("../bot/keyboards")
 
 const lessons = new Map();
     lessons.set("kprog", "КПрог");

@@ -1,4 +1,4 @@
-const { sendMessages, sendEndMessage } = require('../../delayedMsgs');
+const { sendMessages, sendEndMessage } = require('../../commands/delayedMsgs');
 
 /**
  * Универсальная функция для отправки сообщений по расписанию.

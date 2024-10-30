@@ -1,6 +1,6 @@
 const { createCanvas } = require('canvas');
 const fs = require('fs');
-const config = require('../config.json');
+const config = require('../../config.json');
 
 function getPriorityColor(priority) {
     switch (priority) {

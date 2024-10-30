@@ -1,9 +1,9 @@
 const { Bot, GrammyError, HttpError } = require('grammy');
 const { hydrate } = require('@grammyjs/hydrate');
 const { session, MemorySessionStorage } = require('grammy');
-const { commands } = require('./commands');
-const { sendKProgMessages, sendKProgEnd } = require('./lessons/schedules/schedules');
-const { sendMessageForAll, sendStickerForAll } = require('./delayedMsgs');
+const { commands } = require('../commands/commands');
+const { sendKProgMessages, sendKProgEnd } = require('../lessons/schedules/schedules');
+const { sendMessageForAll, sendStickerForAll } = require('../commands/delayedMsgs');
 
 
 process.on('uncaughtException', (error) => {

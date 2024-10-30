@@ -1,6 +1,3 @@
-const { sendMessages, sendEndMessage } = require('../../delayedMsgs')
-const { sendScheduledMessages, sendEndScheduledMessages } = require('./scheduleUtils');
-
 const KProgShedule = new Array();
 const KProgEnd = new Array();
 

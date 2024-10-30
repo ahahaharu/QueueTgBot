@@ -1,6 +1,6 @@
 const con = require('./dbConnect');
 const { students } = require('../students/students');
-const config = require('../config.json');
+const config = require('../../config.json');
 
 async function insertIntoDatabase(name, surname, username, tg_id) {
     let subgroup;
