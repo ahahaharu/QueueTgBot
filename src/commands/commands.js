@@ -28,7 +28,7 @@ const { messageHandler } = require('./messageHandler.js');
 function commands(bot) {
     bot.use((ctx, next) => {
         ctx.session.photoMessageId ??= null;
-        ctx.session.KProgPhotoMessageId ??= null;
+        ctx.session.QueuePhotoMessageId ??= null;
         return next();
     });
 
@@ -62,7 +62,7 @@ function commands(bot) {
 
             await generateQueueTable(queue, 'KProgTable', 'КПрог');
             let photoMessage = await ctx.replyWithPhoto(new InputFile("./src/tables/KProgTable.png"));
-            ctx.session.KProgPhotoMessageId = photoMessage.message_id;
+            ctx.session.QueuePhotoMessageId = photoMessage.message_id;
         } else {
             status = "_Пока никакой очереди нет_";
         }
@@ -95,7 +95,7 @@ function commands(bot) {
 
             await generateQueueTable(queue, 'ISPTable', 'ИСП');
             let photoMessage = await ctx.replyWithPhoto(new InputFile("./src/tables/ISPTable.png"));
-            ctx.session.KProgPhotoMessageId = photoMessage.message_id;
+            ctx.session.QueuePhotoMessageId = photoMessage.message_id;
         } else {
             status = "_Пока никакой очереди нет_";
         }
@@ -104,17 +104,40 @@ function commands(bot) {
         
         await ctx.reply(`💻 *Очередь на ИСП\n\n*`+status, {
             parse_mode: 'MarkdownV2',
-            reply_markup: getReturnKeyboard(condition, 'kprog')
+            reply_markup: getReturnKeyboard(condition, 'isp')
         })
     });
 
     bot.callbackQuery('pzma', async (ctx) => {
         await ctx.answerCallbackQuery();
 
-        let status = "_Пока никакой очереди нет_";
-        await ctx.callbackQuery.message.editText(`📈 *Очередь на ПЗМА\n\n*`+status, {
+        await ctx.deleteMessage();
+
+        let status = "";
+        const queue = await getQueue('PZMA');
+        let condition = false;
+
+        if (queue?.length) {
+            const index = queue.findIndex(item => item.tg_id == ctx.from.id);
+            if (index !== -1) {
+                status = "Вы записаны в таблицу\\! Ваше место в очереди: "+(+index+1);
+            } else {
+                status = "Вы ещё не записались в таблицу"
+                condition = true;
+            }
+
+            await generateQueueTable(queue, 'PZMATable', 'ПЗМА');
+            let photoMessage = await ctx.replyWithPhoto(new InputFile("./src/tables/PZMATable.png"));
+            ctx.session.QueuePhotoMessageId = photoMessage.message_id;
+        } else {
+            status = "_Пока никакой очереди нет_";
+        }
+        
+
+        
+        await ctx.reply(`💻 *Очередь на ПЗМА\n\n*`+status, {
             parse_mode: 'MarkdownV2',
-            reply_markup: returnToQueueKeyboard
+            reply_markup: getReturnKeyboard(condition, 'pzma')
         })
     });
 
@@ -141,10 +164,9 @@ function commands(bot) {
     bot.callbackQuery('priorityInfo', async (ctx) => {
         await ctx.answerCallbackQuery();
     
-        // Удаляем предыдущее сообщение
-        if (ctx.session.KProgPhotoMessageId) {
-            await ctx.api.deleteMessage(ctx.chat.id, ctx.session.KProgPhotoMessageId);
-            ctx.session.KProgPhotoMessageId = undefined; // Сбрасываем ID
+        if (ctx.session.QueuePhotoMessageId) {
+            await ctx.api.deleteMessage(ctx.chat.id, ctx.session.QueuePhotoMessageId);
+            ctx.session.QueuePhotoMessageId = undefined; // Сбрасываем ID
         }
         await ctx.deleteMessage();
     
@@ -187,9 +209,9 @@ function commands(bot) {
     bot.callbackQuery(/signLesson:(.+)/, async (ctx) => {
         await ctx.answerCallbackQuery();
         
-        if (ctx.session.KProgPhotoMessageId) {
-            await ctx.api.deleteMessage(ctx.chat.id, ctx.session.KProgPhotoMessageId);
-            ctx.session.KProgPhotoMessageId = undefined;
+        if (ctx.session.QueuePhotoMessageId) {
+            await ctx.api.deleteMessage(ctx.chat.id, ctx.session.QueuePhotoMessageId);
+            ctx.session.QueuePhotoMessageId = undefined;
         }
 
         const lessonType = ctx.match[1];

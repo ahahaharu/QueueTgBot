@@ -40,13 +40,14 @@ function sendMessages(bot, dateTime, lesson, type) {
     const replyMarkup = createSignButton(lesson);
 
     schedule.scheduleJob(jobDate, async () => {
-        await clearKProg(); 
+        if (lesson === 'kprog') {
+            await clearKProg(); 
 
-        const config = await readConfig();
-        config.isKProgEnd = false;
-        await writeConfig(config);
+            const config = await readConfig();
+            config.isKProgEnd = false;
+            await writeConfig(config);
+        }
 
-        // Отправляем сообщения всем пользователям
         await sendMessagesToUsers(bot, message, replyMarkup);
     });
 }

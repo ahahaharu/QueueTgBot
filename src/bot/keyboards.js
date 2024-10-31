@@ -43,6 +43,8 @@ const returnToQueueKeyboard = new InlineKeyboard().text('↩️Вернутьс�
 
 const returnToKProg = new InlineKeyboard().text('↩️Вернуться к КПрог ', 'kprog');
 const returnToISP = new InlineKeyboard().text('↩️Вернуться к ИСП ', 'isp');
+const returnToPZMA = new InlineKeyboard().text('↩️Вернуться к ПЗМА ', 'pzma');
+const returnToMCHA = new InlineKeyboard().text('↩️Вернуться к МЧА ', 'mcha');
 
 const kprogStatusKeyboard = new InlineKeyboard()
     .text("🟩Сдал(-а)", "passed").row()
@@ -74,6 +76,8 @@ module.exports = {
     returnToQueueKeyboard,
     returnToKProg,
     returnToISP,
+    returnToPZMA,
+    returnToMCHA,
     createSignButton,
     kprogStatusKeyboard,
     adminKeyboard,

@@ -61,9 +61,9 @@ function menuCommand(bot) {
     })
     
     bot.callbackQuery('queue', async (ctx) => {
-        if (ctx.session.KProgPhotoMessageId) {
-            await ctx.api.deleteMessage(ctx.chat.id, ctx.session.KProgPhotoMessageId);
-            ctx.session.KProgPhotoMessageId = undefined; 
+        if (ctx.session.QueuePhotoMessageId) {
+            await ctx.api.deleteMessage(ctx.chat.id, ctx.session.QueuePhotoMessageId);
+            ctx.session.QueuePhotoMessageId = undefined; 
         }
     
         await ctx.answerCallbackQuery();

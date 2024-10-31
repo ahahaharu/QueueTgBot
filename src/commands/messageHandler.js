@@ -1,7 +1,8 @@
 const config = require('../../config.json');
 
 const {
-    returnToKProg, returnToISP, setPriorityKeyboard
+    returnToKProg, returnToISP, setPriorityKeyboard,
+    returnToPZMA
 } = require('../bot/keyboards'); 
 
 const { 
@@ -131,6 +132,61 @@ function messageHandler(bot) {
 
             await ctx.reply(`✅ Отлично! Вы записаны!`, {
                 reply_markup: returnToISP
+            });
+
+            ctx.session.step = null;
+        } else if (ctx.session.step === "waiting_for_pzmaLab") {
+            let lab = ctx.message.text;
+
+            if(!(regex.test(lab) && lab.length < 20)) {
+                await ctx.reply("*Неверное значение\\!* Введите номера лаб верно\\!\n\n_Например\\: 1\\, 2_", {
+                    parse_mode: 'MarkdownV2'
+                }
+                );
+                return;
+            }
+
+            const PZMAQueue = await getQueue('PZMA');
+            const userInfo = await getInfoById(ctx.from.id.toString());
+            const queue = [
+                [], []
+            ]
+
+            let subgroupIndex, userSubgpoup;
+            if (config.PZMALessonType == 0) {
+                queue.pop();
+                queue.flat(1);
+                userSubgpoup = 0;
+            } else {  
+                userSubgpoup = userInfo.subgroup - 1;
+            }
+           
+            if (PZMAQueue?.length) {
+                PZMAQueue.forEach(item => {
+                    if (config.PZMALessonType == 0) {
+                        subgroupIndex = 0;
+                    } else {
+                        subgroupIndex = item.subgroup - 1;
+                    }
+                    queue[subgroupIndex].push(item); 
+                });
+            }
+            
+            queue[userSubgpoup].push({
+                tg_id: userInfo.tg_id,
+                surname: userInfo.surname,
+                labs: lab,
+                subgroup: userInfo.subgroup
+            });
+
+            if (config.PZMALessonType == 2) {
+                [queue[0], queue[1]] = [queue[1], queue[0]];
+            }
+
+            insertIntoQueue(queue.flat(1), 'PZMA');
+
+            await ctx.reply(`✅ Отлично! Вы записаны!`, {
+                reply_markup: returnToPZMA
             });
 
             ctx.session.step = null;

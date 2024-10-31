@@ -8,7 +8,9 @@ async function sendScheduledMessages(bot, schedule, messageType) {
             config.KProgLessonType = el.type;
         } else if (messageType === 'isp') {
             config.ISPLessonType = el.type;
-        }
+        } else if (messageType === 'pzma') {
+            config.PZMALessonType = el.type;
+        } 
         
         await writeConfig(config);
 
