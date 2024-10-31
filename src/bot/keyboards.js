@@ -35,7 +35,21 @@ function getReturnKeyboard(condition, lessonType) {
     return kprogPriorityKeyBoard;
 }
 
+function doWithTable(lesson) {
+    return new InlineKeyboard()
+        .text('Изменить номера лаб у пользователя', `changeUsersLab:${lesson}`).row()
+        .text('Удалить пользователя из таблицы', `deleteUserFrom:${lesson}`).row()
+        .text('Очистить таблицу', `clear:${lesson}`).row()
 
+}
+
+const selectQueueKeyboard = new InlineKeyboard()
+    .text('💻КПрог', 'changeKprog').row()
+    .text('🖥ИСП', 'changeIsp').row()
+    .text('📈ПЗМА', 'changePzma').row()
+    .text('👴🏻МЧА', 'changeMcha').row()
+    .text('🌡БЖЧ', 'changeBzch').row()
+    .text('↩️Вернуться в меню', 'adminmenu').row()
 
 const returnToMenuKeyboard = new InlineKeyboard().text('↩️Вернуться в меню', 'returnToMenu');
 
@@ -54,7 +68,10 @@ const kprogStatusKeyboard = new InlineKeyboard()
 
 const adminKeyboard = new InlineKeyboard()
     .text("Поставить приоритет", "setPr").row()
+    .text("Изменить таблицу", "queueToChange").row()
     .text("Отправить сообщение всем", "sendMsg").row()
+
+
 
 const setPriorityKeyboard = new InlineKeyboard()
     .text("🟥 Красный", 'setRedPriority').row()
@@ -82,5 +99,7 @@ module.exports = {
     kprogStatusKeyboard,
     adminKeyboard,
     setPriorityKeyboard,
-    getReturnKeyboard
+    getReturnKeyboard,
+    selectQueueKeyboard,
+    doWithTable
 };

@@ -1,23 +1,3 @@
-const { InputFile } = require('grammy');
-const config = require('../../config.json');
-
-const {
-    menuKeyboard, returnToMenuKeyboard,
-    queueKeyboard, returnToQueueKeyboard, returnToKProg,
-    adminKeyboard, setPriorityKeyboard, getReturnKeyboard
-} = require('../bot/keyboards'); 
-
-const { students } = require('../students/students');
-const { 
-    insertIntoDatabase, isRegistered, getInfoById, getAllUsers, 
-    insertToKProg, getQueue, setPriority, isInUsers, 
-    setPriorityBySurname 
-} = require('../database/database');
-
-const { generatePriorityTable, generateQueueTable } = require('../tables/tables');
-const { lessons } = require ('../lessons/lessons');
-const { sendMessageForAll } = require('./delayedMsgs');
-
 const { menuCommand } = require('./menu');
 const { startCommand } = require("./start.js");
 const { adminMenuCommand } = require('./adminMenu.js');

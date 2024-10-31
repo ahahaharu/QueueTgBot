@@ -1,8 +1,14 @@
+const { InputFile } = require('grammy');
+
 const {
-    adminKeyboard, getKProgPriorityKeyboard
+    adminKeyboard, getKProgPriorityKeyboard,
+    selectQueueKeyboard,
+    doWithTable
 } = require('../bot/keyboards'); 
 
-const { setPriorityBySurname } = require('../database/database');
+const { generateQueueTable } = require('../tables/tables');
+
+const { setPriorityBySurname, getQueue, clearTable } = require('../database/database');
 
 
 function adminMenuCommand(bot) {
@@ -34,6 +40,51 @@ function adminMenuCommand(bot) {
         ctx.session.step = 'waiting_for_adminMessage';
     })
 
+    bot.callbackQuery('queueToChange', async (ctx) => {
+        await ctx.answerCallbackQuery();
+        await ctx.callbackQuery.message.editText('Выберите таблицу, которую нужно изменить', {
+            parse_mode: 'MarkdownV2',
+            reply_markup: selectQueueKeyboard
+        });  
+    })
+
+    bot.callbackQuery('changeKprog', async (ctx) => {
+        await ctx.answerCallbackQuery();
+
+        await ctx.deleteMessage();
+
+        let status = "";
+        const queue = await getQueue('KProg');
+
+        if (queue?.length) {
+            await generateQueueTable(queue, 'KProgTable', 'КПрог');
+            let photoMessage = await ctx.replyWithPhoto(new InputFile("./src/tables/KProgTable.png"));
+            ctx.session.QueuePhotoMessageId = photoMessage.message_id;
+        } else {
+            status = "_Пока никакой очереди нет_";
+        }
+        
+
+        
+        await ctx.reply(`💻 *Очередь на КПрог\n\n*`+status+"\n\nВыеберете, что сделать с таблицой:", {
+            parse_mode: 'MarkdownV2',
+            reply_markup: doWithTable('KProg')
+        })
+    });
+
+    bot.callbackQuery(/clear:(.+)/, async (ctx) => {
+        await ctx.answerCallbackQuery();
+        const tableName = ctx.match[1];
+
+        if (ctx.session.QueuePhotoMessageId) {
+            await ctx.api.deleteMessage(ctx.chat.id, ctx.session.QueuePhotoMessageId);
+            ctx.session.QueuePhotoMessageId = undefined; 
+        }
+
+        clearTable(tableName);
+        await ctx.callbackQuery.message.editText(`Таблица очищена`)
+    })
+
     bot.callbackQuery(/set(.*)Priority/, async (ctx) => {
         const priority = ctx.match[1]; // Получаем цвет из callback данных
 
@@ -43,7 +94,7 @@ function adminMenuCommand(bot) {
             "Green": "Зелёный",
             "Purple": "Санкции"
         }
-        const surname = ctx.session.surname; // Извлекаем сохраненную фамилию
+        const surname = ctx.session.surname; 
         if (surname) {
             await setPriorityBySurname(surname, priorities[priority]); // Устанавливаем приоритет
             await ctx.editMessageText(`Приоритет пользователя ${surname} изменён на ${priorities[priority]}`, {

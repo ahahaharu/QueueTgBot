@@ -37,7 +37,8 @@ function lessonsQueueCommand(bot) {
             let photoMessage = await ctx.replyWithPhoto(new InputFile("./src/tables/KProgTable.png"));
             ctx.session.QueuePhotoMessageId = photoMessage.message_id;
         } else {
-            status = "_Пока никакой очереди нет_";
+            status = "В таблице ещё никого нет"
+            condition = true;
         }
         
 
