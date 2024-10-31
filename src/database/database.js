@@ -151,14 +151,14 @@ async function setPriorityBySurname(surname, priority) {
     }
 }
 
-async function clearKProg() {
+async function clearTable(lesson) {
     try {
-        await con.query("TRUNCATE TABLE KProg");
-        console.log(`Таблица KProg очищена`);
+        await con.query(`TRUNCATE TABLE ${lesson}`);
+        console.log(`Таблица ${lesson} очищена`);
     } catch (err) {
-        console.error('Ошибка при очистке KProg:', err);
+        console.error(`Ошибка при очистке ${lesson}:`, err);
     }
 }
 
 
-module.exports = { insertIntoDatabase, isRegistered, getInfoById, getAllUsers, insertIntoQueue, getQueue, setPriority, isInUsers, setPriorityBySurname, clearKProg }
+module.exports = { insertIntoDatabase, isRegistered, getInfoById, getAllUsers, insertIntoQueue, getQueue, setPriority, isInUsers, setPriorityBySurname, clearTable }

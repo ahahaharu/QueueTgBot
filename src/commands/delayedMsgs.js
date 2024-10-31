@@ -1,4 +1,4 @@
-const { getAllUsers, getQueue, setPriority, clearKProg } = require('../database/database');
+const { getAllUsers, getQueue, setPriority, clearTable } = require('../database/database');
 const schedule = require('node-schedule');
 const { createSignButton, kprogStatusKeyboard } = require('../bot/keyboards');
 const { lessons } = require ('../lessons/lessons');
@@ -40,14 +40,27 @@ function sendMessages(bot, dateTime, lesson, type) {
     const replyMarkup = createSignButton(lesson);
 
     schedule.scheduleJob(jobDate, async () => {
+        const config = await readConfig();
+        
+        await writeConfig(config);
         if (lesson === 'kprog') {
-            await clearKProg(); 
+            await clearTable('KProg'); 
+            config.KProgLessonType = type;
 
-            const config = await readConfig();
             config.isKProgEnd = false;
-            await writeConfig(config);
+        } else if (lesson === 'isp') {
+            await clearTable('ISP'); 
+            config.ISPLessonType = type;
+        } else if (lesson === 'pzma') {
+            await clearTable('PZMA'); 
+            config.PZMALessonType = type;
+        }
+        else if (lesson === 'mcha') {
+            await clearTable('MCHA'); 
+            config.MCHALessonType = type;
         }
 
+        await writeConfig(config);
         await sendMessagesToUsers(bot, message, replyMarkup);
     });
 }

@@ -2,12 +2,14 @@ const { sendScheduledMessages, sendEndScheduledMessages } = require('./scheduleU
 const { KProgSchedule, KProgEnd } = require('./KProgSchedule');
 const { ISPSchedule } = require('./ISPSchedule');
 const { PZMASchedule } = require('./PZMASchedule');
+const { MCHASchedule } = require('./MCHASchedule');
 
 
 function setSchedules(bot) {
     sendScheduledMessages(bot, KProgSchedule, "kprog");
     sendScheduledMessages(bot, ISPSchedule, "isp");
     sendScheduledMessages(bot, PZMASchedule, "pzma");
+    sendScheduledMessages(bot, MCHASchedule, "mcha");
     sendEndScheduledMessages(bot, KProgEnd);
 }
 

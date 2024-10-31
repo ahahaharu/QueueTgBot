@@ -92,7 +92,7 @@ function commands(bot) {
                 status = "Вы ещё не записались в таблицу"
                 condition = true;
             }
-
+            
             await generateQueueTable(queue, 'ISPTable', 'ИСП');
             let photoMessage = await ctx.replyWithPhoto(new InputFile("./src/tables/ISPTable.png"));
             ctx.session.QueuePhotoMessageId = photoMessage.message_id;
@@ -144,10 +144,33 @@ function commands(bot) {
     bot.callbackQuery('mcha', async (ctx) => {
         await ctx.answerCallbackQuery();
 
-        let status = "_Пока никакой очереди нет_";
-        await ctx.callbackQuery.message.editText(`👴🏻 *Очередь на МЧА\n\n*`+status, {
+        await ctx.deleteMessage();
+
+        let status = "";
+        const queue = await getQueue('MCHA');
+        let condition = false;
+
+        if (queue?.length) {
+            const index = queue.findIndex(item => item.tg_id == ctx.from.id);
+            if (index !== -1) {
+                status = "Вы записаны в таблицу\\! Ваше место в очереди: "+(+index+1);
+            } else {
+                status = "Вы ещё не записались в таблицу"
+                condition = true;
+            }
+
+            await generateQueueTable(queue, 'MCHATable', 'МЧА');
+            let photoMessage = await ctx.replyWithPhoto(new InputFile("./src/tables/MCHATable.png"));
+            ctx.session.QueuePhotoMessageId = photoMessage.message_id;
+        } else {
+            status = "_Пока никакой очереди нет_";
+        }
+        
+
+        
+        await ctx.reply(`💻 *Очередь на МЧА\n\n*`+status, {
             parse_mode: 'MarkdownV2',
-            reply_markup: returnToQueueKeyboard
+            reply_markup: getReturnKeyboard(condition, 'mcha')
         })
     });
 
