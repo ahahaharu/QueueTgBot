@@ -6,7 +6,8 @@ const {
 } = require('../bot/keyboards'); 
 
 const { 
-    getInfoById, insertIntoQueue, getQueue, isInUsers, 
+    getInfoById, insertIntoQueue, getQueue, isInUsers,
+    clearTable, 
 } = require('../database/database');
 
 const { sendMessageForAll } = require('./delayedMsgs');
@@ -269,6 +270,78 @@ function messageHandler(bot) {
             await sendMessageForAll(bot, text);
 
             ctx.session.step = null;
+        } else if (ctx.session.step === 'waiting_for_KProgToDelete') {
+            let surname = ctx.message.text;
+
+            let queue = await getQueue('KProg');
+            
+            const index = queue.findIndex(item => item.tg_id == ctx.from.id);
+            if(index === -1) {
+                await ctx.reply('Такого пользователя нет в таблице');
+            }
+            queue = queue.filter(item => item.surname !== surname);
+
+            if(queue?.length) {
+                insertIntoQueue(queue, 'KProg');
+            } else {
+                clearTable('KProg');
+            }
+
+            await ctx.reply('Пользователь удалён из таблицы');
+        } else if (ctx.session.step === 'waiting_for_ISPToDelete') {
+            let surname = ctx.message.text;
+
+            let queue = await getQueue('ISP');
+            
+            const index = queue.findIndex(item => item.tg_id == ctx.from.id);
+            if(index === -1) {
+                await ctx.reply('Такого пользователя нет в таблице');
+            }
+            queue = queue.filter(item => item.surname !== surname);
+
+            if(queue?.length) {
+                insertIntoQueue(queue, 'ISP');
+            } else {
+                clearTable('ISP');
+            }
+
+            await ctx.reply('Пользователь удалён из таблицы');
+        } else if (ctx.session.step === 'waiting_for_PZMAToDelete') {
+            let surname = ctx.message.text;
+
+            let queue = await getQueue('PZMA');
+            
+            const index = queue.findIndex(item => item.tg_id == ctx.from.id);
+            if(index === -1) {
+                await ctx.reply('Такого пользователя нет в таблице');
+            }
+            queue = queue.filter(item => item.surname !== surname);
+
+            if(queue?.length) {
+                insertIntoQueue(queue, 'PZMA');
+            } else {
+                clearTable('PZMA');
+            }
+
+            await ctx.reply('Пользователь удалён из таблицы');
+        } else if (ctx.session.step === 'waiting_for_MCHAToDelete') {
+            let surname = ctx.message.text;
+
+            let queue = await getQueue('MCHA');
+            
+            const index = queue.findIndex(item => item.tg_id == ctx.from.id);
+            if(index === -1) {
+                await ctx.reply('Такого пользователя нет в таблице');
+            }
+            queue = queue.filter(item => item.surname !== surname);
+
+            if(queue?.length) {
+                insertIntoQueue(queue, 'MCHA');
+            } else {
+                clearTable('MCHA');
+            }
+
+            await ctx.reply('Пользователь удалён из таблицы');
         } else {
             await ctx.reply('❓ Я не понимаю это сообщение. Для начала нажмите /start или перейдите в меню /menu');
         }

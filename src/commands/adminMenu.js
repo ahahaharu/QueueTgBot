@@ -72,6 +72,78 @@ function adminMenuCommand(bot) {
         })
     });
 
+    bot.callbackQuery('changeIsp', async (ctx) => {
+        await ctx.answerCallbackQuery();
+
+        await ctx.deleteMessage();
+
+        let status = "";
+        const queue = await getQueue('ISP');
+
+        if (queue?.length) {
+            await generateQueueTable(queue, 'ISPTable', 'ИСП');
+            let photoMessage = await ctx.replyWithPhoto(new InputFile("./src/tables/ISPTable.png"));
+            ctx.session.QueuePhotoMessageId = photoMessage.message_id;
+        } else {
+            status = "_Пока никакой очереди нет_";
+        }
+        
+
+        
+        await ctx.reply(`💻 *Очередь на ИСП\n\n*`+status+"\n\nВыеберете, что сделать с таблицой:", {
+            parse_mode: 'MarkdownV2',
+            reply_markup: doWithTable('ISP')
+        })
+    });
+
+    bot.callbackQuery('changePzma', async (ctx) => {
+        await ctx.answerCallbackQuery();
+
+        await ctx.deleteMessage();
+
+        let status = "";
+        const queue = await getQueue('PZMA');
+
+        if (queue?.length) {
+            await generateQueueTable(queue, 'PZMATable', 'ПЗМА');
+            let photoMessage = await ctx.replyWithPhoto(new InputFile("./src/tables/PZMATable.png"));
+            ctx.session.QueuePhotoMessageId = photoMessage.message_id;
+        } else {
+            status = "_Пока никакой очереди нет_";
+        }
+        
+
+        
+        await ctx.reply(`💻 *Очередь на ПЗМА\n\n*`+status+"\n\nВыеберете, что сделать с таблицой:", {
+            parse_mode: 'MarkdownV2',
+            reply_markup: doWithTable('PZMA')
+        })
+    });
+
+    bot.callbackQuery('changeMcha', async (ctx) => {
+        await ctx.answerCallbackQuery();
+
+        await ctx.deleteMessage();
+
+        let status = "";
+        const queue = await getQueue('MCHA');
+
+        if (queue?.length) {
+            await generateQueueTable(queue, 'MCHATable', 'МЧА');
+            let photoMessage = await ctx.replyWithPhoto(new InputFile("./src/tables/MCHATable.png"));
+            ctx.session.QueuePhotoMessageId = photoMessage.message_id;
+        } else {
+            status = "_Пока никакой очереди нет_";
+        }
+        
+
+        
+        await ctx.reply(`💻 *Очередь на МЧА\n\n*`+status+"\n\nВыеберете, что сделать с таблицой:", {
+            parse_mode: 'MarkdownV2',
+            reply_markup: doWithTable('MCHA')
+        })
+    });
+
     bot.callbackQuery(/clear:(.+)/, async (ctx) => {
         await ctx.answerCallbackQuery();
         const tableName = ctx.match[1];
@@ -83,6 +155,14 @@ function adminMenuCommand(bot) {
 
         clearTable(tableName);
         await ctx.callbackQuery.message.editText(`Таблица очищена`)
+    })
+
+    bot.callbackQuery(/deleteUserIn:(.+)/, async (ctx) => {
+        await ctx.answerCallbackQuery();
+        const tableName = ctx.match[1];
+
+        await ctx.callbackQuery.message.editText(`Напишите фамилию пользователя, которого нужно удалить:`);
+        ctx.session.step = `waiting_for_${tableName}ToDelete`;
     })
 
     bot.callbackQuery(/set(.*)Priority/, async (ctx) => {
