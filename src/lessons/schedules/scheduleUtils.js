@@ -1,22 +1,21 @@
 const { sendMessages, sendEndMessage } = require('../../commands/delayedMsgs');
+const { readConfig, writeConfig } = require ('../../utils/config')
 
-/**
- * Универсальная функция для отправки сообщений по расписанию.
- * @param {Object} bot - экземпляр бота.
- * @param {Array} schedule - массив объектов расписания { time, type }.
- * @param {string} messageType - тип сообщения, используемый для различения задач.
- */
-function sendScheduledMessages(bot, schedule, messageType) {
+async function sendScheduledMessages(bot, schedule, messageType) {
     for (const el of schedule) {
+        const config = await readConfig();
+        if (messageType === 'kprog') {
+            config.KProgLessonType = el.type;
+        } else if (messageType === 'isp') {
+            config.ISPLessonType = el.type;
+        }
+        
+        await writeConfig(config);
+
         sendMessages(bot, el.time, messageType, el.type);
     }
 }
 
-/**
- * Универсальная функция для отправки завершающих сообщений по расписанию.
- * @param {Object} bot - экземпляр бота.
- * @param {Array} endSchedule - массив строк с датами завершения.
- */
 function sendEndScheduledMessages(bot, endSchedule) {
     for (const time of endSchedule) {
         sendEndMessage(bot, time);

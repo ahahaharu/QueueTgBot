@@ -64,9 +64,9 @@ function getAllUsers() {
     })
 }
 
-function getKProgQueue() {
+function getQueue(lesson) {
     return new Promise((resolve, reject) => {
-        let query = `SELECT * FROM KProg`;
+        let query = `SELECT * FROM ${lesson}`;
 
         con.query(query, function (err, result) {
             if (err) return reject(err);
@@ -80,18 +80,7 @@ function getKProgQueue() {
     })
 }
 
-function isInQueue(id) {
-    return new Promise((resolve, reject) => {
-        let query = `SELECT tg_id FROM KProg`;
-  
-        con.query(query, function (err, result) {
-            if (err) return reject(err);
-  
-            let tgIds = result.map(row => row.tg_id);
-            resolve(tgIds.includes(id.toString()));
-        });
-    });
-}
+
 
 async function isInUsers(surname) {
     return new Promise((resolve, reject) => {
@@ -106,24 +95,29 @@ async function isInUsers(surname) {
     });
 }
 
-async function insertToKProg(queue) {
+async function insertIntoQueue(queue, lesson) {
     try {
-        // Очищаем таблицу KProg
-        await con.query('TRUNCATE TABLE KProg');
+        await con.query(`TRUNCATE TABLE ${lesson}`);
 
-        // Подготовка SQL-запроса для вставки данных
-        let insertQuery = 'INSERT INTO KProg (tg_id, surname, labs, priority, subgroup) VALUES ?';
-        
-        // Преобразуем newData в массив массивов (каждая строка — отдельная запись)
-        const values = queue.map(item => [item.tg_id, item.surname, item.labs, item.priority, item.subgroup]);
+        let insertQuery;
+        let values;
 
-        // Выполняем запрос на вставку данных
+        if (lesson === 'KProg') {
+            insertQuery = 'INSERT INTO KProg (tg_id, surname, labs, priority, subgroup) VALUES ?';
+            values = queue.map(item => [item.tg_id, item.surname, item.labs, item.priority, item.subgroup]);
+        } else {
+            insertQuery = `INSERT INTO ${lesson} (tg_id, surname, labs, subgroup) VALUES ?`;
+            values = queue.map(item => [item.tg_id, item.surname, item.labs, item.subgroup]);
+        } 
+
         await con.query(insertQuery, [values]);
-        console.log('Таблица KProg была успешно перезаписана.');
+        console.log(`Таблица ${lesson} была успешно перезаписана.`);
     } catch (err) {
-        console.error('Ошибка при перезаписи таблицы KProg:', err);
+        console.error(`Ошибка при перезаписи таблицы ${lesson}:`, err);
     }
 }
+
+
 
 async function setPriority(id, priority) {
     try {
@@ -166,4 +160,5 @@ async function clearKProg() {
     }
 }
 
-module.exports = { insertIntoDatabase, isRegistered, getInfoById, getAllUsers, insertToKProg, getKProgQueue, isInQueue, setPriority, clearKProg, isInUsers, setPriorityBySurname }
+
+module.exports = { insertIntoDatabase, isRegistered, getInfoById, getAllUsers, insertIntoQueue, getQueue, setPriority, isInUsers, setPriorityBySurname, clearKProg }

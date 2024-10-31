@@ -4,21 +4,21 @@ const config = require('../../config.json');
 const {
     menuKeyboard, returnToMenuKeyboard,
     queueKeyboard, returnToQueueKeyboard, returnToKProg,
-    adminKeyboard, setPriorityKeyboard, getKProgPriorityKeyboard
+    adminKeyboard, setPriorityKeyboard, getReturnKeyboard
 } = require('../bot/keyboards'); 
 
 const { students } = require('../students/students');
 const { 
     insertIntoDatabase, isRegistered, getInfoById, getAllUsers, 
-    insertToKProg, getKProgQueue, setPriority, isInUsers, 
+    insertToKProg, getQueue, setPriority, isInUsers, 
     setPriorityBySurname 
 } = require('../database/database');
 
-const { showMenu, menuCommand } = require('./menu');
 const { generatePriorityTable, generateQueueTable } = require('../tables/tables');
 const { lessons } = require ('../lessons/lessons');
 const { sendMessageForAll } = require('./delayedMsgs');
 
+const { menuCommand } = require('./menu');
 const { startCommand } = require("./start.js");
 const { adminMenuCommand } = require('./adminMenu.js');
 const { messageHandler } = require('./messageHandler.js');
@@ -48,7 +48,7 @@ function commands(bot) {
         await ctx.deleteMessage();
 
         let status = "";
-        const queue = await getKProgQueue();
+        const queue = await getQueue('KProg');
         let condition = false;
 
         if (queue?.length) {
@@ -60,7 +60,7 @@ function commands(bot) {
                 condition = true;
             }
 
-            await generateQueueTable(queue, 'KProgTable');
+            await generateQueueTable(queue, 'KProgTable', 'КПрог');
             let photoMessage = await ctx.replyWithPhoto(new InputFile("./src/tables/KProgTable.png"));
             ctx.session.KProgPhotoMessageId = photoMessage.message_id;
         } else {
@@ -71,7 +71,70 @@ function commands(bot) {
         
         await ctx.reply(`💻 *Очередь на КПрог\n\n*`+status, {
             parse_mode: 'MarkdownV2',
-            reply_markup: getKProgPriorityKeyboard(condition, 'kprog')
+            reply_markup: getReturnKeyboard(condition, 'kprog')
+        })
+    });
+
+    bot.callbackQuery('isp', async (ctx) => {
+        await ctx.answerCallbackQuery();
+
+        await ctx.deleteMessage();
+
+        let status = "";
+        const queue = await getQueue('ISP');
+        let condition = false;
+
+        if (queue?.length) {
+            const index = queue.findIndex(item => item.tg_id == ctx.from.id);
+            if (index !== -1) {
+                status = "Вы записаны в таблицу\\! Ваше место в очереди: "+(+index+1);
+            } else {
+                status = "Вы ещё не записались в таблицу"
+                condition = true;
+            }
+
+            await generateQueueTable(queue, 'ISPTable', 'ИСП');
+            let photoMessage = await ctx.replyWithPhoto(new InputFile("./src/tables/ISPTable.png"));
+            ctx.session.KProgPhotoMessageId = photoMessage.message_id;
+        } else {
+            status = "_Пока никакой очереди нет_";
+        }
+        
+
+        
+        await ctx.reply(`💻 *Очередь на ИСП\n\n*`+status, {
+            parse_mode: 'MarkdownV2',
+            reply_markup: getReturnKeyboard(condition, 'kprog')
+        })
+    });
+
+    bot.callbackQuery('pzma', async (ctx) => {
+        await ctx.answerCallbackQuery();
+
+        let status = "_Пока никакой очереди нет_";
+        await ctx.callbackQuery.message.editText(`📈 *Очередь на ПЗМА\n\n*`+status, {
+            parse_mode: 'MarkdownV2',
+            reply_markup: returnToQueueKeyboard
+        })
+    });
+
+    bot.callbackQuery('mcha', async (ctx) => {
+        await ctx.answerCallbackQuery();
+
+        let status = "_Пока никакой очереди нет_";
+        await ctx.callbackQuery.message.editText(`👴🏻 *Очередь на МЧА\n\n*`+status, {
+            parse_mode: 'MarkdownV2',
+            reply_markup: returnToQueueKeyboard
+        })
+    });
+
+    bot.callbackQuery('bzch', async (ctx) => {
+        await ctx.answerCallbackQuery();
+
+        let status = "_Пока никакой очереди нет_";
+        await ctx.callbackQuery.message.editText(`🌡 *Очередь на БЖЧ\n\n*`+status, {
+            parse_mode: 'MarkdownV2',
+            reply_markup: returnToQueueKeyboard
         })
     });
 
@@ -119,45 +182,7 @@ function commands(bot) {
     });
     
 
-    bot.callbackQuery('isp', async (ctx) => {
-        await ctx.answerCallbackQuery();
-
-        let status = "_Пока никакой очереди нет_";
-        await ctx.callbackQuery.message.editText(`*🖥 Очередь на ИСП\n\n*`+status, {
-            parse_mode: 'MarkdownV2',
-            reply_markup: returnToQueueKeyboard
-        })
-    });
-
-    bot.callbackQuery('pzma', async (ctx) => {
-        await ctx.answerCallbackQuery();
-
-        let status = "_Пока никакой очереди нет_";
-        await ctx.callbackQuery.message.editText(`📈 *Очередь на ПЗМА\n\n*`+status, {
-            parse_mode: 'MarkdownV2',
-            reply_markup: returnToQueueKeyboard
-        })
-    });
-
-    bot.callbackQuery('mcha', async (ctx) => {
-        await ctx.answerCallbackQuery();
-
-        let status = "_Пока никакой очереди нет_";
-        await ctx.callbackQuery.message.editText(`👴🏻 *Очередь на МЧА\n\n*`+status, {
-            parse_mode: 'MarkdownV2',
-            reply_markup: returnToQueueKeyboard
-        })
-    });
-
-    bot.callbackQuery('bzch', async (ctx) => {
-        await ctx.answerCallbackQuery();
-
-        let status = "_Пока никакой очереди нет_";
-        await ctx.callbackQuery.message.editText(`🌡 *Очередь на БЖЧ\n\n*`+status, {
-            parse_mode: 'MarkdownV2',
-            reply_markup: returnToQueueKeyboard
-        })
-    });
+    
      
     bot.callbackQuery(/signLesson:(.+)/, async (ctx) => {
         await ctx.answerCallbackQuery();

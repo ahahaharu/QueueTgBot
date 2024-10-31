@@ -1,11 +1,11 @@
 const config = require('../../config.json');
 
 const {
-    returnToKProg, setPriorityKeyboard
+    returnToKProg, returnToISP, setPriorityKeyboard
 } = require('../bot/keyboards'); 
 
 const { 
-    getInfoById, insertToKProg, getKProgQueue, isInUsers, 
+    getInfoById, insertIntoQueue, getQueue, isInUsers, 
 } = require('../database/database');
 
 const { sendMessageForAll } = require('./delayedMsgs');
@@ -25,7 +25,7 @@ function messageHandler(bot) {
                 return;
             }
 
-            const KProgQueue = await getKProgQueue();
+            const KProgQueue = await getQueue('KProg');
             const userInfo = await getInfoById(ctx.from.id.toString());
             const queue = [
                 [[],[],[]],
@@ -71,7 +71,7 @@ function messageHandler(bot) {
                 [queue[0], queue[1]] = [queue[1], queue[0]];
             }
 
-            insertToKProg(queue.flat(2));
+            insertIntoQueue(queue.flat(2), 'KProg');
 
             await ctx.reply(`✅ Отлично! Вы записаны!`, {
                 reply_markup: returnToKProg
@@ -79,6 +79,61 @@ function messageHandler(bot) {
 
             ctx.session.step = null;
             
+        } else if (ctx.session.step === "waiting_for_ispLab") {
+            let lab = ctx.message.text;
+
+            if(!(regex.test(lab) && lab.length < 20)) {
+                await ctx.reply("*Неверное значение\\!* Введите номера лаб верно\\!\n\n_Например\\: 1\\, 2_", {
+                    parse_mode: 'MarkdownV2'
+                }
+                );
+                return;
+            }
+
+            const ISPQueue = await getQueue('ISP');
+            const userInfo = await getInfoById(ctx.from.id.toString());
+            const queue = [
+                [], []
+            ]
+
+            let subgroupIndex, userSubgpoup;
+            if (config.ISPLessonType == 0) {
+                queue.pop();
+                queue.flat(1);
+                userSubgpoup = 0;
+            } else {  
+                userSubgpoup = userInfo.subgroup - 1;
+            }
+           
+            if (ISPQueue?.length) {
+                ISPQueue.forEach(item => {
+                    if (config.ISPLessonType == 0) {
+                        subgroupIndex = 0;
+                    } else {
+                        subgroupIndex = item.subgroup - 1;
+                    }
+                    queue[subgroupIndex].push(item); 
+                });
+            }
+            
+            queue[userSubgpoup].push({
+                tg_id: userInfo.tg_id,
+                surname: userInfo.surname,
+                labs: lab,
+                subgroup: userInfo.subgroup
+            });
+
+            if (config.ISPLessonType == 2) {
+                [queue[0], queue[1]] = [queue[1], queue[0]];
+            }
+
+            insertIntoQueue(queue.flat(1), 'ISP');
+
+            await ctx.reply(`✅ Отлично! Вы записаны!`, {
+                reply_markup: returnToISP
+            });
+
+            ctx.session.step = null;
         } else if (ctx.session.step === "waiting_for_prioritySurname") {
             let surname = ctx.message.text;
 

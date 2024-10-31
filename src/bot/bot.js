@@ -2,7 +2,7 @@ const { Bot, GrammyError, HttpError } = require('grammy');
 const { hydrate } = require('@grammyjs/hydrate');
 const { session, MemorySessionStorage } = require('grammy');
 const { commands } = require('../commands/commands');
-const { sendKProgMessages, sendKProgEnd } = require('../lessons/schedules/schedules');
+const { setSchedules } = require('../lessons/schedules/schedules');
 const { sendMessageForAll, sendStickerForAll } = require('../commands/delayedMsgs');
 
 
@@ -29,8 +29,7 @@ bot.api.setMyCommands([
   ]);
 
 commands(bot);
-sendKProgMessages(bot);
-sendKProgEnd(bot);
+setSchedules(bot);
 
 
 bot.catch((err) => {

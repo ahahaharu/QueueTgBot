@@ -1,21 +1,8 @@
-const { getAllUsers, getKProgQueue, setPriority, clearKProg } = require('../database/database');
+const { getAllUsers, getQueue, setPriority, clearKProg } = require('../database/database');
 const schedule = require('node-schedule');
 const { createSignButton, kprogStatusKeyboard } = require('../bot/keyboards');
 const { lessons } = require ('../lessons/lessons');
-const fs = require('fs');
-const path = require('path');
-const configPath = path.join(__dirname, 'config.json');
-
-
-const readConfig = async () => {
-    const configData = await fs.promises.readFile(configPath, 'utf-8');
-    return JSON.parse(configData);
-};
-
-// Функция для записи конфигурации
-const writeConfig = async (config) => {
-    await fs.promises.writeFile(configPath, JSON.stringify(config, null, 4));
-};
+const {readConfig, writeConfig} = require ('../utils/config')
 
 // Функция для отправки сообщений всем пользователям
 const sendMessagesToUsers = async (bot, message, replyMarkup) => {
@@ -52,11 +39,9 @@ function sendMessages(bot, dateTime, lesson, type) {
     const message = `*Запись на ${lessons.get(lesson)} ${day + 1}\\.${month} ${lessonType}*\n\n_Нажмите кнопку ниже, чтобы записаться_`;
     const replyMarkup = createSignButton(lesson);
 
-    // Планируем задачу с использованием node-schedule
     schedule.scheduleJob(jobDate, async () => {
-        await clearKProg(); // Очищаем KProg перед отправкой сообщений
+        await clearKProg(); 
 
-        // Читаем и обновляем конфигурацию
         const config = await readConfig();
         config.isKProgEnd = false;
         await writeConfig(config);
@@ -78,27 +63,18 @@ function sendEndMessage(bot, dateTime) {
     const replyMarkup = kprogStatusKeyboard;
 
     schedule.scheduleJob(jobDate, async () => {
-        // Читаем и обновляем конфигурацию
-        const config = await readConfig();
-
-        config.KProgLessonType--;
-        if (config.KProgLessonType < 0) {
-            config.KProgLessonType = 2; // Обновляем тип урока по кругу
-        }
-        config.isKProgEnd = true;
-
-        // Получаем очередь пользователей на КПрог
-        const data = await getKProgQueue();
+       
         
-        // Обновляем приоритет пользователей
+        const config = await readConfig();
+        config.isKProgEnd = true;
+        await writeConfig(config);
+
+        const data = await getQueue("KProg");
+
         for (let user of data) {
             setPriority(user.tg_id, "Зелёный");
         }
 
-        // Сохраняем обновленную конфигурацию
-        await writeConfig(config);
-
-        // Отправляем сообщения пользователям из очереди на КПрог
         await sendMessagesToUsers(bot, message, replyMarkup);
     });
 }

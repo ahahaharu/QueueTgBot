@@ -75,7 +75,7 @@ async function generatePriorityTable(data) {
     return `./src/tables/priorityTable.png`;
 }
 
-async function generateQueueTable(data, tableName) {
+async function generateQueueTable(data, tableName, subjectName) {
     const width = 420;  
     const height = 50 + (data.length + 1) * 40 + 20; 
     const canvas = createCanvas(width, height);
@@ -86,7 +86,7 @@ async function generateQueueTable(data, tableName) {
 
     ctx.fillStyle = '#000000';
     ctx.font = '20px Arial';
-    ctx.fillText('Очередь КПрог', 10, 30);
+    ctx.fillText(`Очередь ${subjectName}`, 10, 30);
 
     const colWidthSurname = 200;
     const colWidthLabs = 150;

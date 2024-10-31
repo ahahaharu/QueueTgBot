@@ -1,4 +1,4 @@
-const KProgShedule = new Array();
+const KProgSchedule = new Array();
 const KProgEnd = new Array();
 
 /*
@@ -8,60 +8,60 @@ const KProgEnd = new Array();
 */
 
 //test
-KProgShedule.push({
-    time: '2024-10-30 22:05',
+KProgSchedule.push({
+    time: '2024-10-31 13:28',
     type: 0
 });
 
-KProgShedule.push({
+KProgSchedule.push({
     time: '2024-10-27 17:00',
     type: 2
 });
-KProgShedule.push({
+KProgSchedule.push({
     time: '2024-11-03 17:00',
     type: 1
 });
-KProgShedule.push({
+KProgSchedule.push({
     time: '2024-11-07 17:00',
     type: 0
 });
-KProgShedule.push({
+KProgSchedule.push({
     time: '2024-11-10 17:00',
     type: 2
 });
-KProgShedule.push({
+KProgSchedule.push({
     time: '2024-11-17 17:00',
     type: 1
 });
-KProgShedule.push({
+KProgSchedule.push({
     time: '2024-11-21 17:00',
     type: 0
 });
-KProgShedule.push({
+KProgSchedule.push({
     time: '2024-11-24 17:00',
     type: 2
 });
-KProgShedule.push({
+KProgSchedule.push({
     time: '2024-12-01 17:00',
     type: 1
 });
-KProgShedule.push({
+KProgSchedule.push({
     time: '2024-12-05 17:00',
     type: 0
 });
-KProgShedule.push({
+KProgSchedule.push({
     time: '2024-12-08 17:00',
     type: 2
 });
-KProgShedule.push({
+KProgSchedule.push({
     time: '2024-12-15 17:00',
     type: 1
 });
-KProgShedule.push({
+KProgSchedule.push({
     time: '2024-12-19 17:00',
     type: 0
 });
-KProgShedule.push({
+KProgSchedule.push({
     time: '2024-12-22 17:00',
     type: 2
 });
@@ -82,4 +82,4 @@ KProgEnd.push('2024-12-16 15:20');
 KProgEnd.push('2024-12-20 11:55');
 KProgEnd.push('2024-12-23 15:20');
 
-module.exports = { KProgShedule, KProgEnd }
+module.exports = { KProgSchedule, KProgEnd }
