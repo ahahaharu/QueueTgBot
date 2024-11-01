@@ -37,7 +37,6 @@ function getReturnKeyboard(condition, lessonType) {
 
 function doWithTable(lesson) {
     return new InlineKeyboard()
-        .text('Изменить номера лаб у пользователя', `changeUsersLab:${lesson}`).row()
         .text('Удалить пользователя из таблицы', `deleteUserIn:${lesson}`).row()
         .text('Очистить таблицу', `clear:${lesson}`).row()
 
