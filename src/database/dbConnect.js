@@ -4,13 +4,13 @@ const connection = mysql.createConnection({
     port: "3306",
     user: "gen_user",
     host: "194.87.56.214",
-    database: "default_db",
+    database: "students",
     password: "827530Ab\."
 });
 
-con.connect(function(err) {
+connection.connect(function(err) {
     if (err) throw err;
     console.log("Connected to the database!");
 });
 
-module.exports = con;
+module.exports = connection;
