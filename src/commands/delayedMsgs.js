@@ -1,4 +1,4 @@
-const { getAllusers, getQueue, setPriority, clearTable } = require('../database/database');
+const { getAllUsers, getQueue, setPriority, clearTable } = require('../database/database');
 const schedule = require('node-schedule');
 const { createSignButton, kprogStatusKeyboard } = require('../bot/keyboards');
 const { lessons } = require ('../lessons/lessons');
@@ -6,7 +6,7 @@ const {readConfig, writeConfig} = require ('../utils/config')
 
 // Функция для отправки сообщений всем пользователям
 const sendMessagesToUsers = async (bot, message, replyMarkup) => {
-    const users = await getAllusers(); // Получаем всех пользователей из базы данных
+    const users = await getAllUsers(); // Получаем всех пользователей из базы данных
     console.log(`Всего пользователей в базе: ${users.length}`);
 
     const sendPromises = users.map(async (user) => {
@@ -35,7 +35,7 @@ function sendMessages(bot, dateTime, lesson, type) {
 
     const jobDate = new Date(year, month - 1, day, hour, minute);
 
-    const lessonType = type === 0 ? "" : type === 1 ? "\\(1 подгруппа)" : "\\(2 подгруппа\\)";
+    const lessonType = type === 0 ? "" : type === 1 ? "\\(1 подгруппа\\)" : "\\(2 подгруппа\\)";
     const message = `*Запись на ${lessons.get(lesson)} ${day + 1}\\.${month} ${lessonType}*\n\n_Нажмите кнопку ниже, чтобы записаться_`;
     const replyMarkup = createSignButton(lesson);
 
