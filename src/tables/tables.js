@@ -1,6 +1,8 @@
 const { createCanvas } = require('canvas');
 const fs = require('fs');
-const config = require('../../config.json');
+
+const {readConfig, writeConfig} = require ('../utils/config')
+
 
 function getPriorityColor(priority) {
     switch (priority) {
@@ -99,6 +101,7 @@ async function generateQueueTable(data, tableName, subjectName) {
     ctx.fillStyle = '#000000';
     ctx.fillText('Фамилия', startX + colWidthSurname / 2 - 30, startY + 25);
     ctx.fillText('Лаба', startX + colWidthSurname + colWidthLabs / 2 - 40, startY + 25);
+    config = await readConfig();
 
     data.forEach((item, i) => {
         startY += rowHeight;

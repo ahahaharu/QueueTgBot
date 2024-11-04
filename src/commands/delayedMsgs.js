@@ -8,7 +8,7 @@ const {readConfig, writeConfig} = require ('../utils/config')
 const sendMessagesToUsers = async (bot, message, replyMarkup, isEnd) => {
     let users;
     if (isEnd) {
-        users = await getQueue('KProg');
+        users = await getQueue('KProg')
     } else {
         users = await getAllUsers(); 
     }
@@ -48,22 +48,24 @@ function sendMessages(bot, dateTime, lesson, type) {
     schedule.scheduleJob(jobDate, async () => {
         const config = await readConfig();
         
-        await writeConfig(config);
         if (lesson === 'kprog') {
             await clearTable('KProg'); 
             config.KProgLessonType = type;
-
+            config.KProgDate = `${day+1}\\.${month}`
             config.isKProgEnd = false;
         } else if (lesson === 'isp') {
             await clearTable('ISP'); 
             config.ISPLessonType = type;
+            config.ISPDate = `${day+1}\\.${month}`
         } else if (lesson === 'pzma') {
             await clearTable('PZMA'); 
             config.PZMALessonType = type;
+            config.PZMAgDate = `${day+1}\\.${month}`
         }
         else if (lesson === 'mcha') {
             await clearTable('MCHA'); 
             config.MCHALessonType = type;
+            config.MCHADate = `${day+1}\\.${month}`
         }
 
         await writeConfig(config);
