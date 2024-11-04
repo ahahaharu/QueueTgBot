@@ -1,7 +1,7 @@
 const { InputFile } = require('grammy');
 
 const {
-    returnToKProg
+    returnToKProg, getReturnKeyboard
 } = require('../bot/keyboards'); 
 
 const { 
@@ -61,7 +61,7 @@ function priorityCommand(bot) {
         await setPriority(ctx.from.id.toString(), "Зелёный");
         await ctx.callbackQuery.message.editText(`*🎉 Поздравляю со сдачей\\!*\n\n_🟩 Вам выдан зелёный приоритет_`, {
             parse_mode: 'MarkdownV2',
-            reply_markup: getKProgPriorityKeyboard(false, 'kprog')
+            reply_markup: getReturnKeyboard(false, 'kprog')
         })
     });
 
@@ -71,7 +71,7 @@ function priorityCommand(bot) {
         await setPriority(ctx.from.id.toString(), "Жёлтый");
         await ctx.callbackQuery.message.editText(`*😔 Ничего страшного\\!*\nНа следующей паре вы сможете сдать чуть первее других\n\n🟨 _Вам выдан жёлтый приоритет_`, {
             parse_mode: 'MarkdownV2',
-            reply_markup: getKProgPriorityKeyboard(false, 'kprog')
+            reply_markup: getReturnKeyboard(false, 'kprog')
         })
     });
 
@@ -81,7 +81,7 @@ function priorityCommand(bot) {
         await setPriority(ctx.from.id.toString(), "Красный");
         await ctx.callbackQuery.message.editText(`*☹️ Очень жаль, что вы не успели\\.*\nНа следующей паре вы сможете сдать лабораторную работу одним\\(\\-ой\\) из первых\n\n_🟥 Вам выдан красный приоритет_`, {
             parse_mode: 'MarkdownV2',
-            reply_markup: getKProgPriorityKeyboard(false, 'kprog')
+            reply_markup: getReturnKeyboard(false, 'kprog')
         })
     });
 }
