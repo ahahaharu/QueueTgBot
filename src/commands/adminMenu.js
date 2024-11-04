@@ -1,7 +1,7 @@
 const { InputFile } = require('grammy');
 
 const {
-    adminKeyboard, getKProgPriorityKeyboard,
+    adminKeyboard, getReturnKeyboard,
     selectQueueKeyboard,
     doWithTable
 } = require('../bot/keyboards'); 
@@ -178,7 +178,7 @@ function adminMenuCommand(bot) {
         if (surname) {
             await setPriorityBySurname(surname, priorities[priority]); // Устанавливаем приоритет
             await ctx.editMessageText(`Приоритет пользователя ${surname} изменён на ${priorities[priority]}`, {
-                reply_markup: getKProgPriorityKeyboard(false, 'kprog')
+                reply_markup: getReturnKeyboard(false, 'kprog')
             });
         } else {
             await ctx.reply('Не удалось найти фамилию. Попробуйте ещё раз.');

@@ -5,8 +5,14 @@ const { lessons } = require ('../lessons/lessons');
 const {readConfig, writeConfig} = require ('../utils/config')
 
 // Функция для отправки сообщений всем пользователям
-const sendMessagesToUsers = async (bot, message, replyMarkup) => {
-    const users = await getAllUsers(); // Получаем всех пользователей из базы данных
+const sendMessagesToUsers = async (bot, message, replyMarkup, isEnd) => {
+    let users;
+    if (isEnd) {
+        users = await getQueue('KProg');
+    } else {
+        users = await getAllUsers(); 
+    }
+
     console.log(`Всего пользователей в базе: ${users.length}`);
 
     const sendPromises = users.map(async (user) => {
@@ -61,7 +67,7 @@ function sendMessages(bot, dateTime, lesson, type) {
         }
 
         await writeConfig(config);
-        await sendMessagesToUsers(bot, message, replyMarkup);
+        await sendMessagesToUsers(bot, message, replyMarkup, false);
     });
 }
 
@@ -89,7 +95,7 @@ function sendEndMessage(bot, dateTime) {
             setPriority(user.tg_id, "Зелёный");
         }
 
-        await sendMessagesToUsers(bot, message, replyMarkup);
+        await sendMessagesToUsers(bot, message, replyMarkup, true);
     });
 }
 

@@ -67,7 +67,7 @@ KProgSchedule.push({
 });
 
 // Тест
-KProgEnd.push("2024-10-28 13:05");
+KProgEnd.push("2024-11-04 17:47");
 KProgEnd.push('2024-10-28 15:20');
 KProgEnd.push('2024-11-04 15:20');
 KProgEnd.push('2024-11-08 11:55');

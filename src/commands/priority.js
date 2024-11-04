@@ -29,7 +29,6 @@ function priorityCommand(bot) {
             if (a.surname > b.surname) return 1;
             return 0;
         });
-        console.log(data);
         await generatePriorityTable(data);
     
         // Отправляем изображение
