@@ -49,6 +49,16 @@ KProgSchedule.push({
 });
 
 KProgSchedule.push({
+    time: '2024-11-09 12:00',
+    type: 0
+});
+
+KProgSchedule.push({
+    time: '2024-11-09 17:00',
+    type: 0
+});
+
+KProgSchedule.push({
     time: '2024-11-10 17:00',
     type: 2
 });

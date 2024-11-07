@@ -8,7 +8,40 @@ const MCHASchedule = new Array();
 
 //test
 MCHASchedule.push({
-    time: '2024-10-31 15:11',
+    time: '2024-11-07 17:55',
+    type: 0
+});
+
+MCHASchedule.push({
+    time: '2024-11-07 18:00',
+    type: 0
+});
+
+MCHASchedule.push({
+    time: '2024-11-07 22:00',
+    type: 0
+});
+
+MCHASchedule.push({
+    time: '2024-11-08 11:00',
+    type: 0
+});
+MCHASchedule.push({
+    time: '2024-11-08 13:00',
+    type: 0
+});
+MCHASchedule.push({
+    time: '2024-11-08 17:00',
+    type: 0
+});
+
+MCHASchedule.push({
+    time: '2024-11-09 12:00',
+    type: 0
+});
+
+MCHASchedule.push({
+    time: '2024-11-09 17:00',
     type: 0
 });
 
