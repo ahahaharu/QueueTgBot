@@ -22,9 +22,32 @@ KProgSchedule.push({
     type: 1
 });
 KProgSchedule.push({
-    time: '2024-11-07 17:00',
+    time: '2024-11-07 17:15',
     type: 0
 });
+KProgSchedule.push({
+    time: '2024-11-07 18:00',
+    type: 0
+});
+
+KProgSchedule.push({
+    time: '2024-11-07 22:00',
+    type: 0
+});
+
+KProgSchedule.push({
+    time: '2024-11-08 11:00',
+    type: 0
+});
+KProgSchedule.push({
+    time: '2024-11-08 13:00',
+    type: 0
+});
+KProgSchedule.push({
+    time: '2024-11-08 17:00',
+    type: 0
+});
+
 KProgSchedule.push({
     time: '2024-11-10 17:00',
     type: 2
