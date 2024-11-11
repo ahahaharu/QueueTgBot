@@ -87,7 +87,7 @@ function messageHandler(bot) {
         } else if (ctx.session.step === "waiting_for_ispLab") {
             let lab = ctx.message.text;
 
-            if(!(regex.test(lab) && lab.length < 20)) {
+            if(!(ctx.message.text && lab.length < 20 && inputCheck(lab))) {
                 await ctx.reply("*Неверное значение\\!* Введите номера лаб верно\\!\n\n_Например\\: 1\\, 2_", {
                     parse_mode: 'MarkdownV2'
                 }
@@ -142,7 +142,7 @@ function messageHandler(bot) {
         } else if (ctx.session.step === "waiting_for_pzmaLab") {
             let lab = ctx.message.text;
 
-            if(!(regex.test(lab) && lab.length < 20)) {
+            if(!(ctx.message.text && lab.length < 20 && inputCheck(lab))) {
                 await ctx.reply("*Неверное значение\\!* Введите номера лаб верно\\!\n\n_Например\\: 1\\, 2_", {
                     parse_mode: 'MarkdownV2'
                 }
@@ -197,7 +197,7 @@ function messageHandler(bot) {
         } else if (ctx.session.step === "waiting_for_mchaLab") {
             let lab = ctx.message.text;
 
-            if(!(regex.test(lab) && lab.length < 20)) {
+            if(!(ctx.message.text && lab.length < 20 && inputCheck(lab))) {
                 await ctx.reply("*Неверное значение\\!* Введите номера лаб верно\\!\n\n_Например\\: 1\\, 2_", {
                     parse_mode: 'MarkdownV2'
                 }
