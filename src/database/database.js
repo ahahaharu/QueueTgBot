@@ -1,6 +1,6 @@
 const pool = require('./dbConnect'); // Подключение пула соединений
 const { students } = require('../students/students');
-const config = require('../../config.json');
+const {readConfig, writeConfig} = require ('../utils/config')
 
 // Вставка нового пользователя в базу данных
 async function insertIntoDatabase(name, surname, username, tg_id) {
@@ -103,24 +103,26 @@ async function insertIntoQueue(queue, lesson) {
 // Установка приоритета пользователя по tg_id
 async function setPriority(id, priority) {
     try {
-        const updateUserQuery = 'UPDATE Users SET priority = ? WHERE tg_id = ?';
-        const updateKProgQuery = 'UPDATE KProg SET priority = ? WHERE tg_id = ?';
+        const updateQuery = 'UPDATE Users SET priority = ? WHERE tg_id = ?';
+        await pool.promise().query(updateQuery, [priority, id]);
+        config = await readConfig();
 
-        await pool.promise().query(updateUserQuery, [priority, id]);
-        await pool.promise().query(updateKProgQuery, [priority, id]);
-
-        console.log(`Priority для пользователя с id ${id} обновлён на ${priority} в таблицах Users и KProg`);
+        if (config.isKProgEnd) {
+            const updateKProgQuery = 'UPDATE KProg SET priority = ? WHERE tg_id = ?';
+            await pool.promise().query(updateKProgQuery, [priority, id]);
+        }
+        console.log(`Priority для пользователя с id ${id} обновлён на ${priority}`);
     } catch (err) {
         console.error('Ошибка при обновлении приоритета:', err);
     }
 }
-
 
 // Установка приоритета пользователя по фамилии
 async function setPriorityBySurname(surname, priority) {
     try {
         const updateQuery = 'UPDATE Users SET priority = ? WHERE surname = ?';
         await pool.promise().query(updateQuery, [priority, surname]);
+        config = await readConfig();
 
         if (config.isKProgEnd) {
             const updateKProgQuery = 'UPDATE KProg SET priority = ? WHERE surname = ?';
