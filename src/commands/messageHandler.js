@@ -22,7 +22,7 @@ function messageHandler(bot) {
 
 
 
-            if(!(regex.test(lab) && lab.length < 20 && ctx.message.text)) {
+            if(!(ctx.message.text && lab.length < 20 && inputCheck(lab))) {
                 await ctx.reply("*Неверное значение\\!* Введите номера лаб верно\\!\n\n_Например\\: 1\\, 2_", {
                     parse_mode: 'MarkdownV2'
                 }
