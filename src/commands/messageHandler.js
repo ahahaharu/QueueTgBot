@@ -1,4 +1,5 @@
 const config = require('../../config.json');
+const inputCheck = require('../bot/inputCheck');
 
 const {
     returnToKProg, returnToISP, setPriorityKeyboard,
@@ -14,12 +15,14 @@ const { sendMessageForAll } = require('./delayedMsgs');
 
 function messageHandler(bot) {
     bot.on('message', async (ctx) => {
-        const regex = /^(?:[1-8](?:[,\s]?[1-8])*)$/;
+        
 
         if (ctx.session.step === "waiting_for_kprogLab") {
             let lab = ctx.message.text;
 
-            if(!(regex.test(lab) && lab.length < 20)) {
+
+
+            if(!(regex.test(lab) && lab.length < 20 && ctx.message.text)) {
                 await ctx.reply("*Неверное значение\\!* Введите номера лаб верно\\!\n\n_Например\\: 1\\, 2_", {
                     parse_mode: 'MarkdownV2'
                 }
