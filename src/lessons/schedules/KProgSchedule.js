@@ -104,7 +104,7 @@ KProgEnd.push("2024-11-04 18:56");
 KProgEnd.push('2024-10-28 15:20');
 KProgEnd.push('2024-11-04 15:20');
 KProgEnd.push('2024-11-08 11:55');
-KProgEnd.push('2024-11-11 15:20');
+KProgEnd.push('2024-11-11 15:35');
 KProgEnd.push('2024-11-18 15:20');
 KProgEnd.push('2024-11-22 11:55');
 KProgEnd.push('2024-11-25 15:20');

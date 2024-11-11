@@ -103,18 +103,18 @@ async function insertIntoQueue(queue, lesson) {
 // Установка приоритета пользователя по tg_id
 async function setPriority(id, priority) {
     try {
-        const updateQuery = 'UPDATE Users SET priority = ? WHERE tg_id = ?';
-        await pool.promise().query(updateQuery, [priority, id]);
+        const updateUserQuery = 'UPDATE Users SET priority = ? WHERE tg_id = ?';
+        const updateKProgQuery = 'UPDATE KProg SET priority = ? WHERE tg_id = ?';
 
-        if (config.isKProgEnd) {
-            const updateKProgQuery = 'UPDATE KProg SET priority = ? WHERE tg_id = ?';
-            await pool.promise().query(updateKProgQuery, [priority, id]);
-        }
-        console.log(`Priority для пользователя с id ${id} обновлён на ${priority}`);
+        await pool.promise().query(updateUserQuery, [priority, id]);
+        await pool.promise().query(updateKProgQuery, [priority, id]);
+
+        console.log(`Priority для пользователя с id ${id} обновлён на ${priority} в таблицах Users и KProg`);
     } catch (err) {
         console.error('Ошибка при обновлении приоритета:', err);
     }
 }
+
 
 // Установка приоритета пользователя по фамилии
 async function setPriorityBySurname(surname, priority) {
