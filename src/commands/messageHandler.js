@@ -1,5 +1,5 @@
 const config = require('../../config.json');
-const inputCheck = require('../bot/inputCheck');
+const { inputCheck }= require('../bot/inputCheck');
 
 const {
     returnToKProg, returnToISP, setPriorityKeyboard,
