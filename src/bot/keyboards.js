@@ -14,7 +14,7 @@ const queueKeyboard = new InlineKeyboard()
     .text('🖥ИСП', 'isp').row()
     .text('📈ПЗМА', 'pzma').row()
     .text('👴🏻МЧА', 'mcha').row()
-    .text('🌡БЖЧ', 'bzch').row()
+    //.text('🌡БЖЧ', 'bzch').row()
     .text('↩️Вернуться в меню', 'returnToMenu').row()
 
 

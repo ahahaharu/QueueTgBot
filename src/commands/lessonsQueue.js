@@ -41,7 +41,7 @@ function lessonsQueueCommand(bot) {
             let photoMessage = await ctx.replyWithPhoto(new InputFile("./src/tables/KProgTable.png"));
             ctx.session.QueuePhotoMessageId = photoMessage.message_id;
         } else {
-            status += "В таблице ещё никого нет"
+            status += "_В таблице ещё никого нет_"
             condition = true;
         }
         
@@ -78,7 +78,8 @@ function lessonsQueueCommand(bot) {
             let photoMessage = await ctx.replyWithPhoto(new InputFile("./src/tables/ISPTable.png"));
             ctx.session.QueuePhotoMessageId = photoMessage.message_id;
         } else {
-            status += "_Пока никакой очереди нет_";
+            status += "_В таблице ещё никого нет_"
+            condition = true;
         }
         
 
@@ -114,7 +115,8 @@ function lessonsQueueCommand(bot) {
             let photoMessage = await ctx.replyWithPhoto(new InputFile("./src/tables/PZMATable.png"));
             ctx.session.QueuePhotoMessageId = photoMessage.message_id;
         } else {
-            status += "_Пока никакой очереди нет_";
+            status += "_В таблице ещё никого нет_"
+            condition = true;
         }
         
 
@@ -150,7 +152,8 @@ function lessonsQueueCommand(bot) {
             let photoMessage = await ctx.replyWithPhoto(new InputFile("./src/tables/MCHATable.png"));
             ctx.session.QueuePhotoMessageId = photoMessage.message_id;
         } else {
-            status += "_Пока никакой очереди нет_";
+            status += "_В таблице ещё никого нет_"
+            condition = true;
         }
         
 
