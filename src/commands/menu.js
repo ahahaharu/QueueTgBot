@@ -5,7 +5,7 @@ const {
 const { 
     isRegistered, getInfoById
 } = require('../database/database');
-
+const { statusCheck } = require('./statusCheck');
 
 
 
@@ -18,6 +18,10 @@ function showMenu(ctx) {
 
 function menuCommand(bot) {
     bot.command('menu', async (ctx) => {
+        if (await statusCheck(ctx)) {
+            return;
+        }
+
         let isUserRegistered = await isRegistered(ctx.msg.from.id);
             if (!isUserRegistered) {
                 await ctx.reply('❗Вы ещё не зарегестрированы! Напишите /start для регистрации');

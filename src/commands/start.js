@@ -4,10 +4,15 @@ const {
 } = require('../database/database');
 
 const { showMenu } = require('./menu');
+const { statusCheck } = require('./statusCheck');
+
 
 function startCommand(bot){
     bot.command('start', async (ctx) => {
-        
+        if (await statusCheck(ctx)) {
+            return;
+        }
+
         const isReg = await isRegistered(ctx.from.id);
         if (isReg) {
             await ctx.reply('👋 Привет! Это бот для записи на сдачу лабораторных работ.');

@@ -1,7 +1,11 @@
 const { lessons } = require ('../lessons/lessons');
+const { statusCheck } = require('./statusCheck');
 
 function signCommand(bot) {
     bot.callbackQuery(/signLesson:(.+)/, async (ctx) => {
+        if (await statusCheck(ctx)) {
+            return;
+        }
         await ctx.answerCallbackQuery();
         
         if (ctx.session.QueuePhotoMessageId) {
