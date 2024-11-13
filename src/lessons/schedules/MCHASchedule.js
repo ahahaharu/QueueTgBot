@@ -54,7 +54,7 @@ MCHASchedule.push({
     type: 2
 });
 MCHASchedule.push({
-    time: '2024-11-13 17:00',
+    time: '2024-11-13 17:43',
     type: 0
 });
 

@@ -3,6 +3,8 @@ const schedule = require('node-schedule');
 const { createSignButton, kprogStatusKeyboard } = require('../bot/keyboards');
 const { lessons } = require ('../lessons/lessons');
 const {readConfig, writeConfig} = require ('../utils/config')
+const Mutex = require('async-mutex').Mutex;
+const configMutex = new Mutex();
 
 // Функция для отправки сообщений всем пользователям
 const sendMessagesToUsers = async (bot, message, replyMarkup, isEnd) => {
@@ -33,7 +35,7 @@ const sendMessagesToUsers = async (bot, message, replyMarkup, isEnd) => {
     console.log('Сообщения отправлены всем пользователям.');
 };
 
-// Функция для отправки отложенных сообщений
+
 function sendMessages(bot, dateTime, lesson, type) {
     const [date, time] = dateTime.split(' ');
     const [year, month, day] = date.split('-').map(Number);
@@ -46,30 +48,31 @@ function sendMessages(bot, dateTime, lesson, type) {
     const replyMarkup = createSignButton(lesson);
 
     schedule.scheduleJob(jobDate, async () => {
-        const config = await readConfig();
-        
-        if (lesson === 'kprog') {
-            await clearTable('KProg'); 
-            config.KProgLessonType = type;
-            config.KProgDate = `${day+1}\\.${month}`
-            config.isKProgEnd = false;
-        } else if (lesson === 'isp') {
-            await clearTable('ISP'); 
-            config.ISPLessonType = type;
-            config.ISPDate = `${day+1}\\.${month}`
-        } else if (lesson === 'pzma') {
-            await clearTable('PZMA'); 
-            config.PZMALessonType = type;
-            config.PZMAgDate = `${day+1}\\.${month}`
-        }
-        else if (lesson === 'mcha') {
-            await clearTable('MCHA'); 
-            config.MCHALessonType = type;
-            config.MCHADate = `${day+1}\\.${month}`
-        }
-
-        await writeConfig(config);
-        await sendMessagesToUsers(bot, message, replyMarkup, false);
+        await configMutex.runExclusive(async () => {
+            const config = await readConfig();
+            
+            if (lesson === 'kprog') {
+                await clearTable('KProg'); 
+                config.KProgLessonType = type;
+                config.KProgDate = `${day+1}\\.${month}`;
+                config.isKProgEnd = false;
+            } else if (lesson === 'isp') {
+                await clearTable('ISP');
+                config.ISPLessonType = type;
+                config.ISPDate = `${day+1}\\.${month}`;
+            } else if (lesson === 'pzma') {
+                await clearTable('PZMA');
+                config.PZMALessonType = type;
+                config.PZMAgDate = `${day+1}\\.${month}`;
+            } else if (lesson === 'mcha') {
+                await clearTable('MCHA');
+                config.MCHALessonType = type;
+                config.MCHADate = `${day+1}\\.${month}`;
+            }
+            await writeConfig(config);
+            
+            await sendMessagesToUsers(bot, message, replyMarkup, false);
+        });
     });
 }
 

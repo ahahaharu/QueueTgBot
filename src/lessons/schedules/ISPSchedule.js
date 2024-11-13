@@ -59,7 +59,7 @@ ISPSchedule.push({
     type: 1
 });
 ISPSchedule.push({
-    time: '2024-11-13 17:00',
+    time: '2024-11-13 17:43',
     type: 0
 });
 ISPSchedule.push({
