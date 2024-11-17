@@ -1,4 +1,4 @@
-const config = require('../../config.json');
+
 const { inputCheck }= require('../bot/inputCheck');
 
 const {
@@ -12,6 +12,7 @@ const {
 } = require('../database/database');
 
 const { sendMessageForAll } = require('./delayedMsgs');
+const {readConfig, writeConfig} = require ('../utils/config')
 
 function messageHandler(bot) {
     bot.on('message', async (ctx) => {
@@ -20,7 +21,7 @@ function messageHandler(bot) {
         if (ctx.session.step === "waiting_for_kprogLab") {
             let lab = ctx.message.text;
 
-
+            
 
             if(!(ctx.message.text && lab.length < 20 && inputCheck(lab))) {
                 await ctx.reply("*Неверное значение\\!* Введите номера лаб верно\\!\n\n_Например\\: 1\\, 2_", {
@@ -36,6 +37,7 @@ function messageHandler(bot) {
                 [[],[],[]],
                 [[],[],[]]
             ]
+            config = await readConfig();
 
             let subgroupIndex, userSubgpoup;
             if (config.KProgLessonType == 0) {
@@ -100,6 +102,7 @@ function messageHandler(bot) {
             const queue = [
                 [], []
             ]
+            config = await readConfig();
 
             let subgroupIndex, userSubgpoup;
             if (config.ISPLessonType == 0) {
@@ -155,6 +158,7 @@ function messageHandler(bot) {
             const queue = [
                 [], []
             ]
+            config = await readConfig();
 
             let subgroupIndex, userSubgpoup;
             if (config.PZMALessonType == 0) {
@@ -210,6 +214,7 @@ function messageHandler(bot) {
             const queue = [
                 [], []
             ]
+            config = await readConfig();
 
             let subgroupIndex, userSubgpoup;
             if (config.MCHALessonType == 0) {
