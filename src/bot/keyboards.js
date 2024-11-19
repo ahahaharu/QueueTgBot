@@ -14,7 +14,7 @@ const queueKeyboard = new InlineKeyboard()
     .text('🖥ИСП', 'isp').row()
     .text('📈ПЗМА', 'pzma').row()
     .text('👴🏻МЧА', 'mcha').row()
-    //.text('🌡БЖЧ', 'bzch').row()
+    .text('🌡БЖЧ', 'bzch').row()
     .text('↩️Вернуться в меню', 'returnToMenu').row()
 
 
@@ -58,6 +58,7 @@ const returnToKProg = new InlineKeyboard().text('↩️Вернуться к К�
 const returnToISP = new InlineKeyboard().text('↩️Вернуться к ИСП ', 'isp');
 const returnToPZMA = new InlineKeyboard().text('↩️Вернуться к ПЗМА ', 'pzma');
 const returnToMCHA = new InlineKeyboard().text('↩️Вернуться к МЧА ', 'mcha');
+const returnToBZCH = new InlineKeyboard().text('↩️Вернуться к БЖЧ ', 'bzch');
 
 const kprogStatusKeyboard = new InlineKeyboard()
     .text("🟩Сдал(-а)", "passed").row()
@@ -94,6 +95,7 @@ module.exports = {
     returnToISP,
     returnToPZMA,
     returnToMCHA,
+    returnToBZCH,
     createSignButton,
     kprogStatusKeyboard,
     adminKeyboard,

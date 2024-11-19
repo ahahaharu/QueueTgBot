@@ -5,10 +5,11 @@ const {
 } = require('../bot/keyboards'); 
 
 const { 
-    getQueue
+    getQueue,
+    getInfoById
 } = require('../database/database');
 
-const { generateQueueTable } = require('../tables/tables');
+const { generateQueueTable, generateBZCHTable } = require('../tables/tables');
 const {readConfig, writeConfig} = require ('../utils/config')
 
 function lessonsQueueCommand(bot) {
@@ -167,10 +168,35 @@ function lessonsQueueCommand(bot) {
     bot.callbackQuery('bzch', async (ctx) => {
         await ctx.answerCallbackQuery();
 
-        let status = "_Пока никакой очереди нет_";
-        await ctx.callbackQuery.message.editText(`🌡 *Очередь на БЖЧ\n\n*`+status, {
+        await ctx.deleteMessage();
+
+        let status = "";
+        const queue = await getQueue('BZCH');
+        let condition = false;
+        config = await readConfig();
+        status = `${config.BZCHDate}\n\n`;
+        const userInfo = await getInfoById(ctx.from.id.toString());
+
+        if (queue?.length) {
+            const index = queue.findIndex(item => item.brigade_id == userInfo.brigade_id);
+            if (index !== -1) {
+                status += "Ваша бригада записана таблицу\\! Ваше место в очереди: "+(+index+1);
+            } else {
+                status += "Ваша бригада ещё не записалась в таблицу"
+                condition = true;
+            }
+
+            await generateBZCHTable(queue);
+            let photoMessage = await ctx.replyWithPhoto(new InputFile("./src/tables/BZCHTable.png"));
+            ctx.session.QueuePhotoMessageId = photoMessage.message_id;
+        } else {
+            status += "_В таблице ещё никого нет_"
+            condition = true;
+        }
+        
+        await ctx.reply(`💻 *Очередь на БЖЧ* `+status, {
             parse_mode: 'MarkdownV2',
-            reply_markup: returnToQueueKeyboard
+            reply_markup: getReturnKeyboard(condition, 'bzch')
         })
     });
 }

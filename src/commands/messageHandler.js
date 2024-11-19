@@ -3,7 +3,8 @@ const { inputCheck }= require('../bot/inputCheck');
 
 const {
     returnToKProg, returnToISP, setPriorityKeyboard,
-    returnToPZMA, returnToMCHA
+    returnToPZMA, returnToMCHA,
+    returnToBZCH
 } = require('../bot/keyboards'); 
 
 const { 
@@ -251,6 +252,36 @@ function messageHandler(bot) {
 
             await ctx.reply(`✅ Отлично! Вы записаны!`, {
                 reply_markup: returnToMCHA
+            });
+
+            ctx.session.step = null;
+        } else if (ctx.session.step === "waiting_for_bzchLab") {
+            let lab = ctx.message.text;
+
+            if(!(ctx.message.text && lab.length < 20 && inputCheck(lab))) {
+                await ctx.reply("*Неверное значение\\!* Введите номера лаб верно\\!\n\n_Например\\: 1\\, 2_", {
+                    parse_mode: 'MarkdownV2'
+                }
+                );
+                return;
+            }
+
+            let BZCHQueue = await getQueue('BZCH');
+            const userInfo = await getInfoById(ctx.from.id.toString());
+            config = await readConfig();
+ 
+            if (!BZCHQueue) {
+                BZCHQueue = [];
+            }
+            BZCHQueue.push({
+                brigade_id: userInfo.brigade_id,
+                labs: lab
+            });
+
+            insertIntoQueue(BZCHQueue, 'BZCH');
+
+            await ctx.reply(`✅ Отлично! Вы записаны!`, {
+                reply_markup: returnToBZCH
             });
 
             ctx.session.step = null;

@@ -78,6 +78,18 @@ async function isInUsers(surname) {
     }
 }
 
+async function isInBZCH(id) {
+    const query = `SELECT brigade_id FROM BZCH`;
+    try {
+        const [result] = await pool.promise().query(query);
+        const ids = result.map(row => row.brigade_id);
+        return ids.includes(id);
+    } catch (err) {
+        console.error('Ошибка при проверке бригады в таблице БЖЧ:', err);
+        throw err;
+    }
+}
+
 // Вставка очереди пользователей в таблицу предмета
 async function insertIntoQueue(queue, lesson) {
     try {
@@ -88,6 +100,9 @@ async function insertIntoQueue(queue, lesson) {
         if (lesson === 'KProg') {
             insertQuery = 'INSERT INTO KProg (tg_id, surname, labs, priority, subgroup) VALUES ?';
             values = queue.map(item => [item.tg_id, item.surname, item.labs, item.priority, item.subgroup]);
+        } else if (lesson === 'BZCH') {
+            insertQuery = 'INSERT INTO BZCH (brigade_id, labs) VALUES ?';
+            values = queue.map(item => [item.brigade_id, item.labs]);
         } else {
             insertQuery = `INSERT INTO ${lesson} (tg_id, surname, labs, subgroup) VALUES ?`;
             values = queue.map(item => [item.tg_id, item.surname, item.labs, item.subgroup]);
@@ -155,5 +170,6 @@ module.exports = {
     setPriority, 
     isInUsers, 
     setPriorityBySurname, 
-    clearTable 
+    clearTable,
+    isInBZCH
 };

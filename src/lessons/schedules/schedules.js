@@ -3,6 +3,7 @@ const { KProgSchedule, KProgEnd } = require('./KProgSchedule');
 const { ISPSchedule } = require('./ISPSchedule');
 const { PZMASchedule } = require('./PZMASchedule');
 const { MCHASchedule } = require('./MCHASchedule');
+const { BZCHSchedule } = require('./BZCHSchedule');
 
 
 function setSchedules(bot) {
@@ -10,6 +11,7 @@ function setSchedules(bot) {
     sendScheduledMessages(bot, ISPSchedule, "isp");
     sendScheduledMessages(bot, PZMASchedule, "pzma");
     sendScheduledMessages(bot, MCHASchedule, "mcha");
+    sendScheduledMessages(bot, BZCHSchedule, "bzch");
     sendEndScheduledMessages(bot, KProgEnd);
 }
 
