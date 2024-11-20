@@ -194,7 +194,7 @@ function lessonsQueueCommand(bot) {
             condition = true;
         }
         
-        await ctx.reply(`💻 *Очередь на БЖЧ* `+status, {
+        await ctx.reply(`🌡 *Очередь на БЖЧ* `+status, {
             parse_mode: 'MarkdownV2',
             reply_markup: getReturnKeyboard(condition, 'bzch')
         })

@@ -144,6 +144,28 @@ function adminMenuCommand(bot) {
         })
     });
 
+    bot.callbackQuery('changeBzch', async (ctx) => {
+        await ctx.answerCallbackQuery();
+
+        await ctx.deleteMessage();
+
+        let status = "";
+        const queue = await getQueue('BZCH');
+
+        if (queue?.length) {
+            await generateBZCHTable(queue);
+            let photoMessage = await ctx.replyWithPhoto(new InputFile("./src/tables/BZCHTable.png"));
+            ctx.session.QueuePhotoMessageId = photoMessage.message_id;
+        } else {
+            status += "_В таблице ещё никого нет_"
+        }
+        
+        await ctx.reply(`🌡 *Очередь на БЖЧ\n\n*`+status+"\n\nВыеберете, что сделать с таблицой:", {
+            parse_mode: 'MarkdownV2',
+            reply_markup: doWithTable('BZCH')
+        })
+    });
+
     bot.callbackQuery(/clear:(.+)/, async (ctx) => {
         await ctx.answerCallbackQuery();
         const tableName = ctx.match[1];
