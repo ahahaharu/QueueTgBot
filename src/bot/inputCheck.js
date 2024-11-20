@@ -1,22 +1,21 @@
-function inputCheck(input) {
+function inputCheck(input, labsCount) {
     console.log(input)
 
-    const cleanedInput = input.replace(/\s/g, '');
+    const cleanedInput = input.trim().replace(/[\s,]+/g, ','); 
 
-    const labRegex = /^(\d(,\d)*)$/;
+    const labRegex = /^(\d+(,\d+)*)$/;
     if (!labRegex.test(cleanedInput)) {
-      return false;
+      return "";
     }
 
     const labNumbers = cleanedInput.split(',').map(Number);
-
     for (let num of labNumbers) {
-      if (num < 1 || num > 8) {
-        return false;
+      if (num < 1 || num > labsCount) {
+        return "";
       }
     }
 
-    return true;
+    return labNumbers.join(', ');
   }
 
 module.exports = {inputCheck}

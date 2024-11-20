@@ -70,8 +70,7 @@ function sendMessages(bot, dateTime, lesson, type) {
                 config.MCHADate = `${day+1}\\.${month}`;
             } else if (lesson === 'bzch') {
                 await clearTable('BZCH');
-                config.MCHALessonType = type;
-                config.MCHADate = `${day+1}\\.${month}`;
+                config.BZCHDate = `${day+1}\\.${month}`;
             }
             await writeConfig(config);
             

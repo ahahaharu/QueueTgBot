@@ -8,7 +8,7 @@ const BZCHSchedule = new Array();
 
 //test
 BZCHSchedule.push({
-    time: '2024-11-19 23:43',
+    time: '2024-11-20 14:54',
     type: 0
 });
 

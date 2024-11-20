@@ -9,7 +9,8 @@ const {
 
 const { 
     getInfoById, insertIntoQueue, getQueue, isInUsers,
-    clearTable, 
+    clearTable,
+    isInBZCH, 
 } = require('../database/database');
 
 const { sendMessageForAll } = require('./delayedMsgs');
@@ -21,10 +22,8 @@ function messageHandler(bot) {
 
         if (ctx.session.step === "waiting_for_kprogLab") {
             let lab = ctx.message.text;
-
-            
-
-            if(!(ctx.message.text && lab.length < 20 && inputCheck(lab))) {
+            let labs = inputCheck(lab, 8);
+            if(!(ctx.message.text && lab.length < 20 && labs)) {
                 await ctx.reply("*Неверное значение\\!* Введите номера лаб верно\\!\n\n_Например\\: 1\\, 2_", {
                     parse_mode: 'MarkdownV2'
                 }
@@ -70,7 +69,7 @@ function messageHandler(bot) {
             queue[userSubgpoup][priorityIndex.get(userInfo.priority)].push({
                 tg_id: userInfo.tg_id,
                 surname: userInfo.surname,
-                labs: lab,
+                labs: labs,
                 priority: userInfo.priority,
                 subgroup: userInfo.subgroup
             });
@@ -89,8 +88,8 @@ function messageHandler(bot) {
             
         } else if (ctx.session.step === "waiting_for_ispLab") {
             let lab = ctx.message.text;
-
-            if(!(ctx.message.text && lab.length < 20 && inputCheck(lab))) {
+            let labs = inputCheck(lab, 8);
+            if(!(ctx.message.text && lab.length < 20 && labs)) {
                 await ctx.reply("*Неверное значение\\!* Введите номера лаб верно\\!\n\n_Например\\: 1\\, 2_", {
                     parse_mode: 'MarkdownV2'
                 }
@@ -128,7 +127,7 @@ function messageHandler(bot) {
             queue[userSubgpoup].push({
                 tg_id: userInfo.tg_id,
                 surname: userInfo.surname,
-                labs: lab,
+                labs: labs,
                 subgroup: userInfo.subgroup
             });
 
@@ -145,8 +144,8 @@ function messageHandler(bot) {
             ctx.session.step = null;
         } else if (ctx.session.step === "waiting_for_pzmaLab") {
             let lab = ctx.message.text;
-
-            if(!(ctx.message.text && lab.length < 20 && inputCheck(lab))) {
+            let labs = inputCheck(lab, 4);
+            if(!(ctx.message.text && lab.length < 20 && labs)) {
                 await ctx.reply("*Неверное значение\\!* Введите номера лаб верно\\!\n\n_Например\\: 1\\, 2_", {
                     parse_mode: 'MarkdownV2'
                 }
@@ -184,7 +183,7 @@ function messageHandler(bot) {
             queue[userSubgpoup].push({
                 tg_id: userInfo.tg_id,
                 surname: userInfo.surname,
-                labs: lab,
+                labs: labs,
                 subgroup: userInfo.subgroup
             });
 
@@ -201,8 +200,8 @@ function messageHandler(bot) {
             ctx.session.step = null;
         } else if (ctx.session.step === "waiting_for_mchaLab") {
             let lab = ctx.message.text;
-
-            if(!(ctx.message.text && lab.length < 20 && inputCheck(lab))) {
+            let labs = inputCheck(lab, 10);
+            if(!(ctx.message.text && lab.length < 20 && labs)) {
                 await ctx.reply("*Неверное значение\\!* Введите номера лаб верно\\!\n\n_Например\\: 1\\, 2_", {
                     parse_mode: 'MarkdownV2'
                 }
@@ -240,7 +239,7 @@ function messageHandler(bot) {
             queue[userSubgpoup].push({
                 tg_id: userInfo.tg_id,
                 surname: userInfo.surname,
-                labs: lab,
+                labs: labs,
                 subgroup: userInfo.subgroup
             });
 
@@ -257,8 +256,8 @@ function messageHandler(bot) {
             ctx.session.step = null;
         } else if (ctx.session.step === "waiting_for_bzchLab") {
             let lab = ctx.message.text;
-
-            if(!(ctx.message.text && lab.length < 20 && inputCheck(lab))) {
+            let labs = inputCheck(lab, 9);
+            if(!(ctx.message.text && lab.length < 20 && labs)) {
                 await ctx.reply("*Неверное значение\\!* Введите номера лаб верно\\!\n\n_Например\\: 1\\, 2_", {
                     parse_mode: 'MarkdownV2'
                 }
@@ -269,13 +268,24 @@ function messageHandler(bot) {
             let BZCHQueue = await getQueue('BZCH');
             const userInfo = await getInfoById(ctx.from.id.toString());
             config = await readConfig();
- 
+
+            isReg = await isInBZCH(userInfo.brigade_id); 
+            if (isReg) {
+                await ctx.reply(
+                    `*Один из членов вашей бригады уже записался в таблицу*`,
+                    {
+                        parse_mode: 'MarkdownV2',
+                        reply_markup: returnToBZCH
+                    }
+                );
+                return;
+            }
             if (!BZCHQueue) {
                 BZCHQueue = [];
             }
             BZCHQueue.push({
                 brigade_id: userInfo.brigade_id,
-                labs: lab
+                labs: labs
             });
 
             insertIntoQueue(BZCHQueue, 'BZCH');
