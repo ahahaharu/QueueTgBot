@@ -6,7 +6,7 @@ const {
     doWithTable
 } = require('../bot/keyboards'); 
 
-const { generateQueueTable } = require('../tables/tables');
+const { generateQueueTable, generateBZCHTable } = require('../tables/tables');
 
 const { setPriorityBySurname, getQueue, clearTable } = require('../database/database');
 
