@@ -27,6 +27,10 @@ function getReturnKeyboard(condition, lessonType) {
 
     if (lessonType === 'kprog') {
         kprogPriorityKeyBoard.text("📝Приоритеты", "priorityInfo").row()
+    } 
+
+    if (lessonType === 'bzch') {
+        kprogPriorityKeyBoard.text("📝Приоритеты", "BZCHpriorityInfo").row()
     }
 
     kprogPriorityKeyBoard

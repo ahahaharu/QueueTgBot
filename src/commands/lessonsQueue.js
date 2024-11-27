@@ -46,8 +46,6 @@ function lessonsQueueCommand(bot) {
             condition = true;
         }
         
-
-        
         await ctx.reply(`💻 *Очередь на КПрог* `+status, {
             parse_mode: 'MarkdownV2',
             reply_markup: getReturnKeyboard(condition, 'kprog')

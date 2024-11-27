@@ -78,6 +78,59 @@ async function generatePriorityTable(data) {
     return `./src/tables/priorityTable.png`;
 }
 
+async function generateBZCHPriorityTable(data) {
+    const width = 620;  
+    const height = 50 + (data.length + 1) * 40 + 20; 
+    const canvas = createCanvas(width, height);
+    const ctx = canvas.getContext('2d');
+
+    // Фон холста
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, width, height);
+
+    // Заголовок таблицы
+    ctx.fillStyle = '#000000';
+    ctx.font = '20px Arial';
+    ctx.fillText('Таблица приоритетов', 10, 30);
+
+    // Настройки таблицы
+    const colWidthSurname = 400;
+    const colWidthLabs = 150;
+    const rowHeight = 40;
+
+    let startX = 30;
+    let startY = 50;
+
+    ctx.font = '16px Arial';
+    ctx.fillStyle = '#000000';
+    ctx.fillText('Члены бригады', startX + colWidthSurname / 2 - 30, startY + 25);
+    ctx.fillText('Приоритет', startX + colWidthSurname + colWidthLabs / 2 - 40, startY + 25);
+
+    data.forEach((item, i) => {
+        startY += rowHeight;
+
+        const priorityColor = getPriorityColor(item.priority);
+
+        ctx.fillStyle = priorityColor;
+        ctx.fillRect(startX, startY, colWidthSurname + colWidthLabs, rowHeight);
+
+        ctx.strokeStyle = '#000000';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(startX, startY, colWidthSurname, rowHeight);
+        ctx.strokeRect(startX + colWidthSurname, startY, colWidthLabs, rowHeight);
+
+        ctx.fillStyle = '#000000';
+        ctx.font = '14px Arial';
+        ctx.fillText(item.surnames, startX + 10, startY + 25);
+        ctx.fillText(item.priority, startX + colWidthSurname + 10, startY + 25);
+    });
+
+    const buffer = canvas.toBuffer('image/png');
+    fs.writeFileSync(`./src/tables/BZCHpriorityTable.png`, buffer);
+
+    return `./src/tables/BZCHpriorityTable.png`;
+}
+
 async function generateQueueTable(data, tableName, subjectName) {
     const width = 420;  
     const height = 50 + (data.length + 1) * 40 + 20; 
@@ -107,7 +160,7 @@ async function generateQueueTable(data, tableName, subjectName) {
     data.forEach((item, i) => {
         startY += rowHeight;
 
-        if (config.isKProgEnd) {
+        if (subjectName == "КПрог" && config.isKProgEnd) {
             const priorityColor = getPriorityColor(item.priority);
             ctx.fillStyle = priorityColor;
             ctx.fillRect(startX, startY, colWidthSurname + colWidthLabs, rowHeight);
@@ -131,7 +184,7 @@ async function generateQueueTable(data, tableName, subjectName) {
     return `./src/tables/${tableName}.png`;
 }
 
-async function generateBZCHTable(data, tableName, subjectName) {
+async function generateBZCHTable(data) {
     const width = 620;  
     const height = 50 + (data.length + 1) * 40 + 20; 
     const canvas = createCanvas(width, height);
@@ -160,6 +213,12 @@ async function generateBZCHTable(data, tableName, subjectName) {
     data.forEach((item, i) => {
         startY += rowHeight;
 
+        if (config.isBZCHEnd) {
+            const priorityColor = getPriorityColor(item.priority);
+            ctx.fillStyle = priorityColor;
+            ctx.fillRect(startX, startY, colWidthSurname + colWidthLabs, rowHeight);
+        }
+
         ctx.strokeStyle = '#000000';
         ctx.lineWidth = 1;
         ctx.strokeRect(startX, startY, colWidthSurname, rowHeight);
@@ -179,4 +238,4 @@ async function generateBZCHTable(data, tableName, subjectName) {
     return `./src/tables/BZCHTable.png`;
 }
 
-module.exports = { generatePriorityTable, generateQueueTable, generateBZCHTable };
+module.exports = { generatePriorityTable, generateQueueTable, generateBZCHTable, generateBZCHPriorityTable };

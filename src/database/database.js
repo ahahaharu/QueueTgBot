@@ -53,6 +53,17 @@ async function getAllUsers() {
     }
 }
 
+async function getBZCHPriorityTable() {
+    const query = `SELECT * FROM BZCH_Priority`;
+    try {
+        const [result] = await pool.promise().query(query);
+        return result.length > 0 ? result : null;
+    } catch (err) {
+        console.error('Ошибка при получении списка пользователей:', err);
+        throw err;
+    }
+}
+
 // Получение очереди для определённого предмета
 async function getQueue(lesson) {
     const query = `SELECT * FROM ${lesson}`;
@@ -101,8 +112,8 @@ async function insertIntoQueue(queue, lesson) {
             insertQuery = 'INSERT INTO KProg (tg_id, surname, labs, priority, subgroup) VALUES ?';
             values = queue.map(item => [item.tg_id, item.surname, item.labs, item.priority, item.subgroup]);
         } else if (lesson === 'BZCH') {
-            insertQuery = 'INSERT INTO BZCH (brigade_id, labs) VALUES ?';
-            values = queue.map(item => [item.brigade_id, item.labs]);
+            insertQuery = 'INSERT INTO BZCH (brigade_id, labs, priority) VALUES ?';
+            values = queue.map(item => [item.brigade_id, item.labs, item.priority]);
         } else {
             insertQuery = `INSERT INTO ${lesson} (tg_id, surname, labs, subgroup) VALUES ?`;
             values = queue.map(item => [item.tg_id, item.surname, item.labs, item.subgroup]);
@@ -171,5 +182,6 @@ module.exports = {
     isInUsers, 
     setPriorityBySurname, 
     clearTable,
-    isInBZCH
+    isInBZCH,
+    getBZCHPriorityTable
 };

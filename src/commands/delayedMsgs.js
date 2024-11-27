@@ -37,6 +37,8 @@ const sendMessagesToUsers = async (bot, message, replyMarkup, isEnd) => {
 
 
 function sendMessages(bot, dateTime, lesson, type) {
+
+    
     const [date, time] = dateTime.split(' ');
     const [year, month, day] = date.split('-').map(Number);
     const [hour, minute] = time.split(':').map(Number);
@@ -49,6 +51,7 @@ function sendMessages(bot, dateTime, lesson, type) {
 
     schedule.scheduleJob(jobDate, async () => {
         await configMutex.runExclusive(async () => {
+            console.log("!!");
             const config = await readConfig();
             
             if (lesson === 'kprog') {
@@ -71,6 +74,7 @@ function sendMessages(bot, dateTime, lesson, type) {
             } else if (lesson === 'bzch') {
                 await clearTable('BZCH');
                 config.BZCHDate = `${day+1}\\.${month}`;
+                config.isBZCHEnd = false;
             }
             await writeConfig(config);
             

@@ -10,7 +10,8 @@ const {
 const { 
     getInfoById, insertIntoQueue, getQueue, isInUsers,
     clearTable,
-    isInBZCH, 
+    isInBZCH,
+    getBZCHPriorityTable, 
 } = require('../database/database');
 
 const { sendMessageForAll } = require('./delayedMsgs');
@@ -265,10 +266,11 @@ function messageHandler(bot) {
                 return;
             }
 
-            let BZCHQueue = await getQueue('BZCH');
+            const BZCHQueue = await getQueue('BZCH');
+            const BZCH_Priority = await getBZCHPriorityTable();
             const userInfo = await getInfoById(ctx.from.id.toString());
             config = await readConfig();
-
+            const queue = [[], [], []]
             isReg = await isInBZCH(userInfo.brigade_id); 
             if (isReg) {
                 await ctx.reply(
@@ -280,15 +282,26 @@ function messageHandler(bot) {
                 );
                 return;
             }
-            if (!BZCHQueue) {
-                BZCHQueue = [];
+            priorityIndex = new Map();
+            priorityIndex.set("Красный", 0);
+            priorityIndex.set("Жёлтый", 1);
+            priorityIndex.set("Зелёный", 2);
+            priorityIndex.set("Санкции", 2);
+            const priority = BZCH_Priority[userInfo.brigade_id-1].priority;
+            if (BZCHQueue?.length) {
+                BZCHQueue.forEach(item => {
+                    console.log ("index in table "+item.priority)
+                    queue[priorityIndex.get(item.priority)].push(item); 
+                });
             }
-            BZCHQueue.push({
+            console.log ("user index "+priority)
+            queue[priorityIndex.get(priority)].push({
                 brigade_id: userInfo.brigade_id,
-                labs: labs
+                labs: labs,
+                priority: priority
             });
 
-            insertIntoQueue(BZCHQueue, 'BZCH');
+            insertIntoQueue(queue.flat(1), 'BZCH');
 
             await ctx.reply(`✅ Отлично! Вы записаны!`, {
                 reply_markup: returnToBZCH
