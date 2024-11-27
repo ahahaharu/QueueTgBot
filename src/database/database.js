@@ -41,6 +41,17 @@ async function getInfoById(id) {
     }
 }
 
+async function getBZCHStatus(id) {
+    const query = `SELECT * FROM BZCH WHERE brigade_id = ?`;
+    try {
+        const [result] = await pool.promise().query(query, [id]);
+        return result.length > 0 ? result[0].isPriorityGiven : null;
+    } catch (err) {
+        console.error('Ошибка при получении информации о пользователе:', err);
+        throw err;
+    }
+}
+
 // Получение информации обо всех пользователях
 async function getAllUsers() {
     const query = `SELECT * FROM Users`;
@@ -149,11 +160,23 @@ async function setBZCHPriority(id, priority) {
         await pool.promise().query(updateQuery, [priority, id]);
         config = await readConfig();
 
-        if (config.isKProgEnd) {
-            const updateKProgQuery = 'UPDATE BZCH SET priority = ? WHERE brigade_id = ?';
-            await pool.promise().query(updateKProgQuery, [priority, id]);
+        if (config.isBZCHEnd) {
+            const updateBZCHQuery = 'UPDATE BZCH SET priority = ? WHERE brigade_id = ?';
+            await pool.promise().query(updateBZCHQuery, [priority, id]);
         }
         console.log(`Priority для бригады с id ${id} обновлён на ${priority}`);
+    } catch (err) {
+        console.error('Ошибка при обновлении приоритета:', err);
+    }
+}
+
+async function setPriorityStatus(id, status) {
+    try {
+        const updateQuery = 'UPDATE BZCH SET isPriorityGiven = ? WHERE brigade_id = ?';
+        await pool.promise().query(updateQuery, [status, id]);
+        config = await readConfig();
+
+        console.log(`Статус приоритета для бригады с id ${id} обновлён на ${status}`);
     } catch (err) {
         console.error('Ошибка при обновлении приоритета:', err);
     }
@@ -200,5 +223,7 @@ module.exports = {
     clearTable,
     isInBZCH,
     getBZCHPriorityTable,
-    setBZCHPriority
+    setBZCHPriority,
+    setPriorityStatus,
+    getBZCHStatus
 };

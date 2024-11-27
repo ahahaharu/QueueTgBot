@@ -59,10 +59,12 @@ const returnToPZMA = new InlineKeyboard().text('↩️Вернуться к ПЗ
 const returnToMCHA = new InlineKeyboard().text('↩️Вернуться к МЧА ', 'mcha');
 const returnToBZCH = new InlineKeyboard().text('↩️Вернуться к БЖЧ ', 'bzch');
 
-const kprogStatusKeyboard = new InlineKeyboard()
-    .text("🟩Сдал(-а)", "passed").row()
-    .text("🟨Подошёл(-ла), но не сдал(-а)", "notPassed").row()
-    .text("🟥Не успел(-а) подойти", "notPsbl").row()
+function createStatusKeyboard(subject) {
+    return new InlineKeyboard()
+        .text("🟩Сдал(-а)", `passed:${subject}`).row()
+        .text("🟨Подошёл(-ла), но не сдал(-а)", `notPassed:${subject}`).row()
+        .text("🟥Не успел(-а) подойти", `notPsbl:${subject}`).row();
+}
 
 
 const adminKeyboard = new InlineKeyboard()
@@ -95,7 +97,7 @@ module.exports = {
     returnToMCHA,
     returnToBZCH,
     createSignButton,
-    kprogStatusKeyboard,
+    createStatusKeyboard,
     adminKeyboard,
     setPriorityKeyboard,
     getReturnKeyboard,

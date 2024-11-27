@@ -9,7 +9,7 @@ const BZCHEnd = new Array();
 
 //test
 BZCHSchedule.push({
-    time: '2024-11-26 7:01',
+    time: '2024-11-28 01:23',
     type: 0
 });
 
@@ -37,7 +37,7 @@ BZCHSchedule.push({
     time: '2024-12-27 17:00',
     type: 0
 });
-BZCHEnd.push('2024-11-28 00:23');
+BZCHEnd.push('2024-11-28 01:50');
 BZCHEnd.push('2024-11-30 11:55');
 BZCHEnd.push('2024-12-05 11:55');
 BZCHEnd.push('2024-12-05 11:55');

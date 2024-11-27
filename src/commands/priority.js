@@ -1,12 +1,19 @@
 const { InputFile } = require('grammy');
 
 const {
-    returnToKProg, getReturnKeyboard
+    returnToKProg, getReturnKeyboard,
+    returnToBZCH
 } = require('../bot/keyboards'); 
 
 const { 
     getAllUsers, setPriority,
-    getBZCHPriorityTable
+    getBZCHPriorityTable,
+    setBZCHPriority,
+    getInfoById,
+    getQueue,
+    isInBZCH,
+    getBZCHStatus,
+    setPriorityStatus
 } = require('../database/database');
 
 const { generatePriorityTable, generateBZCHPriorityTable } = require('../tables/tables');
@@ -85,39 +92,56 @@ function priorityCommand(bot) {
             +'Таблица приоритетов представленна выше',
             {
                 parse_mode: 'MarkdownV2',
-                reply_markup: returnToKProg
+                reply_markup: returnToBZCH
             }
         );
     });
 
-    bot.callbackQuery('passed', async (ctx) => {
+    bot.callbackQuery(/(passed|notPassed|notPsbl):(\w+)/, async (ctx) => {
         await ctx.answerCallbackQuery();
+        
+        const action = ctx.match[1];
+        const subject = ctx.match[2]; 
+        
+        let priority;
+        let message;
 
-        await setPriority(ctx.from.id.toString(), "Зелёный");
-        await ctx.callbackQuery.message.editText(`*🎉 Поздравляю со сдачей\\!*\n\n_🟩 Вам выдан зелёный приоритет_`, {
+        const userInfo = await getInfoById(ctx.from.id.toString())
+
+        if (subject == 'bzch') {
+            if (await getBZCHStatus(userInfo.brigade_id)) {
+                await ctx.callbackQuery.message.editText("Один из членов вашей бригады уже поставил приоритет", {
+                    parse_mode: 'MarkdownV2',
+                    reply_markup: getReturnKeyboard(false, 'bzch')
+                });
+            } else {
+                await setPriorityStatus(userInfo.brigade_id, true);
+            }
+            
+        }
+    
+        if (action === 'passed') {
+            priority = "Зелёный";
+            message = `*🎉 Поздравляю со сдачей\\!*\n\n_🟩 Вам выдан зелёный приоритет_`;
+        } else if (action === 'notPassed') {
+            priority = "Жёлтый";
+            message = `*😔 Ничего страшного\\!*\nНа следующей паре вы сможете сдать чуть первее других\n\n🟨 _Вам выдан жёлтый приоритет_`;
+        } else if (action === 'notPsbl') {
+            priority = "Красный";
+            message = `*☹️ Очень жаль, что вы не успели\\.*\nНа следующей паре вы сможете сдать лабораторную работу одним\\(\\-ой\\) из первых\n\n_🟥 Вам выдан красный приоритет_`;
+        }
+        
+        
+        if (subject == 'kprog') {
+            await setPriority(userInfo.tg_id, priority);
+        } else {
+            await setBZCHPriority(userInfo.brigade_id, priority)
+        }
+        
+        await ctx.callbackQuery.message.editText(message, {
             parse_mode: 'MarkdownV2',
-            reply_markup: getReturnKeyboard(false, 'kprog')
-        })
-    });
-
-    bot.callbackQuery('notPassed', async (ctx) => {
-        await ctx.answerCallbackQuery();
-
-        await setPriority(ctx.from.id.toString(), "Жёлтый");
-        await ctx.callbackQuery.message.editText(`*😔 Ничего страшного\\!*\nНа следующей паре вы сможете сдать чуть первее других\n\n🟨 _Вам выдан жёлтый приоритет_`, {
-            parse_mode: 'MarkdownV2',
-            reply_markup: getReturnKeyboard(false, 'kprog')
-        })
-    });
-
-    bot.callbackQuery('notPsbl', async (ctx) => {
-        await ctx.answerCallbackQuery();
-
-        await setPriority(ctx.from.id.toString(), "Красный");
-        await ctx.callbackQuery.message.editText(`*☹️ Очень жаль, что вы не успели\\.*\nНа следующей паре вы сможете сдать лабораторную работу одним\\(\\-ой\\) из первых\n\n_🟥 Вам выдан красный приоритет_`, {
-            parse_mode: 'MarkdownV2',
-            reply_markup: getReturnKeyboard(false, 'kprog')
-        })
+            reply_markup: getReturnKeyboard(false, subject)
+        });
     });
 }
 
