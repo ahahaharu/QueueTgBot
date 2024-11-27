@@ -20,7 +20,15 @@ function lessonsQueueCommand(bot) {
             await ctx.api.deleteMessage(ctx.chat.id, ctx.session.photoMessageId);
             ctx.session.photoMessageId = undefined;
         }
-        await ctx.deleteMessage();
+        try {
+            await ctx.deleteMessage();
+        } catch (error) {
+            if (error.message.includes("message can't be deleted for everyone")) {
+                console.log("Сообщение уже удалено или не может быть удалено.");
+            } else {
+                console.error("Произошла другая ошибка:", error);
+            }
+        }
 
         let status = "";
         const queue = await getQueue('KProg');
@@ -55,7 +63,15 @@ function lessonsQueueCommand(bot) {
     bot.callbackQuery('isp', async (ctx) => {
         await ctx.answerCallbackQuery();
 
-        await ctx.deleteMessage();
+        try {
+            await ctx.deleteMessage();
+        } catch (error) {
+            if (error.message.includes("message can't be deleted for everyone")) {
+                console.log("Сообщение уже удалено или не может быть удалено.");
+            } else {
+                console.error("Произошла другая ошибка:", error);
+            }
+        }
 
         let status = "";
         const queue = await getQueue('ISP');
@@ -92,7 +108,15 @@ function lessonsQueueCommand(bot) {
     bot.callbackQuery('pzma', async (ctx) => {
         await ctx.answerCallbackQuery();
 
-        await ctx.deleteMessage();
+        try {
+            await ctx.deleteMessage();
+        } catch (error) {
+            if (error.message.includes("message can't be deleted for everyone")) {
+                console.log("Сообщение уже удалено или не может быть удалено.");
+            } else {
+                console.error("Произошла другая ошибка:", error);
+            }
+        }
 
         let status = "";
         const queue = await getQueue('PZMA');
@@ -129,7 +153,15 @@ function lessonsQueueCommand(bot) {
     bot.callbackQuery('mcha', async (ctx) => {
         await ctx.answerCallbackQuery();
 
-        await ctx.deleteMessage();
+        try {
+            await ctx.deleteMessage();
+        } catch (error) {
+            if (error.message.includes("message can't be deleted for everyone")) {
+                console.log("Сообщение уже удалено или не может быть удалено.");
+            } else {
+                console.error("Произошла другая ошибка:", error);
+            }
+        }
 
         let status = "";
         const queue = await getQueue('MCHA');
@@ -166,7 +198,15 @@ function lessonsQueueCommand(bot) {
     bot.callbackQuery('bzch', async (ctx) => {
         await ctx.answerCallbackQuery();
 
-        await ctx.deleteMessage();
+        try {
+            await ctx.deleteMessage();
+        } catch (error) {
+            if (error.message.includes("message can't be deleted for everyone")) {
+                console.log("Сообщение уже удалено или не может быть удалено.");
+            } else {
+                console.error("Произошла другая ошибка:", error);
+            }
+        }
 
         let status = "";
         const queue = await getQueue('BZCH');

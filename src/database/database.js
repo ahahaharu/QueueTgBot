@@ -134,7 +134,7 @@ async function setPriority(id, priority) {
         config = await readConfig();
 
         if (config.isKProgEnd) {
-            const updateKProgQuery = 'UPDATE KProg SET priority = ? WHERE tg_id = ?';
+            const updateKProgQuery = 'UPDATE lesson SET priority = ? WHERE tg_id = ?';
             await pool.promise().query(updateKProgQuery, [priority, id]);
         }
         console.log(`Priority для пользователя с id ${id} обновлён на ${priority}`);
@@ -143,7 +143,23 @@ async function setPriority(id, priority) {
     }
 }
 
-// Установка приоритета пользователя по фамилии
+async function setBZCHPriority(id, priority) {
+    try {
+        const updateQuery = 'UPDATE BZCH_Priority SET priority = ? WHERE brigade_id = ?';
+        await pool.promise().query(updateQuery, [priority, id]);
+        config = await readConfig();
+
+        if (config.isKProgEnd) {
+            const updateKProgQuery = 'UPDATE BZCH SET priority = ? WHERE brigade_id = ?';
+            await pool.promise().query(updateKProgQuery, [priority, id]);
+        }
+        console.log(`Priority для бригады с id ${id} обновлён на ${priority}`);
+    } catch (err) {
+        console.error('Ошибка при обновлении приоритета:', err);
+    }
+}
+
+
 async function setPriorityBySurname(surname, priority) {
     try {
         const updateQuery = 'UPDATE Users SET priority = ? WHERE surname = ?';
@@ -183,5 +199,6 @@ module.exports = {
     setPriorityBySurname, 
     clearTable,
     isInBZCH,
-    getBZCHPriorityTable
+    getBZCHPriorityTable,
+    setBZCHPriority
 };

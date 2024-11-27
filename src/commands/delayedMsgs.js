@@ -1,4 +1,4 @@
-const { getAllUsers, getQueue, setPriority, clearTable } = require('../database/database');
+const { getAllUsers, getQueue, setPriority, clearTable, setBZCHPriority } = require('../database/database');
 const schedule = require('node-schedule');
 const { createSignButton, kprogStatusKeyboard } = require('../bot/keyboards');
 const { lessons } = require ('../lessons/lessons');
@@ -6,11 +6,24 @@ const {readConfig, writeConfig} = require ('../utils/config')
 const Mutex = require('async-mutex').Mutex;
 const configMutex = new Mutex();
 
+const getBZCHBrigadesUsers = async () => {
+    const data = await getQueue('BZCH');
+    const users = await getAllUsers();
+    const brigadeUsers = new Array();
+    for (let brigade of data) {
+        for (let user of users) {
+            if (user.brigade_id == brigade.brigade_id) {
+                brigadeUsers.push(user);
+            }
+        }
+    }
+    return brigadeUsers;
+}
 // Функция для отправки сообщений всем пользователям
-const sendMessagesToUsers = async (bot, message, replyMarkup, isEnd) => {
+const sendMessagesToUsers = async (bot, message, replyMarkup, isEnd, lesson) => {
     let users;
     if (isEnd) {
-        users = await getQueue('KProg')
+        users = await getBZCHBrigadesUsers();
     } else {
         users = await getAllUsers(); 
     }
@@ -84,30 +97,39 @@ function sendMessages(bot, dateTime, lesson, type) {
 }
 
 // Функция для отправки сообщения об окончании занятия по КПрог
-function sendEndMessage(bot, dateTime) {
+function sendEndMessage(bot, dateTime, lesson) {
     const [date, time] = dateTime.split(' ');
     const [year, month, day] = date.split('-').map(Number);
     const [hour, minute] = time.split(':').map(Number);
 
     const jobDate = new Date(year, month - 1, day, hour, minute);
 
-    const message = `*Пара по КПрог закончилась*\n\nСдали ли вы лабораторную работу?`;
+    const message = `*Пара по ${lesson} закончилась*\n\nСдали ли вы лабораторную работу?`;
     const replyMarkup = kprogStatusKeyboard;
 
     schedule.scheduleJob(jobDate, async () => {
-       
         
         const config = await readConfig();
-        config.isKProgEnd = true;
+        let data;
+        if (lesson === 'КПрог') {
+            config.isKProgEnd = true;
+            data = await getQueue("KProg");
+            for (let user of data) {
+                setPriority(user.tg_id, "Зелёный");
+            }
+            await sendMessagesToUsers(bot, message, replyMarkup, true, 'KProg');
+        } else {
+            config.isBZCHEnd = true;
+            data = await getQueue("BZCH");
+            for (let brigade of data) {
+                setBZCHPriority(brigade.brigade_id, "Зелёный");
+            }
+            await sendMessagesToUsers(bot, message, replyMarkup, true, 'BZCH');
+        }
+        
         await writeConfig(config);
 
-        const data = await getQueue("KProg");
-
-        for (let user of data) {
-            setPriority(user.tg_id, "Зелёный");
-        }
-
-        await sendMessagesToUsers(bot, message, replyMarkup, true);
+        
     });
 }
 

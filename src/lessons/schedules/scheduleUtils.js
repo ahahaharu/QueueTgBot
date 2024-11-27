@@ -7,9 +7,9 @@ async function sendScheduledMessages(bot, schedule, messageType) {
     }
 }
 
-function sendEndScheduledMessages(bot, endSchedule) {
+function sendEndScheduledMessages(bot, endSchedule, lesson) {
     for (const time of endSchedule) {
-        sendEndMessage(bot, time);
+        sendEndMessage(bot, time, lesson);
     }
 }
 
