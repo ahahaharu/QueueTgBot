@@ -13,11 +13,15 @@ const queueKeyboard = new InlineKeyboard()
     .text('↩️Вернуться в меню', 'returnToMenu').row()
 
 
-function getReturnKeyboard(condition, lessonType) {
+function getReturnKeyboard(condition, lessonType, isQueue) {
     const kprogPriorityKeyBoard = new InlineKeyboard();
 
     if (condition) {
         kprogPriorityKeyBoard.text('✍️Записаться', `signLesson:${lessonType}`).row()
+    } else {
+        if (isQueue && lessonType != 'bzch') {
+            kprogPriorityKeyBoard.text('❌Я не приду на пару', `deleteFrom:${lessonType}`).row()
+        }
     }
 
     if (lessonType === 'kprog') {
@@ -32,6 +36,14 @@ function getReturnKeyboard(condition, lessonType) {
     .text('↩️Вернуться к очередям', 'queue').row()
 
     return kprogPriorityKeyBoard;
+}
+
+function confirmDelete(lessonType) {
+    const confirmKeyboard = new InlineKeyboard()
+        .text("Да", `yesFor:${lessonType}`)
+        .text("Нет", `noFor:${lessonType}`)
+
+    return confirmKeyboard;
 }
 
 function doWithTable(lesson) {
@@ -102,5 +114,6 @@ module.exports = {
     setPriorityKeyboard,
     getReturnKeyboard,
     selectQueueKeyboard,
-    doWithTable
+    doWithTable,
+    confirmDelete
 };

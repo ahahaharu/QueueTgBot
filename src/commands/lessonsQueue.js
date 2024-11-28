@@ -1,12 +1,15 @@
 const { InputFile } = require('grammy');
 
 const {
-    returnToQueueKeyboard, getReturnKeyboard
+    returnToQueueKeyboard, getReturnKeyboard,
+    confirmDelete
 } = require('../bot/keyboards'); 
 
 const { 
     getQueue,
-    getInfoById
+    getInfoById,
+    insertIntoQueue,
+    clearTable
 } = require('../database/database');
 
 const { generateQueueTable, generateBZCHTable } = require('../tables/tables');
@@ -56,7 +59,7 @@ function lessonsQueueCommand(bot) {
         
         await ctx.reply(`💻 *Очередь на КПрог* `+status, {
             parse_mode: 'MarkdownV2',
-            reply_markup: getReturnKeyboard(condition, 'kprog')
+            reply_markup: getReturnKeyboard(condition, 'kprog', true)
         })
     });
 
@@ -101,7 +104,7 @@ function lessonsQueueCommand(bot) {
         
         await ctx.reply(`💻 *Очередь на ИСП* `+status, {
             parse_mode: 'MarkdownV2',
-            reply_markup: getReturnKeyboard(condition, 'isp')
+            reply_markup: getReturnKeyboard(condition, 'isp', true)
         })
     });
 
@@ -146,7 +149,7 @@ function lessonsQueueCommand(bot) {
         
         await ctx.reply(`💻 *Очередь на ПЗМА* `+status, {
             parse_mode: 'MarkdownV2',
-            reply_markup: getReturnKeyboard(condition, 'pzma')
+            reply_markup: getReturnKeyboard(condition, 'pzma', true)
         })
     });
 
@@ -191,7 +194,7 @@ function lessonsQueueCommand(bot) {
         
         await ctx.reply(`💻 *Очередь на МЧА* `+status, {
             parse_mode: 'MarkdownV2',
-            reply_markup: getReturnKeyboard(condition, 'mcha')
+            reply_markup: getReturnKeyboard(condition, 'mcha', true)
         })
     });
 
@@ -234,8 +237,73 @@ function lessonsQueueCommand(bot) {
         
         await ctx.reply(`🌡 *Очередь на БЖЧ* `+status, {
             parse_mode: 'MarkdownV2',
-            reply_markup: getReturnKeyboard(condition, 'bzch')
+            reply_markup: getReturnKeyboard(condition, 'bzch', true)
         })
+    });
+
+    bot.callbackQuery(/deleteFrom:(.+)/, async (ctx) => {
+        await ctx.answerCallbackQuery();
+        
+        if (ctx.session.QueuePhotoMessageId) {
+            await ctx.api.deleteMessage(ctx.chat.id, ctx.session.QueuePhotoMessageId);
+            ctx.session.QueuePhotoMessageId = undefined;
+        }
+
+        const lessonType = ctx.match[1];
+        
+        await ctx.callbackQuery.message.editText(
+            `*Удалить вас с таблицы?*`,
+            {
+                parse_mode: 'MarkdownV2',
+                reply_markup: confirmDelete(lessonType)
+            }
+        );
+    
+    });
+
+    bot.callbackQuery(/yesFor:(.+)/, async (ctx) => {
+        await ctx.answerCallbackQuery();
+
+        const lessonType = ctx.match[1];
+
+        const lessonsToDelete = new Map();
+        lessonsToDelete.set("kprog", "KProg");
+        lessonsToDelete.set("isp", "ISP");
+        lessonsToDelete.set("pzma", "PZMA");
+        lessonsToDelete.set("mcha", "MCHA");
+
+        const lesson = lessonsToDelete.get(lessonType)
+
+        let queue = await getQueue(lesson);
+        queue = queue.filter(item => item.tg_id != ctx.from.id);
+
+        if(queue?.length) {
+            insertIntoQueue(queue, lesson);
+        } else {
+            clearTable(lesson);
+        }
+
+        await ctx.callbackQuery.message.editText(
+            `*Вы удалены из таблицы*`,
+            {
+                parse_mode: 'MarkdownV2',
+                reply_markup: getReturnKeyboard(false, lessonType)
+            }
+        );
+    });
+
+    bot.callbackQuery(/noFor:(.+)/, async (ctx) => {
+        await ctx.answerCallbackQuery();
+
+        const lessonType = ctx.match[1];
+
+        await ctx.callbackQuery.message.editText(
+            `*Вы не были удалены из таблицы*`,
+            {
+                parse_mode: 'MarkdownV2',
+                reply_markup: getReturnKeyboard(false, lessonType)
+            }
+        );
     });
 }
 

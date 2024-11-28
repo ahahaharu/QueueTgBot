@@ -337,7 +337,7 @@ function messageHandler(bot) {
 
             let queue = await getQueue('KProg');
             
-            const index = queue.findIndex(item => item.tg_id == ctx.from.id);
+            const index = queue.findIndex(item => item.surname == surname);
             if(index === -1) {
                 await ctx.reply('Такого пользователя нет в таблице');
             }
@@ -355,7 +355,7 @@ function messageHandler(bot) {
 
             let queue = await getQueue('ISP');
             
-            const index = queue.findIndex(item => item.tg_id == ctx.from.id);
+            const index = queue.findIndex(item => item.surname == surname);
             if(index === -1) {
                 await ctx.reply('Такого пользователя нет в таблице');
             }
@@ -373,7 +373,7 @@ function messageHandler(bot) {
 
             let queue = await getQueue('PZMA');
             
-            const index = queue.findIndex(item => item.tg_id == ctx.from.id);
+            const index = queue.findIndex(item => item.surname == surname);
             if(index === -1) {
                 await ctx.reply('Такого пользователя нет в таблице');
             }
@@ -391,7 +391,7 @@ function messageHandler(bot) {
 
             let queue = await getQueue('MCHA');
             
-            const index = queue.findIndex(item => item.tg_id == ctx.from.id);
+            const index = queue.findIndex(item => item.surname == surname);
             if(index === -1) {
                 await ctx.reply('Такого пользователя нет в таблице');
             }
