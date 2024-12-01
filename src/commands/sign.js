@@ -11,7 +11,15 @@ function signCommand(bot) {
         await ctx.answerCallbackQuery();
         
         if (ctx.session.QueuePhotoMessageId) {
-            await ctx.api.deleteMessage(ctx.chat.id, ctx.session.QueuePhotoMessageId);
+            try {
+                await ctx.api.deleteMessage(ctx.chat.id, ctx.session.QueuePhotoMessageId);
+            } catch (error) {
+                if (error.message.includes("message can't be deleted for everyone")) {
+                    console.log("Сообщение уже удалено или не может быть удалено.");
+                } else {
+                    console.error("Произошла другая ошибка:", error);
+                }
+            }
             ctx.session.QueuePhotoMessageId = undefined;
         }
 

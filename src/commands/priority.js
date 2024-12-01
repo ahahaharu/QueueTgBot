@@ -25,10 +25,26 @@ function priorityCommand(bot) {
         await ctx.answerCallbackQuery();
     
         if (ctx.session.QueuePhotoMessageId) {
-            await ctx.api.deleteMessage(ctx.chat.id, ctx.session.QueuePhotoMessageId);
+            try {
+                await ctx.api.deleteMessage(ctx.chat.id, ctx.session.QueuePhotoMessageId);
+            } catch (error) {
+                if (error.message.includes("message can't be deleted for everyone")) {
+                    console.log("Сообщение уже удалено или не может быть удалено.");
+                } else {
+                    console.error("Произошла другая ошибка:", error);
+                }
+            }
             ctx.session.QueuePhotoMessageId = undefined; // Сбрасываем ID
         }
-        await ctx.deleteMessage();
+        try {
+            await ctx.deleteMessage();
+        } catch (error) {
+            if (error.message.includes("message can't be deleted for everyone")) {
+                console.log("Сообщение уже удалено или не может быть удалено.");
+            } else {
+                console.error("Произошла другая ошибка:", error);
+            }
+        }
     
         // Получаем данные и создаём таблицу
         let data = await getAllUsers();
@@ -66,10 +82,27 @@ function priorityCommand(bot) {
         await ctx.answerCallbackQuery();
     
         if (ctx.session.QueuePhotoMessageId) {
-            await ctx.api.deleteMessage(ctx.chat.id, ctx.session.QueuePhotoMessageId);
+            try {
+                await ctx.api.deleteMessage(ctx.chat.id, ctx.session.QueuePhotoMessageId);
+            } catch (error) {
+                if (error.message.includes("message can't be deleted for everyone")) {
+                    console.log("Сообщение уже удалено или не может быть удалено.");
+                } else {
+                    console.error("Произошла другая ошибка:", error);
+                }
+            }
             ctx.session.QueuePhotoMessageId = undefined;
         }
-        await ctx.deleteMessage();
+        try {
+            await ctx.deleteMessage();
+        } catch (error) {
+            if (error.message.includes("message can't be deleted for everyone")) {
+                console.log("Сообщение уже удалено или не может быть удалено.");
+            } else {
+                console.error("Произошла другая ошибка:", error);
+            }
+        }
+        
     
         let data = await getBZCHPriorityTable();
         await generateBZCHPriorityTable(data);
