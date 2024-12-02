@@ -19,7 +19,7 @@ function getReturnKeyboard(condition, lessonType, isQueue) {
     if (condition) {
         kprogPriorityKeyBoard.text('✍️Записаться', `signLesson:${lessonType}`).row()
     } else {
-        if (isQueue && lessonType != 'bzch') {
+        if (isQueue && lessonType != 'BZCH') {
             kprogPriorityKeyBoard.text('❌Я не приду на пару', `deleteFrom:${lessonType}`).row()
         }
     }

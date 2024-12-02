@@ -235,7 +235,7 @@ function lessonsQueueCommand(bot) {
                 condition = true;
             }
 
-            generateQueueTable(queue, 'BZCH');
+            await generateQueueTable(queue, 'BZCH');
             let photoMessage = await ctx.replyWithPhoto(new InputFile("./src/tables/BZCHTable.png"));
             ctx.session.QueuePhotoMessageId = photoMessage.message_id;
         } else {
