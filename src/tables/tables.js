@@ -200,4 +200,4 @@ async function createTableImage(data, options) {
     return `./src/tables/${options.tableName}Table.png`;
 }
 
-module.exports = { generatePriorityTable, generateQueueTable, generateBZCHTable, generateBZCHPriorityTable };
+module.exports = { generatePriorityTable, generateQueueTable, generateBZCHPriorityTable };
