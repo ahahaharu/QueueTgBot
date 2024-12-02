@@ -16,7 +16,7 @@ const {
     setPriorityStatus
 } = require('../database/database');
 
-const { generatePriorityTable, generateBZCHPriorityTable } = require('../tables/tables');
+const { generatePriorityTable, generateBZCHPriorityTable, generateQueueTable } = require('../tables/tables');
 
 
 
@@ -53,10 +53,10 @@ function priorityCommand(bot) {
             if (a.surname > b.surname) return 1;
             return 0;
         });
-        await generatePriorityTable(data);
+        await generateQueueTable(data, 'KProg', true);
     
         // Отправляем изображение
-        let photoMessage = await ctx.replyWithPhoto(new InputFile("./src/tables/priorityTable.png"));
+        let photoMessage = await ctx.replyWithPhoto(new InputFile("./src/tables/KProgpriorityTable.png"));
         ctx.session.photoMessageId = photoMessage.message_id;
     
         // Отправляем текст
@@ -105,7 +105,7 @@ function priorityCommand(bot) {
         
     
         let data = await getBZCHPriorityTable();
-        await generateBZCHPriorityTable(data);
+        await generateQueueTable(data, 'BZCH', true);
     
         // Отправляем изображение
         let photoMessage = await ctx.replyWithPhoto(new InputFile("./src/tables/BZCHpriorityTable.png"));
