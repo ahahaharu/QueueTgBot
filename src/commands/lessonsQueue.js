@@ -13,7 +13,7 @@ const {
 } = require('../database/database');
 
 const { generateQueueTable, generateBZCHTable } = require('../tables/tables');
-const {readConfig, writeConfig} = require ('../utils/config')
+const {readConfig} = require ('../utils/config')
 
 function lessonsQueueCommand(bot) {
     bot.callbackQuery('kprog', async (ctx) => {
@@ -235,7 +235,7 @@ function lessonsQueueCommand(bot) {
                 condition = true;
             }
 
-            await generateBZCHTable(queue);
+            generateQueueTable(queue, 'BZCH');
             let photoMessage = await ctx.replyWithPhoto(new InputFile("./src/tables/BZCHTable.png"));
             ctx.session.QueuePhotoMessageId = photoMessage.message_id;
         } else {
