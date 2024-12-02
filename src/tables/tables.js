@@ -140,7 +140,7 @@ async function generateQueueTable(data, subject) {
         membersText: isBZCH ? 'Члены Бригады' : 'Фамилия',
         lessonType: isBZCH ? 'ПЗ' : 'Лаба',
     }
-    createTableImage(data, options);
+    await createTableImage(data, options);
 }
 async function createTableImage(data, options) {
     const width = options.width;  
