@@ -113,7 +113,7 @@ function sendEndMessage(bot, dateTime, lesson) {
         let data;
         if (lesson === 'КПрог') {
             config.isKProgEnd = true;
-            data = await getQueue("kprog");
+            data = await getQueue("KProg");
             for (let user of data) {
                 setPriority(user.tg_id, "Зелёный");
             }
