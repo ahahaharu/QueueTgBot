@@ -209,6 +209,18 @@ function lessonsQueueCommand(bot) {
     bot.callbackQuery('bzch', async (ctx) => {
         await ctx.answerCallbackQuery();
 
+        if (ctx.session.photoMessageId) {
+            try {
+                await ctx.api.deleteMessage(ctx.chat.id, ctx.session.photoMessageId);
+            } catch (error) {
+                if (error.message.includes("message can't be deleted for everyone")) {
+                    console.log("Сообщение уже удалено или не может быть удалено.");
+                } else {
+                    console.error("Произошла другая ошибка:", error);
+                }
+            }
+            ctx.session.photoMessageId = undefined;
+        }
         try {
             await ctx.deleteMessage();
         } catch (error) {
