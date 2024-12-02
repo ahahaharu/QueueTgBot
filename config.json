@@ -1,12 +1,12 @@
 {
     "KProgLessonType": 1,
     "KProgDate": "2\\.12",
-    "ISPLessonType": 1,
-    "ISPDate": "26\\.11",
+    "ISPLessonType": 2,
+    "ISPDate": "3\\.12",
     "PZMALessonType": 0,
     "PZMADate": "29\\.11",
-    "MCHALessonType": 0,
-    "MCHADate": "28\\.11",
+    "MCHALessonType": 1,
+    "MCHADate": "3\\.12",
     "isKProgEnd": true,
     "BZCHDate": "30\\.11",
     "isBZCHEnd": true
