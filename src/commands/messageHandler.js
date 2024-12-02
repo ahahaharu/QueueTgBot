@@ -21,7 +21,7 @@ function messageHandler(bot) {
     bot.on('message', async (ctx) => {
         
 
-        if (ctx.session.step === "waiting_for_kprogLab") {
+        if (ctx.session.step === "waiting_for_KProgLab") {
             let lab = ctx.message.text;
             let labs = inputCheck(lab, 8);
             if(!(ctx.message.text && lab.length < 20 && labs)) {
@@ -87,7 +87,7 @@ function messageHandler(bot) {
 
             ctx.session.step = null;
             
-        } else if (ctx.session.step === "waiting_for_ispLab") {
+        } else if (ctx.session.step === "waiting_for_ISPLab") {
             let lab = ctx.message.text;
             let labs = inputCheck(lab, 8);
             if(!(ctx.message.text && lab.length < 20 && labs)) {
@@ -143,7 +143,7 @@ function messageHandler(bot) {
             });
 
             ctx.session.step = null;
-        } else if (ctx.session.step === "waiting_for_pzmaLab") {
+        } else if (ctx.session.step === "waiting_for_PZMALab") {
             let lab = ctx.message.text;
             let labs = inputCheck(lab, 4);
             if(!(ctx.message.text && lab.length < 20 && labs)) {
@@ -199,7 +199,7 @@ function messageHandler(bot) {
             });
 
             ctx.session.step = null;
-        } else if (ctx.session.step === "waiting_for_mchaLab") {
+        } else if (ctx.session.step === "waiting_for_MCHALab") {
             let lab = ctx.message.text;
             let labs = inputCheck(lab, 10);
             if(!(ctx.message.text && lab.length < 20 && labs)) {
@@ -255,7 +255,7 @@ function messageHandler(bot) {
             });
 
             ctx.session.step = null;
-        } else if (ctx.session.step === "waiting_for_bzchLab") {
+        } else if (ctx.session.step === "waiting_for_BZCHLab") {
             let lab = ctx.message.text;
             let labs = inputCheck(lab, 9);
             if(!(ctx.message.text && lab.length < 20 && labs)) {

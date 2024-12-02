@@ -3,6 +3,7 @@ const fs = require('fs');
 
 const {readConfig, writeConfig} = require ('../utils/config');
 const { brigades } = require('../students/brigades');
+const { lessons } = require('../lessons/lessons');
 
 
 function getPriorityColor(priority) {
@@ -131,7 +132,7 @@ async function generateBZCHPriorityTable(data) {
     return `./src/tables/BZCHpriorityTable.png`;
 }
 
-async function generateQueueTable(data, tableName, subjectName) {
+async function generateQueueTable(data, tableName) {
     const width = 420;  
     const height = 50 + (data.length + 1) * 40 + 20; 
     const canvas = createCanvas(width, height);
@@ -142,7 +143,7 @@ async function generateQueueTable(data, tableName, subjectName) {
 
     ctx.fillStyle = '#000000';
     ctx.font = '20px Arial';
-    ctx.fillText(`Очередь ${subjectName}`, 10, 30);
+    ctx.fillText(`Очередь ${lessons.get(tableName)}`, 10, 30);
 
     const colWidthSurname = 200;
     const colWidthLabs = 150;
@@ -160,7 +161,7 @@ async function generateQueueTable(data, tableName, subjectName) {
     data.forEach((item, i) => {
         startY += rowHeight;
 
-        if (subjectName == "КПрог" && config.isKProgEnd) {
+        if (tableName == "KProg" && config.isKProgEnd) {
             const priorityColor = getPriorityColor(item.priority);
             ctx.fillStyle = priorityColor;
             ctx.fillRect(startX, startY, colWidthSurname + colWidthLabs, rowHeight);
@@ -179,9 +180,9 @@ async function generateQueueTable(data, tableName, subjectName) {
 
     // Сохранение изображения с динамическим путём
     const buffer = canvas.toBuffer('image/png');
-    fs.writeFileSync(`./src/tables/${tableName}.png`, buffer);
+    fs.writeFileSync(`./src/tables/${tableName}Table.png`, buffer);
 
-    return `./src/tables/${tableName}.png`;
+    return `./src/tables/${tableName}Table.png`;
 }
 
 async function generateBZCHTable(data) {

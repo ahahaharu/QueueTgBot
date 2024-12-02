@@ -57,7 +57,7 @@ function lessonsQueueCommand(bot) {
                 condition = true;
             }
 
-            await generateQueueTable(queue, 'KProgTable', 'КПрог');
+            await generateQueueTable(queue, 'KProg');
             let photoMessage = await ctx.replyWithPhoto(new InputFile("./src/tables/KProgTable.png"));
             ctx.session.QueuePhotoMessageId = photoMessage.message_id;
         } else {
@@ -67,7 +67,7 @@ function lessonsQueueCommand(bot) {
         
         await ctx.reply(`💻 *Очередь на КПрог* `+status, {
             parse_mode: 'MarkdownV2',
-            reply_markup: getReturnKeyboard(condition, 'kprog', true)
+            reply_markup: getReturnKeyboard(condition, 'KProg', true)
         })
     });
 
@@ -100,7 +100,7 @@ function lessonsQueueCommand(bot) {
                 condition = true;
             }
             
-            await generateQueueTable(queue, 'ISPTable', 'ИСП');
+            await generateQueueTable(queue, 'ISP');
             let photoMessage = await ctx.replyWithPhoto(new InputFile("./src/tables/ISPTable.png"));
             ctx.session.QueuePhotoMessageId = photoMessage.message_id;
         } else {
@@ -112,7 +112,7 @@ function lessonsQueueCommand(bot) {
         
         await ctx.reply(`💻 *Очередь на ИСП* `+status, {
             parse_mode: 'MarkdownV2',
-            reply_markup: getReturnKeyboard(condition, 'isp', true)
+            reply_markup: getReturnKeyboard(condition, 'ISP', true)
         })
     });
 
@@ -145,7 +145,7 @@ function lessonsQueueCommand(bot) {
                 condition = true;
             }
 
-            await generateQueueTable(queue, 'PZMATable', 'ПЗМА');
+            await generateQueueTable(queue, 'PZMA');
             let photoMessage = await ctx.replyWithPhoto(new InputFile("./src/tables/PZMATable.png"));
             ctx.session.QueuePhotoMessageId = photoMessage.message_id;
         } else {
@@ -157,7 +157,7 @@ function lessonsQueueCommand(bot) {
         
         await ctx.reply(`💻 *Очередь на ПЗМА* `+status, {
             parse_mode: 'MarkdownV2',
-            reply_markup: getReturnKeyboard(condition, 'pzma', true)
+            reply_markup: getReturnKeyboard(condition, 'PZMA', true)
         })
     });
 
@@ -190,7 +190,7 @@ function lessonsQueueCommand(bot) {
                 condition = true;
             }
 
-            await generateQueueTable(queue, 'MCHATable', 'МЧА');
+            await generateQueueTable(queue, 'MCHA');
             let photoMessage = await ctx.replyWithPhoto(new InputFile("./src/tables/MCHATable.png"));
             ctx.session.QueuePhotoMessageId = photoMessage.message_id;
         } else {
@@ -202,7 +202,7 @@ function lessonsQueueCommand(bot) {
         
         await ctx.reply(`💻 *Очередь на МЧА* `+status, {
             parse_mode: 'MarkdownV2',
-            reply_markup: getReturnKeyboard(condition, 'mcha', true)
+            reply_markup: getReturnKeyboard(condition, 'MCHA', true)
         })
     });
 
@@ -245,7 +245,7 @@ function lessonsQueueCommand(bot) {
         
         await ctx.reply(`🌡 *Очередь на БЖЧ* `+status, {
             parse_mode: 'MarkdownV2',
-            reply_markup: getReturnKeyboard(condition, 'bzch', true)
+            reply_markup: getReturnKeyboard(condition, 'BZCH', true)
         })
     });
 
@@ -283,20 +283,14 @@ function lessonsQueueCommand(bot) {
         const lessonType = ctx.match[1];
 
         const lessonsToDelete = new Map();
-        lessonsToDelete.set("kprog", "KProg");
-        lessonsToDelete.set("isp", "ISP");
-        lessonsToDelete.set("pzma", "PZMA");
-        lessonsToDelete.set("mcha", "MCHA");
 
-        const lesson = lessonsToDelete.get(lessonType)
-
-        let queue = await getQueue(lesson);
+        let queue = await getQueue(lessonType);
         queue = queue.filter(item => item.tg_id != ctx.from.id);
 
         if(queue?.length) {
-            insertIntoQueue(queue, lesson);
+            insertIntoQueue(queue, lessonType);
         } else {
-            clearTable(lesson);
+            clearTable(lessonType);
         }
 
         await ctx.callbackQuery.message.editText(

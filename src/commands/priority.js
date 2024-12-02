@@ -165,7 +165,7 @@ function priorityCommand(bot) {
         }
         
         
-        if (subject == 'kprog') {
+        if (subject == 'KProg') {
             await setPriority(userInfo.tg_id, priority);
         } else {
             await setBZCHPriority(userInfo.brigade_id, priority)

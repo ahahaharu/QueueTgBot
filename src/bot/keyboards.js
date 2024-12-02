@@ -24,11 +24,11 @@ function getReturnKeyboard(condition, lessonType, isQueue) {
         }
     }
 
-    if (lessonType === 'kprog') {
+    if (lessonType === 'KProg') {
         kprogPriorityKeyBoard.text("📝Приоритеты", "priorityInfo").row()
     } 
 
-    if (lessonType === 'bzch') {
+    if (lessonType === 'BZCH') {
         kprogPriorityKeyBoard.text("📝Приоритеты", "BZCHpriorityInfo").row()
     }
 

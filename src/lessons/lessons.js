@@ -1,10 +1,10 @@
 const {} = require("../bot/keyboards")
 
 const lessons = new Map();
-    lessons.set("kprog", "КПрог");
-    lessons.set("isp", "ИСП");
-    lessons.set("pzma", "ПЗМА");
-    lessons.set("mcha", "МЧА");
-    lessons.set("bzch", "БЖЧ");
+    lessons.set("KProg", "КПрог");
+    lessons.set("ISP", "ИСП");
+    lessons.set("PZMA", "ПЗМА");
+    lessons.set("MCHA", "МЧА");
+    lessons.set("BZCH", "БЖЧ");
 
 module.exports = { lessons }

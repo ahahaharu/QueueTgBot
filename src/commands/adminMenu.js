@@ -240,7 +240,7 @@ function adminMenuCommand(bot) {
         if (surname) {
             await setPriorityBySurname(surname, priorities[priority]); // Устанавливаем приоритет
             await ctx.editMessageText(`Приоритет пользователя ${surname} изменён на ${priorities[priority]}`, {
-                reply_markup: getReturnKeyboard(false, 'kprog')
+                reply_markup: getReturnKeyboard(false, 'KProg')
             });
         } else {
             await ctx.reply('Не удалось найти фамилию. Попробуйте ещё раз.');

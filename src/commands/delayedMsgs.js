@@ -25,7 +25,7 @@ const sendMessagesToUsers = async (bot, message, replyMarkup, isEnd, lesson) => 
     if (isEnd) {
         users = await getBZCHBrigadesUsers();
     } else {
-        users = await getAllUsers(); 
+        users = await getQueue('KProg'); 
     }
 
     console.log(`Всего пользователей в базе: ${users.length}`);
@@ -67,24 +67,24 @@ function sendMessages(bot, dateTime, lesson, type) {
             console.log("!!");
             const config = await readConfig();
             
-            if (lesson === 'kprog') {
+            if (lesson === 'KProg') {
                 await clearTable('KProg'); 
                 config.KProgLessonType = type;
                 config.KProgDate = `${day+1}\\.${month}`;
                 config.isKProgEnd = false;
-            } else if (lesson === 'isp') {
+            } else if (lesson === 'ISP') {
                 await clearTable('ISP');
                 config.ISPLessonType = type;
                 config.ISPDate = `${day+1}\\.${month}`;
-            } else if (lesson === 'pzma') {
+            } else if (lesson === 'PZMA') {
                 await clearTable('PZMA');
                 config.PZMALessonType = type;
                 config.PZMAgDate = `${day+1}\\.${month}`;
-            } else if (lesson === 'mcha') {
+            } else if (lesson === 'MCHA') {
                 await clearTable('MCHA');
                 config.MCHALessonType = type;
                 config.MCHADate = `${day+1}\\.${month}`;
-            } else if (lesson === 'bzch') {
+            } else if (lesson === 'BZCH') {
                 await clearTable('BZCH');
                 config.BZCHDate = `${day+1}\\.${month}`;
                 config.isBZCHEnd = false;
@@ -117,7 +117,7 @@ function sendEndMessage(bot, dateTime, lesson) {
             for (let user of data) {
                 setPriority(user.tg_id, "Зелёный");
             }
-            replyMarkup = createStatusKeyboard('kprog');
+            replyMarkup = createStatusKeyboard('KProg');
             await sendMessagesToUsers(bot, message, replyMarkup, true, 'KProg');
         } else {
             config.isBZCHEnd = true;
@@ -126,7 +126,7 @@ function sendEndMessage(bot, dateTime, lesson) {
                 await setBZCHPriority(brigade.brigade_id, "Зелёный");
                 await setPriorityStatus(brigade.brigade_id, false);
             }
-            replyMarkup = createStatusKeyboard('bzch');
+            replyMarkup = createStatusKeyboard('BZCH');
             
             await sendMessagesToUsers(bot, message, replyMarkup, true, 'BZCH');
         }
