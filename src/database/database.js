@@ -145,7 +145,7 @@ async function setPriority(id, priority) {
         config = await readConfig();
 
         if (config.isKProgEnd) {
-            const updateKProgQuery = 'UPDATE lesson SET priority = ? WHERE tg_id = ?';
+            const updateKProgQuery = 'UPDATE KProg SET priority = ? WHERE tg_id = ?';
             await pool.promise().query(updateKProgQuery, [priority, id]);
         }
         console.log(`Priority для пользователя с id ${id} обновлён на ${priority}`);
