@@ -15,6 +15,8 @@ const {
 const { generateQueueTable, generateBZCHTable } = require('../tables/tables');
 const {readConfig} = require ('../utils/config')
 
+//TODO: решить проблему с копи пастом очередей
+
 function lessonsQueueCommand(bot) {
     bot.callbackQuery('kprog', async (ctx) => {
         await ctx.answerCallbackQuery();

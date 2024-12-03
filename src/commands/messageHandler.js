@@ -4,7 +4,8 @@ const { inputCheck }= require('../bot/inputCheck');
 const {
     returnToKProg, returnToISP, setPriorityKeyboard,
     returnToPZMA, returnToMCHA,
-    returnToBZCH
+    returnToBZCH,
+    returnToLessonQueue
 } = require('../bot/keyboards'); 
 
 const { 
@@ -16,6 +17,8 @@ const {
 
 const { sendMessageForAll } = require('./delayedMsgs');
 const {readConfig, writeConfig} = require ('../utils/config')
+
+//TODO: решить проблему с копи пастом
 
 function messageHandler(bot) {
     bot.on('message', async (ctx) => {
@@ -82,7 +85,7 @@ function messageHandler(bot) {
             insertIntoQueue(queue.flat(2), 'KProg');
 
             await ctx.reply(`✅ Отлично! Вы записаны!`, {
-                reply_markup: returnToKProg
+                reply_markup: returnToLessonQueue('KProg')
             });
 
             ctx.session.step = null;
@@ -139,7 +142,7 @@ function messageHandler(bot) {
             insertIntoQueue(queue.flat(1), 'ISP');
 
             await ctx.reply(`✅ Отлично! Вы записаны!`, {
-                reply_markup: returnToISP
+                reply_markup: returnToLessonQueue('ISP')
             });
 
             ctx.session.step = null;
@@ -195,7 +198,7 @@ function messageHandler(bot) {
             insertIntoQueue(queue.flat(1), 'PZMA');
 
             await ctx.reply(`✅ Отлично! Вы записаны!`, {
-                reply_markup: returnToPZMA
+                reply_markup: returnToLessonQueue('PZMA')
             });
 
             ctx.session.step = null;
@@ -251,7 +254,7 @@ function messageHandler(bot) {
             insertIntoQueue(queue.flat(1), 'MCHA');
 
             await ctx.reply(`✅ Отлично! Вы записаны!`, {
-                reply_markup: returnToMCHA
+                reply_markup: returnToLessonQueue('MCHA')
             });
 
             ctx.session.step = null;
@@ -277,7 +280,7 @@ function messageHandler(bot) {
                     `*Один из членов вашей бригады уже записался в таблицу*`,
                     {
                         parse_mode: 'MarkdownV2',
-                        reply_markup: returnToBZCH
+                        reply_markup: returnToLessonQueue('BZCH')
                     }
                 );
                 return;
@@ -304,7 +307,7 @@ function messageHandler(bot) {
             insertIntoQueue(queue.flat(1), 'BZCH');
 
             await ctx.reply(`✅ Отлично! Вы записаны!`, {
-                reply_markup: returnToBZCH
+                reply_markup: returnToLessonQueue('BZCH')
             });
 
             ctx.session.step = null;

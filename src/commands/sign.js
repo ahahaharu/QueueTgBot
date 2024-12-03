@@ -1,4 +1,4 @@
-const { returnToBZCH } = require('../bot/keyboards');
+const { returnToBZCH, returnToLessonQueue } = require('../bot/keyboards');
 const { isInBZCH, getInfoById } = require('../database/database');
 const { lessons } = require ('../lessons/lessons');
 const { statusCheck } = require('./statusCheck');
@@ -34,7 +34,7 @@ function signCommand(bot) {
                     `*Один из членов вашей бригады уже записался в таблицу*`,
                     {
                         parse_mode: 'MarkdownV2',
-                        reply_markup: returnToBZCH
+                        reply_markup: returnToLessonQueue('BZCH')
                     }
                 );
                 return;

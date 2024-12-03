@@ -1,4 +1,7 @@
 const { InlineKeyboard } = require('grammy');
+const { lessons } = require('../lessons/lessons');
+
+//TODO: решить проблему с поипастом и почистить клавиатуры
 
 const menuKeyboard = new InlineKeyboard()
     .text('👤 Профиль', 'profile').row()
@@ -24,13 +27,9 @@ function getReturnKeyboard(condition, lessonType, isQueue) {
         }
     }
 
-    if (lessonType === 'KProg') {
-        kprogPriorityKeyBoard.text("📝Приоритеты", "priorityInfo").row()
+    if (lessonType === 'KProg' || lessonType === 'BZCH') {
+        kprogPriorityKeyBoard.text("📝Приоритеты", `priorityInfoFor:${lessonType}`).row()
     } 
-
-    if (lessonType === 'BZCH') {
-        kprogPriorityKeyBoard.text("📝Приоритеты", "BZCHpriorityInfo").row()
-    }
 
     kprogPriorityKeyBoard
     .text('↩️Вернуться к очередям', 'queue').row()
@@ -65,11 +64,10 @@ const returnToMenuKeyboard = new InlineKeyboard().text('↩️Вернуться
 
 const returnToQueueKeyboard = new InlineKeyboard().text('↩️Вернуться к очередям ', 'queue');
 
-const returnToKProg = new InlineKeyboard().text('↩️Вернуться к КПрог ', 'kprog');
-const returnToISP = new InlineKeyboard().text('↩️Вернуться к ИСП ', 'isp');
-const returnToPZMA = new InlineKeyboard().text('↩️Вернуться к ПЗМА ', 'pzma');
-const returnToMCHA = new InlineKeyboard().text('↩️Вернуться к МЧА ', 'mcha');
-const returnToBZCH = new InlineKeyboard().text('↩️Вернуться к БЖЧ ', 'bzch');
+function returnToLessonQueue(lesson) {
+    const returnKeyboard = new InlineKeyboard().text(`↩️Вернуться к ${lessons.get(lesson)} `, `${lesson.toLowerCase()}`);
+    return returnKeyboard;
+}
 
 function createStatusKeyboard(subject) {
     return new InlineKeyboard()
@@ -103,11 +101,6 @@ module.exports = {
     returnToMenuKeyboard,
     queueKeyboard,
     returnToQueueKeyboard,
-    returnToKProg,
-    returnToISP,
-    returnToPZMA,
-    returnToMCHA,
-    returnToBZCH,
     createSignButton,
     createStatusKeyboard,
     adminKeyboard,
@@ -115,5 +108,6 @@ module.exports = {
     getReturnKeyboard,
     selectQueueKeyboard,
     doWithTable,
-    confirmDelete
+    confirmDelete, 
+    returnToLessonQueue
 };
