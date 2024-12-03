@@ -42,7 +42,6 @@ function signCommand(bot) {
             }
         } else {
             const isReg = await isInQueue(ctx.from.id.toString(), lessonType);
-            console.log(isReg);
             if (isReg) {
                 await ctx.callbackQuery.message.editText(
                     `*Вы уже записаны в эту таблицу*`,
