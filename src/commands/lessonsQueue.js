@@ -1,7 +1,7 @@
 const { InputFile } = require('grammy');
 
 const {
-    returnToQueueKeyboard, getReturnKeyboard,
+    getReturnKeyboard,
     confirmDelete
 } = require('../bot/keyboards'); 
 
@@ -12,13 +12,19 @@ const {
     clearTable
 } = require('../database/database');
 
-const { generateQueueTable, generateBZCHTable } = require('../tables/tables');
-const {readConfig} = require ('../utils/config')
+const { generateQueueTable} = require('../tables/tables');
+const {returnConfigs} = require ('../utils/config');
+const { lessons } = require('../lessons/lessons');
 
-//TODO: решить проблему с копи пастом очередей
+const emojies = new Map();
+emojies.set("KProg", "💻");
+emojies.set("ISP", "🖥");
+emojies.set("PZMA", "📈");
+emojies.set("MCHA", "👴🏻");
+emojies.set("BZCH", "🌡");
 
 function lessonsQueueCommand(bot) {
-    bot.callbackQuery('kprog', async (ctx) => {
+    async function showQueue(ctx, subject) {
         await ctx.answerCallbackQuery();
 
         if (ctx.session.photoMessageId) {
@@ -44,223 +50,68 @@ function lessonsQueueCommand(bot) {
         }
 
         let status = "";
-        const queue = await getQueue('KProg');
+        const queue = await getQueue(subject);
         let condition = false;
-        config = await readConfig();
-        const lessonType = config.KProgLessonType === 0 ? "" : config.KProgLessonType === 1 ? "\\(1 подгруппа\\)" : "\\(2 подгруппа\\)";
-        status = `${config.KProgDate} ${lessonType}\n\n`;
+        let configs = await returnConfigs()
+        const lessonType = configs.get(subject).lessonType === 0 ? "" : configs.get(subject).lessonType === 1 ? "\\(1 подгруппа\\)" : "\\(2 подгруппа\\)";
+        status = `${configs.get(subject).date} ${lessonType}\n\n`;
 
         if (queue?.length) {
-            const index = queue.findIndex(item => item.tg_id == ctx.from.id);
-            if (index !== -1) {
-                status += "Вы записаны в таблицу\\! Ваше место в очереди: "+(+index+1);
+            let index;
+            if (subject === 'BZCH') {
+                const userInfo = await getInfoById(ctx.from.id.toString());
+                index = queue.findIndex(item => item.brigade_id == userInfo.brigade_id);
             } else {
-                status += "Вы ещё не записались в таблицу"
+                index = queue.findIndex(item => item.tg_id == ctx.from.id);
+            }
+            if (index !== -1) {
+                let type;
+                if (subject === 'BZCH') {
+                    type = "Ваша бригада записана таблицу\\! ";
+                } else {
+                    type = "Вы записаны в таблицу\\! ";
+                }
+                status += type+"Ваше место в очереди: "+(+index+1);
+            } else {
+                if (subject === 'BZCH') {
+                    status += "Ваша бригада ещё не записалась в таблицу";
+                } else {
+                    status += "Вы ещё не записались в таблицу";
+                }
                 condition = true;
             }
 
-            await generateQueueTable(queue, 'KProg');
-            let photoMessage = await ctx.replyWithPhoto(new InputFile("./src/tables/KProgTable.png"));
+            await generateQueueTable(queue, subject);
+            let photoMessage = await ctx.replyWithPhoto(new InputFile(`./src/tables/${subject}Table.png`));
             ctx.session.QueuePhotoMessageId = photoMessage.message_id;
         } else {
             status += "_В таблице ещё никого нет_"
             condition = true;
         }
         
-        await ctx.reply(`💻 *Очередь на КПрог* `+status, {
+        await ctx.reply(`${emojies.get(subject)} *Очередь на ${lessons.get(subject)}* `+status, {
             parse_mode: 'MarkdownV2',
-            reply_markup: getReturnKeyboard(condition, 'KProg', true)
+            reply_markup: getReturnKeyboard(condition, subject, true)
         })
+    }
+    bot.callbackQuery('kprog', async (ctx) => {
+        await showQueue(ctx, 'KProg');
     });
 
     bot.callbackQuery('isp', async (ctx) => {
-        await ctx.answerCallbackQuery();
-
-        try {
-            await ctx.deleteMessage();
-        } catch (error) {
-            if (error.message.includes("message can't be deleted for everyone")) {
-                console.log("Сообщение уже удалено или не может быть удалено.");
-            } else {
-                console.error("Произошла другая ошибка:", error);
-            }
-        }
-
-        let status = "";
-        const queue = await getQueue('ISP');
-        let condition = false;
-        config = await readConfig();
-        const lessonType = config.ISPLessonType === 0 ? "" : config.ISPLessonType === 1 ? "\\(1 подгруппа\\)" : "\\(2 подгруппа\\)";
-        status = `${config.ISPDate} ${lessonType}\n\n`;
-
-        if (queue?.length) {
-            const index = queue.findIndex(item => item.tg_id == ctx.from.id);
-            if (index !== -1) {
-                status += "Вы записаны в таблицу\\! Ваше место в очереди: "+(+index+1);
-            } else {
-                status += "Вы ещё не записались в таблицу"
-                condition = true;
-            }
-            
-            await generateQueueTable(queue, 'ISP');
-            let photoMessage = await ctx.replyWithPhoto(new InputFile("./src/tables/ISPTable.png"));
-            ctx.session.QueuePhotoMessageId = photoMessage.message_id;
-        } else {
-            status += "_В таблице ещё никого нет_"
-            condition = true;
-        }
-        
-
-        
-        await ctx.reply(`💻 *Очередь на ИСП* `+status, {
-            parse_mode: 'MarkdownV2',
-            reply_markup: getReturnKeyboard(condition, 'ISP', true)
-        })
+        await showQueue(ctx, 'ISP');
     });
 
     bot.callbackQuery('pzma', async (ctx) => {
-        await ctx.answerCallbackQuery();
-
-        try {
-            await ctx.deleteMessage();
-        } catch (error) {
-            if (error.message.includes("message can't be deleted for everyone")) {
-                console.log("Сообщение уже удалено или не может быть удалено.");
-            } else {
-                console.error("Произошла другая ошибка:", error);
-            }
-        }
-
-        let status = "";
-        const queue = await getQueue('PZMA');
-        let condition = false;
-        config = await readConfig();
-        const lessonType = config.PZMALessonType === 0 ? "" : config.PZMALessonType === 1 ? "\\(1 подгруппа\\)" : "\\(2 подгруппа\\)";
-        status = `${config.PZMADate} ${lessonType}\n\n`;
-
-        if (queue?.length) {
-            const index = queue.findIndex(item => item.tg_id == ctx.from.id);
-            if (index !== -1) {
-                status += "Вы записаны в таблицу\\! Ваше место в очереди: "+(+index+1);
-            } else {
-                status += "Вы ещё не записались в таблицу"
-                condition = true;
-            }
-
-            await generateQueueTable(queue, 'PZMA');
-            let photoMessage = await ctx.replyWithPhoto(new InputFile("./src/tables/PZMATable.png"));
-            ctx.session.QueuePhotoMessageId = photoMessage.message_id;
-        } else {
-            status += "_В таблице ещё никого нет_"
-            condition = true;
-        }
-        
-
-        
-        await ctx.reply(`💻 *Очередь на ПЗМА* `+status, {
-            parse_mode: 'MarkdownV2',
-            reply_markup: getReturnKeyboard(condition, 'PZMA', true)
-        })
+        await showQueue(ctx, 'PZMA');
     });
 
     bot.callbackQuery('mcha', async (ctx) => {
-        await ctx.answerCallbackQuery();
-
-        try {
-            await ctx.deleteMessage();
-        } catch (error) {
-            if (error.message.includes("message can't be deleted for everyone")) {
-                console.log("Сообщение уже удалено или не может быть удалено.");
-            } else {
-                console.error("Произошла другая ошибка:", error);
-            }
-        }
-
-        let status = "";
-        const queue = await getQueue('MCHA');
-        let condition = false;
-        config = await readConfig();
-        const lessonType = config.MCHALessonType === 0 ? "" : config.MCHALessonType === 1 ? "\\(1 подгруппа\\)" : "\\(2 подгруппа\\)";
-        status = `${config.MCHADate} ${lessonType}\n\n`;
-
-        if (queue?.length) {
-            const index = queue.findIndex(item => item.tg_id == ctx.from.id);
-            if (index !== -1) {
-                status += "Вы записаны в таблицу\\! Ваше место в очереди: "+(+index+1);
-            } else {
-                status += "Вы ещё не записались в таблицу"
-                condition = true;
-            }
-
-            await generateQueueTable(queue, 'MCHA');
-            let photoMessage = await ctx.replyWithPhoto(new InputFile("./src/tables/MCHATable.png"));
-            ctx.session.QueuePhotoMessageId = photoMessage.message_id;
-        } else {
-            status += "_В таблице ещё никого нет_"
-            condition = true;
-        }
-        
-
-        
-        await ctx.reply(`💻 *Очередь на МЧА* `+status, {
-            parse_mode: 'MarkdownV2',
-            reply_markup: getReturnKeyboard(condition, 'MCHA', true)
-        })
+        await showQueue(ctx, 'MCHA');
     });
 
     bot.callbackQuery('bzch', async (ctx) => {
-        await ctx.answerCallbackQuery();
-
-        if (ctx.session.photoMessageId) {
-            try {
-                await ctx.api.deleteMessage(ctx.chat.id, ctx.session.photoMessageId);
-            } catch (error) {
-                if (error.message.includes("message can't be deleted for everyone")) {
-                    console.log("Сообщение уже удалено или не может быть удалено.");
-                } else {
-                    console.error("Произошла другая ошибка:", error);
-                }
-            }
-            ctx.session.photoMessageId = undefined;
-        }
-        try {
-            await ctx.deleteMessage();
-        } catch (error) {
-            if (error.message.includes("message can't be deleted for everyone")) {
-                console.log("Сообщение уже удалено или не может быть удалено.");
-            } else {
-                console.error("Произошла другая ошибка:", error);
-            }
-        }
-
-        let status = "";
-        const queue = await getQueue('BZCH');
-        let condition = false;
-        config = await readConfig();
-        status = `${config.BZCHDate}\n\n`;
-        const userInfo = await getInfoById(ctx.from.id.toString());
-
-        if (queue?.length) {
-            const index = queue.findIndex(item => item.brigade_id == userInfo.brigade_id);
-            if (index !== -1) {
-                status += "Ваша бригада записана таблицу\\! Ваше место в очереди: "+(+index+1);
-            } else {
-                status += "Ваша бригада ещё не записалась в таблицу"
-                condition = true;
-            }
-
-            await generateQueueTable(queue, 'BZCH');
-            let photoMessage = await ctx.replyWithPhoto(new InputFile("./src/tables/BZCHTable.png"));
-            ctx.session.QueuePhotoMessageId = photoMessage.message_id;
-        } else {
-            status += "_В таблице ещё никого нет_"
-            condition = true;
-        }
-        
-        await ctx.reply(`🌡 *Очередь на БЖЧ* `+status, {
-            parse_mode: 'MarkdownV2',
-            reply_markup: getReturnKeyboard(condition, 'BZCH', true)
-        })
+        await showQueue(ctx, 'BZCH');
     });
 
     bot.callbackQuery(/deleteFrom:(.+)/, async (ctx) => {
@@ -295,8 +146,6 @@ function lessonsQueueCommand(bot) {
         await ctx.answerCallbackQuery();
 
         const lessonType = ctx.match[1];
-
-        const lessonsToDelete = new Map();
 
         let queue = await getQueue(lessonType);
         queue = queue.filter(item => item.tg_id != ctx.from.id);

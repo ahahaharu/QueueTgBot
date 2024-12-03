@@ -13,4 +13,29 @@ const writeConfig = async (config) => {
     await fs.promises.writeFile(configPath, JSON.stringify(config, null, 4));
 };
 
-module.exports = { readConfig, writeConfig }
+async function returnConfigs() {
+    const config = await readConfig();
+    const configs = new Map();
+    configs.set("KProg", {
+        lessonType: config.KProgLessonType,
+        date: config.KProgDate
+    });
+    configs.set("ISP", {
+        lessonType: config.ISPLessonType,
+        date: config.ISPDate
+    });
+    configs.set("PZMA", {
+        lessonType: config.PZMALessonType,
+        date: config.PZMADate
+    });
+    configs.set("MCHA", {
+        lessonType: config.MCHALessonType,
+        date: config.MCHADate
+    });
+    configs.set("BZCH", {
+        lessonType: "",
+        date: config.BZCHDate
+    });
+    return configs;
+}
+module.exports = { readConfig, writeConfig, returnConfigs }

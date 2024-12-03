@@ -19,7 +19,6 @@ const {
 
 const { generatePriorityTable, generateBZCHPriorityTable, generateQueueTable } = require('../tables/tables');
 
-//TODO: объединить функции приоритетов
 
 function priorityCommand(bot) {
     bot.callbackQuery(/priorityInfoFor:(.+)/, async (ctx) => {
