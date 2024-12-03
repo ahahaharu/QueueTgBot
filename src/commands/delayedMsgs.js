@@ -19,7 +19,7 @@ const getBZCHBrigadesUsers = async () => {
     }
     return brigadeUsers;
 }
-// Функция для отправки сообщений всем пользователям
+
 const sendMessagesToUsers = async (bot, message, replyMarkup, isEnd, lesson) => {
     let users;
     if (isEnd) {

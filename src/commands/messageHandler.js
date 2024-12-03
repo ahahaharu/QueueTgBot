@@ -22,8 +22,13 @@ const { getTime } = require('../bot/getTime');
 
 function messageHandler(bot) {
     bot.on('message', async (ctx) => {
+        let message = ctx.message.text;
+        const userInfo = await getInfoById(ctx.from.id.toString());
+
+        console.log(getTime()+" "+userInfo.surname+": "+message);
+
         async function signToTable(options) {
-            let lab = ctx.message.text;
+            let lab = message;
             let labs = inputCheck(lab, options.numOfLabs);
             if(!(ctx.message.text && lab.length < 20 && labs)) {
                 await ctx.reply("*Неверное значение\\!* Введите номера лаб верно\\!\n\n_Например\\: 1\\, 2_", {
@@ -133,7 +138,7 @@ function messageHandler(bot) {
         }
 
         async function deleteInTable(subject) {
-            let surname = ctx.message.text;
+            let surname = message;
 
             let queue = await getQueue(subject);
             

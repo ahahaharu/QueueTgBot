@@ -100,6 +100,18 @@ async function isInUsers(surname) {
     }
 }
 
+async function isInQueue(tg_id, subject) {
+    const query = `SELECT tg_id FROM ${subject}`;
+    try {
+        const [result] = await pool.promise().query(query);
+        const surnames = result.map(row => row.tg_id);
+        return surnames.includes(tg_id);
+    } catch (err) {
+        console.error(`Ошибка при проверке айди в таблице ${subject}:`, err);
+        throw err;
+    }
+}
+
 async function isInBZCH(id) {
     const query = `SELECT brigade_id FROM BZCH`;
     try {
@@ -225,5 +237,6 @@ module.exports = {
     getBZCHPriorityTable,
     setBZCHPriority,
     setPriorityStatus,
-    getBZCHStatus
+    getBZCHStatus,
+    isInQueue
 };
