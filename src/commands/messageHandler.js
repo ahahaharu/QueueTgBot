@@ -16,301 +16,166 @@ const {
 } = require('../database/database');
 
 const { sendMessageForAll } = require('./delayedMsgs');
-const {readConfig, writeConfig} = require ('../utils/config')
+const {readConfig, writeConfig, returnConfigs} = require ('../utils/config')
 
-//TODO: решить проблему с копи пастом
+//TODO: решить проблему с копи пастом в toDelete
 
 function messageHandler(bot) {
     bot.on('message', async (ctx) => {
-        
+        async function signToTable(options) {
+            let lab = ctx.message.text;
+            let labs = inputCheck(lab, options.numOfLabs);
+            if(!(ctx.message.text && lab.length < 20 && labs)) {
+                await ctx.reply("*Неверное значение\\!* Введите номера лаб верно\\!\n\n_Например\\: 1\\, 2_", {
+                    parse_mode: 'MarkdownV2'
+                }
+                );
+                return;
+            }
+
+            const [subjectQueue, BZCH_Priority, userInfo, configs] = await Promise.all([
+                getQueue(options.subjectName),
+                getBZCHPriorityTable(),
+                getInfoById(ctx.from.id.toString()),
+                returnConfigs()
+            ]);
+            const queue = options.queue;
+            let priorityIndex;
+            let subgroupIndex, userSubgpoup;
+            const lessonType = configs.get(options.subjectName).lessonType;
+
+            if (options.isBZCH) {
+                const isReg = await isInBZCH(userInfo.brigade_id); 
+                if (isReg) {
+                    await ctx.reply(
+                        `*Один из членов вашей бригады уже записался в таблицу*`,
+                        {
+                            parse_mode: 'MarkdownV2',
+                            reply_markup: returnToLessonQueue('BZCH')
+                        }
+                    );
+                    return;
+                }
+            } else {
+                if (lessonType == 0) {
+                    queue.pop();
+                    queue.flat(1);
+                    userSubgpoup = 0;
+                } else {  
+                    userSubgpoup = userInfo.subgroup - 1;
+                }
+            }   
+            
+            let priority;
+            if (options.isPriority) {
+                priorityIndex = new Map();
+                priorityIndex.set("Красный", 0);
+                priorityIndex.set("Жёлтый", 1);
+                priorityIndex.set("Зелёный", 2);
+                priorityIndex.set("Санкции", 2);
+                if (options.isBZCH) {
+                    priority = BZCH_Priority[userInfo.brigade_id-1].priority;
+                }
+            }
+           
+            if (subjectQueue?.length) {
+                subjectQueue.forEach(item => {
+                    if (lessonType == 0) {
+                        subgroupIndex = 0;
+                    } else {
+                        subgroupIndex = item.subgroup - 1;
+                    }
+                    if (options.isBZCH) {
+                        queue[priorityIndex.get(item.priority)].push(item); 
+                    } else if (options.isPriority) {
+                        queue[subgroupIndex][priorityIndex.get(item.priority)].push(item);
+                    } else {
+                        queue[subgroupIndex].push(item);
+                    } 
+                });
+            }
+            
+            if (options.isBZCH) {
+                queue[priorityIndex.get(priority)].push({
+                    brigade_id: userInfo.brigade_id,
+                    labs: labs,
+                    priority: priority
+                });
+            } else {
+                const item = {
+                    tg_id: userInfo.tg_id,
+                    surname: userInfo.surname,
+                    labs: labs,
+                    subgroup: userInfo.subgroup,
+                    ...(options.isPriority && { priority: userInfo.priority }) 
+                };
+                
+                if (options.isPriority) {
+                    queue[userSubgpoup][priorityIndex.get(userInfo.priority)].push(item);
+                } else {
+                    queue[userSubgpoup].push(item);
+                }
+
+                if (lessonType == 2) {
+                    [queue[0], queue[1]] = [queue[1], queue[0]];
+                }
+            }
+            let flatNum = options.subjectName === 'KProg' ? 2 : 1;
+            insertIntoQueue(queue.flat(flatNum), options.subjectName);
+
+            await ctx.reply(`✅ Отлично! Вы записаны!`, {
+                reply_markup: returnToLessonQueue(options.subjectName)
+            });
+
+            ctx.session.step = null;
+        }
 
         if (ctx.session.step === "waiting_for_KProgLab") {
-            let lab = ctx.message.text;
-            let labs = inputCheck(lab, 8);
-            if(!(ctx.message.text && lab.length < 20 && labs)) {
-                await ctx.reply("*Неверное значение\\!* Введите номера лаб верно\\!\n\n_Например\\: 1\\, 2_", {
-                    parse_mode: 'MarkdownV2'
-                }
-                );
-                return;
+            const options = {
+                subjectName: 'KProg',
+                numOfLabs: 8,
+                queue: [[[],[],[]], [[],[],[]]],
+                isPriority: true,
+                isBZCH: false
             }
-
-            const KProgQueue = await getQueue('KProg');
-            const userInfo = await getInfoById(ctx.from.id.toString());
-            const queue = [
-                [[],[],[]],
-                [[],[],[]]
-            ]
-            config = await readConfig();
-
-            let subgroupIndex, userSubgpoup;
-            if (config.KProgLessonType == 0) {
-                queue.pop();
-                queue.flat(1);
-                userSubgpoup = 0;
-            } else {  
-                userSubgpoup = userInfo.subgroup - 1;
-            }
-
-
-            priorityIndex = new Map();
-            priorityIndex.set("Красный", 0);
-            priorityIndex.set("Жёлтый", 1);
-            priorityIndex.set("Зелёный", 2);
-            priorityIndex.set("Санкции", 2);
-           
-            if (KProgQueue?.length) {
-                KProgQueue.forEach(item => {
-                    if (config.KProgLessonType == 0) {
-                        subgroupIndex = 0;
-                    } else {
-                        subgroupIndex = item.subgroup - 1;
-                    }
-                    queue[subgroupIndex][priorityIndex.get(item.priority)].push(item); 
-                });
-            }
-            
-            queue[userSubgpoup][priorityIndex.get(userInfo.priority)].push({
-                tg_id: userInfo.tg_id,
-                surname: userInfo.surname,
-                labs: labs,
-                priority: userInfo.priority,
-                subgroup: userInfo.subgroup
-            });
-
-            if (config.KProgLessonType == 2) {
-                [queue[0], queue[1]] = [queue[1], queue[0]];
-            }
-
-            insertIntoQueue(queue.flat(2), 'KProg');
-
-            await ctx.reply(`✅ Отлично! Вы записаны!`, {
-                reply_markup: returnToLessonQueue('KProg')
-            });
-
-            ctx.session.step = null;
+            await signToTable(options);
             
         } else if (ctx.session.step === "waiting_for_ISPLab") {
-            let lab = ctx.message.text;
-            let labs = inputCheck(lab, 8);
-            if(!(ctx.message.text && lab.length < 20 && labs)) {
-                await ctx.reply("*Неверное значение\\!* Введите номера лаб верно\\!\n\n_Например\\: 1\\, 2_", {
-                    parse_mode: 'MarkdownV2'
-                }
-                );
-                return;
+            const options = {
+                subjectName: 'ISP',
+                numOfLabs: 8,
+                queue: [[], []],
+                isPriority: false,
+                isBZCH: false
             }
-
-            const ISPQueue = await getQueue('ISP');
-            const userInfo = await getInfoById(ctx.from.id.toString());
-            const queue = [
-                [], []
-            ]
-            config = await readConfig();
-
-            let subgroupIndex, userSubgpoup;
-            if (config.ISPLessonType == 0) {
-                queue.pop();
-                queue.flat(1);
-                userSubgpoup = 0;
-            } else {  
-                userSubgpoup = userInfo.subgroup - 1;
-            }
-           
-            if (ISPQueue?.length) {
-                ISPQueue.forEach(item => {
-                    if (config.ISPLessonType == 0) {
-                        subgroupIndex = 0;
-                    } else {
-                        subgroupIndex = item.subgroup - 1;
-                    }
-                    queue[subgroupIndex].push(item); 
-                });
-            }
-            
-            queue[userSubgpoup].push({
-                tg_id: userInfo.tg_id,
-                surname: userInfo.surname,
-                labs: labs,
-                subgroup: userInfo.subgroup
-            });
-
-            if (config.ISPLessonType == 2) {
-                [queue[0], queue[1]] = [queue[1], queue[0]];
-            }
-
-            insertIntoQueue(queue.flat(1), 'ISP');
-
-            await ctx.reply(`✅ Отлично! Вы записаны!`, {
-                reply_markup: returnToLessonQueue('ISP')
-            });
-
-            ctx.session.step = null;
+            await signToTable(options);
         } else if (ctx.session.step === "waiting_for_PZMALab") {
-            let lab = ctx.message.text;
-            let labs = inputCheck(lab, 4);
-            if(!(ctx.message.text && lab.length < 20 && labs)) {
-                await ctx.reply("*Неверное значение\\!* Введите номера лаб верно\\!\n\n_Например\\: 1\\, 2_", {
-                    parse_mode: 'MarkdownV2'
-                }
-                );
-                return;
+            const options = {
+                subjectName: 'PZMA',
+                numOfLabs: 4,
+                queue: [[], []],
+                isPriority: false,
+                isBZCH: false
             }
-
-            const PZMAQueue = await getQueue('PZMA');
-            const userInfo = await getInfoById(ctx.from.id.toString());
-            const queue = [
-                [], []
-            ]
-            config = await readConfig();
-
-            let subgroupIndex, userSubgpoup;
-            if (config.PZMALessonType == 0) {
-                queue.pop();
-                queue.flat(1);
-                userSubgpoup = 0;
-            } else {  
-                userSubgpoup = userInfo.subgroup - 1;
-            }
-           
-            if (PZMAQueue?.length) {
-                PZMAQueue.forEach(item => {
-                    if (config.PZMALessonType == 0) {
-                        subgroupIndex = 0;
-                    } else {
-                        subgroupIndex = item.subgroup - 1;
-                    }
-                    queue[subgroupIndex].push(item); 
-                });
-            }
-            
-            queue[userSubgpoup].push({
-                tg_id: userInfo.tg_id,
-                surname: userInfo.surname,
-                labs: labs,
-                subgroup: userInfo.subgroup
-            });
-
-            if (config.PZMALessonType == 2) {
-                [queue[0], queue[1]] = [queue[1], queue[0]];
-            }
-
-            insertIntoQueue(queue.flat(1), 'PZMA');
-
-            await ctx.reply(`✅ Отлично! Вы записаны!`, {
-                reply_markup: returnToLessonQueue('PZMA')
-            });
-
-            ctx.session.step = null;
+            await signToTable(options);
         } else if (ctx.session.step === "waiting_for_MCHALab") {
-            let lab = ctx.message.text;
-            let labs = inputCheck(lab, 10);
-            if(!(ctx.message.text && lab.length < 20 && labs)) {
-                await ctx.reply("*Неверное значение\\!* Введите номера лаб верно\\!\n\n_Например\\: 1\\, 2_", {
-                    parse_mode: 'MarkdownV2'
-                }
-                );
-                return;
+            const options = {
+                subjectName: 'MCHA',
+                numOfLabs: 10,
+                queue: [[], []],
+                isPriority: false,
+                isBZCH: false
             }
-
-            const MCHAQueue = await getQueue('MCHA');
-            const userInfo = await getInfoById(ctx.from.id.toString());
-            const queue = [
-                [], []
-            ]
-            config = await readConfig();
-
-            let subgroupIndex, userSubgpoup;
-            if (config.MCHALessonType == 0) {
-                queue.pop();
-                queue.flat(1);
-                userSubgpoup = 0;
-            } else {  
-                userSubgpoup = userInfo.subgroup - 1;
-            }
-           
-            if (MCHAQueue?.length) {
-                MCHAQueue.forEach(item => {
-                    if (config.MCHALessonType == 0) {
-                        subgroupIndex = 0;
-                    } else {
-                        subgroupIndex = item.subgroup - 1;
-                    }
-                    queue[subgroupIndex].push(item); 
-                });
-            }
-            
-            queue[userSubgpoup].push({
-                tg_id: userInfo.tg_id,
-                surname: userInfo.surname,
-                labs: labs,
-                subgroup: userInfo.subgroup
-            });
-
-            if (config.MCHALessonType == 2) {
-                [queue[0], queue[1]] = [queue[1], queue[0]];
-            }
-
-            insertIntoQueue(queue.flat(1), 'MCHA');
-
-            await ctx.reply(`✅ Отлично! Вы записаны!`, {
-                reply_markup: returnToLessonQueue('MCHA')
-            });
-
-            ctx.session.step = null;
+            await signToTable(options);
         } else if (ctx.session.step === "waiting_for_BZCHLab") {
-            let lab = ctx.message.text;
-            let labs = inputCheck(lab, 9);
-            if(!(ctx.message.text && lab.length < 20 && labs)) {
-                await ctx.reply("*Неверное значение\\!* Введите номера лаб верно\\!\n\n_Например\\: 1\\, 2_", {
-                    parse_mode: 'MarkdownV2'
-                }
-                );
-                return;
+            const options = {
+                subjectName: 'BZCH',
+                numOfLabs: 9,
+                queue: [[], [], []],
+                isPriority: true,
+                isBZCH: true
             }
-
-            const BZCHQueue = await getQueue('BZCH');
-            const BZCH_Priority = await getBZCHPriorityTable();
-            const userInfo = await getInfoById(ctx.from.id.toString());
-            config = await readConfig();
-            const queue = [[], [], []]
-            isReg = await isInBZCH(userInfo.brigade_id); 
-            if (isReg) {
-                await ctx.reply(
-                    `*Один из членов вашей бригады уже записался в таблицу*`,
-                    {
-                        parse_mode: 'MarkdownV2',
-                        reply_markup: returnToLessonQueue('BZCH')
-                    }
-                );
-                return;
-            }
-            priorityIndex = new Map();
-            priorityIndex.set("Красный", 0);
-            priorityIndex.set("Жёлтый", 1);
-            priorityIndex.set("Зелёный", 2);
-            priorityIndex.set("Санкции", 2);
-            const priority = BZCH_Priority[userInfo.brigade_id-1].priority;
-            if (BZCHQueue?.length) {
-                BZCHQueue.forEach(item => {
-                    console.log ("index in table "+item.priority)
-                    queue[priorityIndex.get(item.priority)].push(item); 
-                });
-            }
-            console.log ("user index "+priority)
-            queue[priorityIndex.get(priority)].push({
-                brigade_id: userInfo.brigade_id,
-                labs: labs,
-                priority: priority
-            });
-
-            insertIntoQueue(queue.flat(1), 'BZCH');
-
-            await ctx.reply(`✅ Отлично! Вы записаны!`, {
-                reply_markup: returnToLessonQueue('BZCH')
-            });
-
-            ctx.session.step = null;
+            await signToTable(options);
         } else if (ctx.session.step === "waiting_for_prioritySurname") {
             let surname = ctx.message.text;
 
