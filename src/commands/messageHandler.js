@@ -2,9 +2,7 @@
 const { inputCheck }= require('../bot/inputCheck');
 
 const {
-    returnToKProg, returnToISP, setPriorityKeyboard,
-    returnToPZMA, returnToMCHA,
-    returnToBZCH,
+    setPriorityKeyboard,
     returnToLessonQueue
 } = require('../bot/keyboards'); 
 
@@ -16,9 +14,11 @@ const {
 } = require('../database/database');
 
 const { sendMessageForAll } = require('./delayedMsgs');
-const {readConfig, writeConfig, returnConfigs} = require ('../utils/config')
+const {returnConfigs} = require ('../utils/config');
+const { lessons } = require('../lessons/lessons');
+const { getTime } = require('../bot/getTime');
 
-//TODO: решить проблему с копи пастом в toDelete
+
 
 function messageHandler(bot) {
     bot.on('message', async (ctx) => {
@@ -127,6 +127,31 @@ function messageHandler(bot) {
                 reply_markup: returnToLessonQueue(options.subjectName)
             });
 
+            console.log(getTime()+" "+userInfo.surname+" записался в таблицу "+lessons.get(options.subjectName)+". Лабы: "+labs);
+
+            ctx.session.step = null;
+        }
+
+        async function deleteInTable(subject) {
+            let surname = ctx.message.text;
+
+            let queue = await getQueue(subject);
+            
+            const index = queue.findIndex(item => item.surname == surname);
+            if(index === -1) {
+                await ctx.reply('Такого пользователя нет в таблице');
+                return;
+            }
+            queue = queue.filter(item => item.surname !== surname);
+
+            if(queue?.length) {
+                insertIntoQueue(queue, subject);
+            } else {
+                clearTable(subject);
+            }
+
+            await ctx.reply('Пользователь удалён из таблицы');
+
             ctx.session.step = null;
         }
 
@@ -201,77 +226,13 @@ function messageHandler(bot) {
 
             ctx.session.step = null;
         } else if (ctx.session.step === 'waiting_for_KProgToDelete') {
-            let surname = ctx.message.text;
-
-            let queue = await getQueue('KProg');
-            
-            const index = queue.findIndex(item => item.surname == surname);
-            if(index === -1) {
-                await ctx.reply('Такого пользователя нет в таблице');
-            }
-            queue = queue.filter(item => item.surname !== surname);
-
-            if(queue?.length) {
-                insertIntoQueue(queue, 'KProg');
-            } else {
-                clearTable('KProg');
-            }
-
-            await ctx.reply('Пользователь удалён из таблицы');
+            deleteInTable('KProg');
         } else if (ctx.session.step === 'waiting_for_ISPToDelete') {
-            let surname = ctx.message.text;
-
-            let queue = await getQueue('ISP');
-            
-            const index = queue.findIndex(item => item.surname == surname);
-            if(index === -1) {
-                await ctx.reply('Такого пользователя нет в таблице');
-            }
-            queue = queue.filter(item => item.surname !== surname);
-
-            if(queue?.length) {
-                insertIntoQueue(queue, 'ISP');
-            } else {
-                clearTable('ISP');
-            }
-
-            await ctx.reply('Пользователь удалён из таблицы');
+            deleteInTable('ISP');
         } else if (ctx.session.step === 'waiting_for_PZMAToDelete') {
-            let surname = ctx.message.text;
-
-            let queue = await getQueue('PZMA');
-            
-            const index = queue.findIndex(item => item.surname == surname);
-            if(index === -1) {
-                await ctx.reply('Такого пользователя нет в таблице');
-            }
-            queue = queue.filter(item => item.surname !== surname);
-
-            if(queue?.length) {
-                insertIntoQueue(queue, 'PZMA');
-            } else {
-                clearTable('PZMA');
-            }
-
-            await ctx.reply('Пользователь удалён из таблицы');
+            deleteInTable('PZMA');
         } else if (ctx.session.step === 'waiting_for_MCHAToDelete') {
-            let surname = ctx.message.text;
-
-            let queue = await getQueue('MCHA');
-            
-            const index = queue.findIndex(item => item.surname == surname);
-            if(index === -1) {
-                await ctx.reply('Такого пользователя нет в таблице');
-            }
-            queue = queue.filter(item => item.surname !== surname);
-
-            if(queue?.length) {
-                insertIntoQueue(queue, 'MCHA');
-            } else {
-                clearTable('MCHA');
-            }
-
-            await ctx.reply('Пользователь удалён из таблицы');
+            deleteInTable('MCHA');
         } else {
             await ctx.reply('❓ Я не понимаю это сообщение. Для начала нажмите /start или перейдите в меню /menu');
         }

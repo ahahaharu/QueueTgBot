@@ -15,6 +15,7 @@ const {
 const { generateQueueTable} = require('../tables/tables');
 const {returnConfigs} = require ('../utils/config');
 const { lessons } = require('../lessons/lessons');
+const { getTime } = require('../bot/getTime');
 
 const emojies = new Map();
 emojies.set("KProg", "💻");
@@ -148,6 +149,7 @@ function lessonsQueueCommand(bot) {
         const lessonType = ctx.match[1];
 
         let queue = await getQueue(lessonType);
+        const userInfo = await getInfoById(ctx.from.id.toString());
         queue = queue.filter(item => item.tg_id != ctx.from.id);
 
         if(queue?.length) {
@@ -156,6 +158,7 @@ function lessonsQueueCommand(bot) {
             clearTable(lessonType);
         }
 
+        console.log(getTime()+" "+userInfo.surname+" удалил себя из таблицы "+lessons.get(lessonType));
         await ctx.callbackQuery.message.editText(
             `*Вы удалены из таблицы*`,
             {

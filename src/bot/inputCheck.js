@@ -1,5 +1,4 @@
 function inputCheck(input, labsCount) {
-    console.log(input)
 
     const cleanedInput = input.trim().replace(/[\s,]+/g, ','); 
 
