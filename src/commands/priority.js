@@ -61,7 +61,7 @@ function priorityCommand(bot) {
         }
         await generateQueueTable(data, subject, true);
     
-        let photoMessage = await ctx.replyWithPhoto(new InputFile(`./src/tables/${subject}priorityTable.png`));
+        let photoMessage = await ctx.replyWithPhoto(new InputFile(`./src/tables/${subject}PriorityTable.png`));
         ctx.session.photoMessageId = photoMessage.message_id;
     
         await ctx.reply(
