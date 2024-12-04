@@ -3,4 +3,4 @@
 
 .env
 src/tables/*.png
-config.jsonconfig.json
+config.json
