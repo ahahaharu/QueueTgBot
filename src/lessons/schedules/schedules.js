@@ -7,11 +7,11 @@ const { BZCHSchedule, BZCHEnd } = require('./BZCHSchedule');
 
 
 function setSchedules(bot) {
-    sendScheduledMessages(bot, KProgSchedule, "kprog");
-    sendScheduledMessages(bot, ISPSchedule, "isp");
-    sendScheduledMessages(bot, PZMASchedule, "pzma");
-    sendScheduledMessages(bot, MCHASchedule, "mcha");
-    sendScheduledMessages(bot, BZCHSchedule, "bzch");
+    sendScheduledMessages(bot, KProgSchedule, "KProg");
+    sendScheduledMessages(bot, ISPSchedule, "ISP");
+    sendScheduledMessages(bot, PZMASchedule, "PZMA");
+    sendScheduledMessages(bot, MCHASchedule, "MCHA");
+    sendScheduledMessages(bot, BZCHSchedule, "BZCH");
     sendEndScheduledMessages(bot, KProgEnd, 'КПрог');
     sendEndScheduledMessages(bot, BZCHEnd, 'БЖЧ');
 }

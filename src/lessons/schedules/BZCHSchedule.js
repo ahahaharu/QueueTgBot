@@ -24,7 +24,7 @@ BZCHSchedule.push({
 });
 
 BZCHSchedule.push({
-    time: '2024-12-04 17:00',
+    time: '2024-12-04 18:00',
     type: 0
 });
 
@@ -39,7 +39,6 @@ BZCHSchedule.push({
 });
 BZCHEnd.push('2024-11-28 01:50');
 BZCHEnd.push('2024-11-30 11:55');
-BZCHEnd.push('2024-12-05 11:55');
 BZCHEnd.push('2024-12-05 11:55');
 BZCHEnd.push('2024-12-19 11:55');
 BZCHEnd.push('2024-12-28 11:55');
