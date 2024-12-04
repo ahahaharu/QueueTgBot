@@ -23,9 +23,13 @@ const getBZCHBrigadesUsers = async () => {
 const sendMessagesToUsers = async (bot, message, replyMarkup, isEnd, lesson) => {
     let users;
     if (isEnd) {
-        users = await getBZCHBrigadesUsers();
+        if (lesson == 'BZCH') {
+            users = await getBZCHBrigadesUsers();
+        } else if (lesson == 'KProg') {
+            users = await getQueue('KProg'); 
+        }
     } else {
-        users = await getQueue('KProg'); 
+       users = await getAllUsers();
     }
 
     console.log(`Всего пользователей в базе: ${users.length}`);
