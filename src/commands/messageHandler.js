@@ -238,9 +238,30 @@ function messageHandler(bot) {
             deleteInTable('PZMA');
         } else if (ctx.session.step === 'waiting_for_MCHAToDelete') {
             deleteInTable('MCHA');
+        } else if (ctx.session.step === 'waiting_for_brigadeToDelete') {
+            let brigade = message;
+
+            let queue = await getQueue('BZCH');
+            
+            const index = queue.findIndex(item => item.brigade_id == brigade);
+            if(index === -1) {
+                await ctx.reply('Такой бригады нет в таблице');
+                return;
+            }
+            queue = queue.filter(item => item.brigade_id != brigade);
+
+            if(queue?.length) {
+                insertIntoQueue(queue, 'BZCH');
+            } else {
+                clearTable('BZCH');
+            }
+
+            await ctx.reply('Бригада удалена из таблицы');
+
+            ctx.session.step = null;
         } else {
             await ctx.reply('❓ Я не понимаю это сообщение. Для начала нажмите /start или перейдите в меню /menu');
-        }
+        } 
     });
 }
 

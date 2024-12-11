@@ -83,7 +83,7 @@ function sendMessages(bot, dateTime, lesson, type) {
             } else if (lesson === 'PZMA') {
                 await clearTable('PZMA');
                 config.PZMALessonType = type;
-                config.PZMAgDate = `${day+1}\\.${month}`;
+                config.PZMADate = `${day+1}\\.${month}`;
             } else if (lesson === 'MCHA') {
                 await clearTable('MCHA');
                 config.MCHALessonType = type;
@@ -119,7 +119,7 @@ function sendEndMessage(bot, dateTime, lesson) {
             config.isKProgEnd = true;
             data = await getQueue("KProg");
             for (let user of data) {
-                setPriority(user.tg_id, "Зелёный");
+                await setPriority(user.tg_id, "Зелёный");
             }
             replyMarkup = createStatusKeyboard('KProg');
             await sendMessagesToUsers(bot, message, replyMarkup, true, 'KProg');

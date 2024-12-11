@@ -227,6 +227,14 @@ function adminMenuCommand(bot) {
         ctx.session.step = `waiting_for_${tableName}ToDelete`;
     })
 
+    bot.callbackQuery('deleteBrigade', async (ctx) => {
+        await ctx.answerCallbackQuery();
+        const tableName = ctx.match[1];
+
+        await ctx.callbackQuery.message.editText(`Напишите номер бригады, которую нужно удалить:`);
+        ctx.session.step = `waiting_for_brigadeToDelete`;
+    })
+
     bot.callbackQuery(/set(.*)Priority/, async (ctx) => {
         const priority = ctx.match[1]; // Получаем цвет из callback данных
 
