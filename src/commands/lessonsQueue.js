@@ -54,7 +54,10 @@ function lessonsQueueCommand(bot) {
         const queue = await getQueue(subject);
         let condition = false;
         let configs = await returnConfigs()
-        const lessonType = configs.get(subject).lessonType === 0 ? "" : configs.get(subject).lessonType === 1 ? "\\(1 подгруппа\\)" : "\\(2 подгруппа\\)";
+        let lessonType = configs.get(subject).lessonType === 0 ? "" : configs.get(subject).lessonType === 1 ? "\\(1 подгруппа\\)" : "\\(2 подгруппа\\)";
+        if (subject === 'BZCH') {
+            lessonType = "";
+        }
         status = `${configs.get(subject).date} ${lessonType}\n\n`;
 
         if (queue?.length) {
