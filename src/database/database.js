@@ -155,11 +155,8 @@ async function setPriority(id, priority) {
         const updateQuery = 'UPDATE Users SET priority = ? WHERE tg_id = ?';
         await pool.promise().query(updateQuery, [priority, id]);
         config = await readConfig();
-
-        if (config.isKProgEnd) {
-            const updateKProgQuery = 'UPDATE KProg SET priority = ? WHERE tg_id = ?';
-            await pool.promise().query(updateKProgQuery, [priority, id]);
-        }
+        const updateKProgQuery = 'UPDATE KProg SET priority = ? WHERE tg_id = ?';
+        await pool.promise().query(updateKProgQuery, [priority, id]);
         console.log(`Priority для пользователя с id ${id} обновлён на ${priority}`);
     } catch (err) {
         console.error('Ошибка при обновлении приоритета:', err);
