@@ -198,10 +198,8 @@ async function setPriorityBySurname(surname, priority) {
         await pool.promise().query(updateQuery, [priority, surname]);
         config = await readConfig();
 
-        if (config.isKProgEnd) {
-            const updateKProgQuery = 'UPDATE KProg SET priority = ? WHERE surname = ?';
-            await pool.promise().query(updateKProgQuery, [priority, surname]);
-        }
+        const updateKProgQuery = 'UPDATE KProg SET priority = ? WHERE surname = ?';
+        await pool.promise().query(updateKProgQuery, [priority, surname]);
 
         console.log(`Priority для пользователя с фамилией ${surname} обновлён на ${priority}`);
     } catch (err) {
