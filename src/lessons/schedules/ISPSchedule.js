@@ -87,10 +87,6 @@ ISPSchedule.push({
     time: '2024-12-16 17:00',
     type: 2
 });
-ISPSchedule.push({
-    time: '2024-12-23 17:00',
-    type: 1
-});
 
 
 module.exports = { ISPSchedule }

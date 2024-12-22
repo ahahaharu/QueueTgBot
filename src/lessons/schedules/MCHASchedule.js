@@ -88,14 +88,7 @@ MCHASchedule.push({
     time: '2024-12-16 17:00',
     type: 1
 });
-MCHASchedule.push({
-    time: '2024-12-23 17:00',
-    type: 2
-});
-MCHASchedule.push({
-    time: '2024-12-25 17:00',
-    type: 0
-});
+
 
 
 module.exports = { MCHASchedule }

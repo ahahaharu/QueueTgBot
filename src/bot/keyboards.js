@@ -82,6 +82,7 @@ const adminKeyboard = new InlineKeyboard()
     .text("Изменить таблицу", "queueToChange").row()
     .text("Отправить сообщение всем", "sendMsg").row()
     .text("Удалить бригаду из таблицы", 'deleteBrigade').row()
+    .text("Обновить таблицу КПрог", 'updateKProg').row()
 
 
 

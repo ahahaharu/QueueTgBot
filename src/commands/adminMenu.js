@@ -8,7 +8,8 @@ const {
 
 const { generateQueueTable, generateBZCHTable } = require('../tables/tables');
 
-const { setPriorityBySurname, getQueue, clearTable } = require('../database/database');
+const { setPriorityBySurname, getQueue, clearTable, insertIntoQueue } = require('../database/database');
+const { readConfig } = require('../utils/config');
 
 
 function adminMenuCommand(bot) {
@@ -255,6 +256,48 @@ function adminMenuCommand(bot) {
         }
         ctx.session.step = null; // Завершаем процесс
     });
+
+    bot.callbackQuery('updateKProg', async (ctx) => {
+        await ctx.answerCallbackQuery();
+        
+        const subjectQueue = getQueue('KProg');
+
+        const queue = [[[],[],[]], [[],[],[]]];
+        let priorityIndex;
+        let subgroupIndex, userSubgpoup;
+        const config = await readConfig();
+        const lessonType = config.KProgLessonType;
+
+        if (lessonType == 0) {
+            queue.pop();
+            queue.flat(1);
+        }
+
+        priorityIndex = new Map();
+        priorityIndex.set("Красный", 0);
+        priorityIndex.set("Жёлтый", 1);
+        priorityIndex.set("Зелёный", 2);
+        priorityIndex.set("Санкции", 2);
+
+        if (subjectQueue?.length) {
+            subjectQueue.forEach(item => {
+                if (lessonType == 0) {
+                    subgroupIndex = 0;
+                } else {
+                    subgroupIndex = item.subgroup - 1;
+                }
+                queue[subgroupIndex][priorityIndex.get(item.priority)].push(item);
+            });
+        }
+
+        queue.flat(2);
+        insertIntoQueue(queue, 'KProg');
+        await ctx.callbackQuery.message.editText(`Таблица КПрог обновлена`, {
+            reply_markup: getReturnKeyboard(false, 'KProg')
+        });
+       
+        console.log("Таблица КПрог обновлена");
+    })
 }
 
 module.exports = { adminMenuCommand }
