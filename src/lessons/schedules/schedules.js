@@ -1,21 +1,18 @@
-const { sendScheduledMessages, sendEndScheduledMessages } = require('./scheduleUtils');
-const { KProgSchedule, KProgEnd } = require('./KProgSchedule');
-const { ISPSchedule } = require('./ISPSchedule');
-const { PZMASchedule } = require('./PZMASchedule');
-const { MCHASchedule } = require('./MCHASchedule');
-const { BZCHSchedule, BZCHEnd } = require('./BZCHSchedule');
-
+const {
+  sendScheduledMessages,
+  sendEndScheduledMessages,
+} = require("./scheduleUtils");
+const { lessons } = require("../../../data/lessons");
 
 function setSchedules(bot) {
-    sendScheduledMessages(bot, KProgSchedule, "KProg");
-    sendScheduledMessages(bot, ISPSchedule, "ISP");
-    sendScheduledMessages(bot, PZMASchedule, "PZMA");
-    sendScheduledMessages(bot, MCHASchedule, "MCHA");
-    sendScheduledMessages(bot, BZCHSchedule, "BZCH");
-    sendEndScheduledMessages(bot, KProgEnd, 'КПрог');
-    sendEndScheduledMessages(bot, BZCHEnd, 'БЖЧ');
+  lessons.forEach((lesson) =>
+    sendScheduledMessages(bot, lesson.scheduleOfLessons, lesson.name)
+  );
+
+  // sendEndScheduledMessages(bot, KProgEnd, 'КПрог');
+  // sendEndScheduledMessages(bot, BZCHEnd, 'БЖЧ');
 }
 
 module.exports = {
-    setSchedules
+  setSchedules,
 };
