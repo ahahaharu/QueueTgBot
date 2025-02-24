@@ -3,5 +3,21 @@
   "ISPDate": "20\\.2",
   "MPPiULessonType": 0,
   "MPPiUDate": "20\\.2",
-  "isMPPiUEnd": false
+  "isMPPiUEnd": false,
+  "IGILessonType": 0,
+  "IGIDate": "24\\.2",
+  "isIGIEnd": false,
+  "OOPLessonType": 0,
+  "OOPDate": "24\\.2",
+  "isOOPEnd": false,
+  "МЧАLessonType": 0,
+  "МЧАDate": "24\\.2",
+  "AWSLessonType": 0,
+  "AWSDate": "24\\.2",
+  "isAWSEnd": false,
+  "MSiSvITLessonType": 0,
+  "MSiSvITDate": "24\\.2",
+  "isMSiSvITEnd": false,
+  "MCHALessonType": 0,
+  "MCHADate": "24\\.2"
 }

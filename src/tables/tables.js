@@ -20,14 +20,16 @@ function getPriorityColor(priority) {
   }
 }
 
-async function generateQueueTable(data, lesson, splitNum) {
+// TODO: сделать корректное отображение приоритетов
+
+async function generateQueueTable(data, lesson, splitNum, isPriority) {
   let isBrigadeType = lesson.isBrigadeType;
   let subjectName = lesson.title;
-  let tableText = lesson.isPriority
+  let tableText = isPriority
     ? `Таблица приоритетов на ${subjectName}`
     : `Очередь ${subjectName}`;
   let secondColumn;
-  if (lesson.isPriority) {
+  if (isPriority) {
     secondColumn = "Приоритет";
   } else {
     secondColumn = lesson.workType === "pz" ? "ПЗ" : "Лаба";
@@ -40,7 +42,7 @@ async function generateQueueTable(data, lesson, splitNum) {
     firstColumn: isBrigadeType ? "Члены Бригады" : "Фамилия",
     secondColumn: secondColumn,
   };
-  await createTableImage(data, options, lesson.isPriority, lesson, splitNum);
+  await createTableImage(data, options, isPriority, lesson, splitNum);
 }
 async function createTableImage(data, options, isPriority, lesson, splitNum) {
   const width = options.width;
@@ -94,7 +96,10 @@ async function createTableImage(data, options, isPriority, lesson, splitNum) {
     ctx.font = "14px Arial";
     let name;
     if (lesson.isBrigadeType) {
-      name = brigades[item.brigade_num];
+      const brigade = lesson.brigadeData.find(
+        (br) => br.brigadeNum === item.brigade_num
+      );
+      name = brigade.members.join(", ");
     } else {
       name = item.surname;
     }
@@ -115,7 +120,6 @@ async function createTableImage(data, options, isPriority, lesson, splitNum) {
     tableType = "PriorityTable";
   } else if (splitNum) {
     tableType = "Table" + splitNum;
-    console.log(tableType);
   } else {
     tableType = "Table";
   }

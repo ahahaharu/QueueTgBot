@@ -152,7 +152,7 @@ function messageHandler(bot) {
       let item;
       if (lesson.isBrigadeType) {
         item = {
-          brigade_num: getBrigadeNum(lesson.name, userInfo.tg_id),
+          brigade_num: await getBrigadeNum(lesson.name, userInfo.tg_id),
           labs: labs,
         };
       } else {
@@ -186,7 +186,7 @@ function messageHandler(bot) {
           " " +
           userInfo.surname +
           " записался в таблицу " +
-          options.subjectName +
+          lesson.subjectName +
           ". Лабы: " +
           labs
       );

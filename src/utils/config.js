@@ -24,7 +24,6 @@ async function returnConfigs() {
       canSplit: lesson.isPriority ? config[`is${lesson.name}End`] : null,
     });
   });
-  console.log(configs);
   return configs;
 }
 module.exports = { readConfig, writeConfig, returnConfigs };

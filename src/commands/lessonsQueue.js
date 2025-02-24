@@ -19,6 +19,7 @@ const { getBrigadeNum } = require("../bot/getBrigadeNum");
 
 function lessonsQueueCommand(bot) {
   async function showQueue(ctx, lesson) {
+    // TODO: сделать корректный вывод для бригад
     await ctx.answerCallbackQuery();
 
     if (ctx.session.photoMessageId) {
@@ -58,7 +59,6 @@ function lessonsQueueCommand(bot) {
     let configs = await returnConfigs();
     let lessonType;
     const type = configs.get(lesson.name).lessonType;
-    console.log(type);
     if (!lesson.hasSubgroupType) {
       lessonType = "";
     } else {
@@ -70,43 +70,67 @@ function lessonsQueueCommand(bot) {
           : "\\(2 подгруппа\\)";
     }
     status = `${configs.get(lesson.name).date} ${lessonType}\n\n`;
-    const queue = [];
-    const queueForSecondSG = [];
+    let queue = [];
     if (subjectQueue?.length) {
       let index;
       if (type === 0) {
         if (lesson.isPriority) {
           queue.push([], [], []);
 
-          const priority = getPriorityForLessonByID(
+          const priority = await getPriorityForLessonByID(
             userInfo.tg_id,
             lesson.name
           );
 
-          subjectQueue.forEach((sb) => {
-            const item = {
-              tg_id: sb.tg_id,
-              surname: sb.surname,
-              labs: sb.labs,
-              subgroup: sb.subgroup,
-              ...(lesson.isPriority && { priority: priority }),
-            };
+          for (const sb of subjectQueue) {
+            let item;
+            if (lesson.isBrigadeType) {
+              const brigadeNum = await getBrigadeNum(
+                lesson.name,
+                userInfo.tg_id
+              );
+              item = {
+                brigade_num: brigadeNum,
+                labs: sb.labs,
+                ...(lesson.isPriority && { priority: priority }),
+              };
+            } else {
+              item = {
+                tg_id: sb.tg_id,
+                surname: sb.surname,
+                labs: sb.labs,
+                subgroup: sb.subgroup,
+                ...(lesson.isPriority && { priority: priority }),
+              };
+            }
             queue[priorityIndex[priority]].push(item);
-          });
+          }
+          queue = queue.flat();
         } else {
-          subjectQueue.forEach((sb) => {
-            const item = {
-              tg_id: sb.tg_id,
-              surname: sb.surname,
-              labs: sb.labs,
-              subgroup: sb.subgroup,
-              ...(lesson.isPriority && { priority: priority }),
-            };
+          for (const sb of subjectQueue) {
+            let item;
+            if (lesson.isBrigadeType) {
+              const brigadeNum = await getBrigadeNum(
+                lesson.name,
+                userInfo.tg_id
+              );
+              item = {
+                brigade_num: brigadeNum,
+                labs: sb.labs,
+                ...(lesson.isPriority && { priority: priority }),
+              };
+            } else {
+              item = {
+                tg_id: sb.tg_id,
+                surname: sb.surname,
+                labs: sb.labs,
+                subgroup: sb.subgroup,
+                ...(lesson.isPriority && { priority: priority }),
+              };
+            }
             queue.push(item);
-          });
+          }
         }
-
-        queue.flat(1);
       } else {
         queue.push([], []);
         if (lesson.isPriority) {
@@ -117,6 +141,30 @@ function lessonsQueueCommand(bot) {
             userInfo.tg_id,
             lesson.name
           );
+
+          for (const sb of subjectQueue) {
+            let item;
+            if (lesson.isBrigadeType) {
+              const brigadeNum = await getBrigadeNum(
+                lesson.name,
+                userInfo.tg_id
+              );
+              item = {
+                brigade_num: brigadeNum,
+                labs: sb.labs,
+                ...(lesson.isPriority && { priority: priority }),
+              };
+            } else {
+              item = {
+                tg_id: sb.tg_id,
+                surname: sb.surname,
+                labs: sb.labs,
+                subgroup: sb.subgroup,
+                ...(lesson.isPriority && { priority: priority }),
+              };
+            }
+            queue.push(item);
+          }
 
           subjectQueue.forEach((sb) => {
             const item = {
@@ -129,6 +177,7 @@ function lessonsQueueCommand(bot) {
 
             queue[sb.subgroup - 1][priorityIndex[priority]].push(item);
           });
+          queue = queue.flat(2);
         } else {
           subjectQueue.forEach((sb) => {
             const item = {
@@ -141,6 +190,7 @@ function lessonsQueueCommand(bot) {
 
             queue[sb.subgroup - 1].push(item);
           });
+          queue = queue.flat();
         }
       }
       if (type === 3) {
@@ -149,7 +199,7 @@ function lessonsQueueCommand(bot) {
           index = queue[1].findIndex((item) => item.tg_id == ctx.from.id);
         }
       } else if (lesson.isBrigadeType) {
-        let brigade_num = getBrigadeNum(lesson.name, userInfo.tg_id);
+        let brigade_num = await getBrigadeNum(lesson.name, userInfo.tg_id);
         index = queue.findIndex((item) => item.brigade_num == brigade_num);
       } else {
         index = queue.findIndex((item) => item.tg_id == ctx.from.id);
@@ -170,6 +220,7 @@ function lessonsQueueCommand(bot) {
         }
 
         status += type + "Ваше место в очереди: " + (+index + 1);
+        condition = false;
       } else {
         // if (subject === "BZCH") {
         //   status += "Ваша бригада ещё не записалась в таблицу";
@@ -196,11 +247,9 @@ function lessonsQueueCommand(bot) {
 
       let photoMessage;
       if (type === 3) {
-        console.log("!!");
         await generateQueueTable(queue[0], lesson, 1);
         await generateQueueTable(queue[1], lesson, 2);
         const photosArray = [];
-        console.log(queue);
         if (queue[0].length != 0) {
           await generateQueueTable(queue[0], lesson, 1);
           photosArray.push({

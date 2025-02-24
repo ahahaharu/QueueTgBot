@@ -82,7 +82,7 @@ const returnToQueueKeyboard = new InlineKeyboard().text(
 function returnToLessonQueue(lesson) {
   const returnKeyboard = new InlineKeyboard().text(
     `↩️Вернуться к ${lessons.find((ls) => ls.name === lesson).title} `,
-    `${lesson.toLowerCase()}`
+    `${lesson}`
   );
   return returnKeyboard;
 }

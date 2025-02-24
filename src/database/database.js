@@ -2,7 +2,6 @@ const pool = require("./dbConnect"); // Подключение пула соед
 const { students } = require("../../data/students");
 const { readConfig, writeConfig } = require("../utils/config");
 const { lessons } = require("../../data/lessons");
-const { getBrigadeNum } = require("../bot/getBrigadeNum");
 
 async function createUsersTable() {
   try {
@@ -54,11 +53,11 @@ async function createQueueTable(lesson) {
 async function createPrioritiesTable() {
   let qr = `CREATE TABLE IF NOT EXISTS priorities (
           tg_id VARCHAR(20),
-          surname VARCHAR(255),
+          surname VARCHAR(255)
         `;
   lessons.forEach((lesson) => {
     if (lesson.isPriority) {
-      qr += `${lesson.name}_priority VARCHAR(20)`;
+      qr += `,\n ${lesson.name}_priority VARCHAR(20)`;
     }
   });
 
@@ -198,7 +197,8 @@ async function getPriorities() {
 }
 
 async function getPriorityForLessonByID(tg_id, lesson) {
-  const query = `SELECT ${lesson}_priority FROM priorities WHERE tg_id = ?`;
+  const columnName = lesson + "_priority";
+  const query = `SELECT ${columnName} FROM priorities WHERE tg_id = ?`;
   try {
     const [rows] = await pool.promise().query(query, [tg_id]);
     return rows.length > 0 ? rows[0][columnName] : null;
