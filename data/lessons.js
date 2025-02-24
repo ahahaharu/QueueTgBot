@@ -254,7 +254,7 @@ const lessons = [
     labsCount: 4,
     isPriority: true,
     isBrigadeType: true,
-    brigadeData: null,
+    brigadeData: [],
     canSplit: false,
     hasSubgroupType: false,
     workType: "pz",

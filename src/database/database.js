@@ -199,8 +199,10 @@ async function getPriorities() {
 async function getPriorityForLessonByID(tg_id, lesson) {
   const columnName = lesson + "_priority";
   const query = `SELECT ${columnName} FROM priorities WHERE tg_id = ?`;
+
   try {
     const [rows] = await pool.promise().query(query, [tg_id]);
+    console.log(rows);
     return rows.length > 0 ? rows[0][columnName] : null;
   } catch (err) {
     console.error(`Ошибка при получении приоритета для ${lesson}:`, err);

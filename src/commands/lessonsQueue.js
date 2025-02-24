@@ -103,6 +103,8 @@ function lessonsQueueCommand(bot) {
                 ...(lesson.isPriority && { priority: priority }),
               };
             }
+            console.log(item);
+            console.log(priority);
             queue[priorityIndex[priority]].push(item);
           }
           queue = queue.flat();
