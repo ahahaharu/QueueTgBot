@@ -2,7 +2,6 @@ const { createCanvas } = require("canvas");
 const fs = require("fs");
 
 const { readConfig, writeConfig } = require("../utils/config");
-const { brigades } = require("../students/brigades");
 const { lessons } = require("../../data/lessons");
 
 function getPriorityColor(priority) {
@@ -19,8 +18,6 @@ function getPriorityColor(priority) {
       return "#FFFFFF"; // Белый по умолчанию
   }
 }
-
-// TODO: сделать корректное отображение приоритетов
 
 async function generateQueueTable(data, lesson, splitNum, isPriority) {
   let isBrigadeType = lesson.isBrigadeType;
@@ -42,9 +39,23 @@ async function generateQueueTable(data, lesson, splitNum, isPriority) {
     firstColumn: isBrigadeType ? "Члены Бригады" : "Фамилия",
     secondColumn: secondColumn,
   };
-  await createTableImage(data, options, isPriority, lesson, splitNum);
+  let isEnd;
+  if (lesson.isPriority) {
+    const config = await readConfig();
+    if (config[`is${lesson.name}End`]) {
+      isEnd = true;
+    }
+  }
+  await createTableImage(data, options, isPriority, lesson, splitNum, isEnd);
 }
-async function createTableImage(data, options, isPriority, lesson, splitNum) {
+async function createTableImage(
+  data,
+  options,
+  isPriority,
+  lesson,
+  splitNum,
+  isEnd
+) {
   const width = options.width;
   const height = 50 + (data.length + 1) * 40 + 20;
   const canvas = createCanvas(width, height);
@@ -81,11 +92,11 @@ async function createTableImage(data, options, isPriority, lesson, splitNum) {
   data.forEach((item, i) => {
     startY += rowHeight;
 
-    // if (isPriority) {
-    //   const priorityColor = getPriorityColor(item.priority);
-    //   ctx.fillStyle = priorityColor;
-    //   ctx.fillRect(startX, startY, colWidthSurname + colWidthLabs, rowHeight);
-    // }
+    if (isPriority || isEnd) {
+      const priorityColor = getPriorityColor(item.priority);
+      ctx.fillStyle = priorityColor;
+      ctx.fillRect(startX, startY, colWidthSurname + colWidthLabs, rowHeight);
+    }
 
     ctx.strokeStyle = "#000000";
     ctx.lineWidth = 1;

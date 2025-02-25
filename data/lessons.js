@@ -1,5 +1,9 @@
 const {} = require("../src/bot/keyboards");
 const { MPPiU_brigades } = require("./MPPiU_brigades");
+const { MSiSvIT_brigades } = require("./MSiSvIT_brigades");
+
+// TODO: доделать расписание для всех пар
+// TODO: сделать структуру данных бригад для мсисвит
 
 const lessons = [
   {
@@ -254,7 +258,7 @@ const lessons = [
     labsCount: 4,
     isPriority: true,
     isBrigadeType: true,
-    brigadeData: [],
+    brigadeData: MSiSvIT_brigades,
     canSplit: false,
     hasSubgroupType: false,
     workType: "pz",

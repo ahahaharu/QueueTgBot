@@ -21,7 +21,7 @@ async function returnConfigs() {
       lessonType: config[`${lesson.name}LessonType`],
       date: config[`${lesson.name}Date`],
       canSplit: lesson.canSplit ? config[`is${lesson.name}CanSplit`] : null,
-      canSplit: lesson.isPriority ? config[`is${lesson.name}End`] : null,
+      isEnd: lesson.isPriority ? config[`is${lesson.name}End`] : null,
     });
   });
   return configs;

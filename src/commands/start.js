@@ -51,19 +51,18 @@ function startCommand(bot) {
       );
     }
 
-    lessons
-      .filter((ls) => ls.isBrigadeType === true)
-      .forEach((ls) => {
-        for (let brigade of ls.brigadeData) {
-          if (brigade.members.includes(data.surname)) {
-            insertIntoBrigade(
-              ls.name,
-              ctx.msg.from.id.toString(),
-              brigade.brigadeNum
-            );
-          }
+    ls = lessons.filter((ls) => ls.isBrigadeType === true);
+    for (let l of ls) {
+      for (let brigade of l.brigadeData) {
+        if (brigade.members.includes(data.surname)) {
+          await insertIntoBrigade(
+            l.name,
+            ctx.msg.from.id.toString(),
+            brigade.brigadeNum
+          );
         }
-      });
+      }
+    }
     await insertIntoPriority(ctx.msg.from.id.toString(), data.surname);
 
     await ctx.reply(`✅ Отлично! Вы зарегистрированы!`);

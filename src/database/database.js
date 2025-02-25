@@ -50,16 +50,36 @@ async function createQueueTable(lesson) {
   }
 }
 
+async function createPriorityForBrigades(lesson) {
+  let qr = `CREATE TABLE IF NOT EXISTS ${lesson.name}_priorities (
+    brigade_num INT,
+    members VARCHAR(255),
+    priority VARCHAR(20));
+  `;
+  try {
+    await pool.promise().query(qr);
+    console.log(
+      `Таблица ${lesson.name}_priorities успешно создана или уже существует.`
+    );
+  } catch (err) {
+    console.error(`Ошибка при создании таблицы priorities:`, err);
+  }
+}
+
 async function createPrioritiesTable() {
   let qr = `CREATE TABLE IF NOT EXISTS priorities (
-          tg_id VARCHAR(20),
-          surname VARCHAR(255)
-        `;
-  lessons.forEach((lesson) => {
+    tg_id VARCHAR(20),
+    surname VARCHAR(255)
+  `;
+  for (let lesson of lessons) {
     if (lesson.isPriority) {
+      if (lesson.isBrigadeType) {
+        await createPriorityForBrigades(lesson);
+        continue;
+      }
       qr += `,\n ${lesson.name}_priority VARCHAR(20)`;
     }
-  });
+  }
 
   qr += ");";
   try {
@@ -67,6 +87,17 @@ async function createPrioritiesTable() {
     console.log(`Таблица priorities успешно создана или уже существует.`);
   } catch (err) {
     console.error(`Ошибка при создании таблицы priorities:`, err);
+  }
+}
+
+async function getBrigades(subject) {
+  const query = `SELECT * FROM ${subject}_brigades`;
+  try {
+    const [result] = await pool.promise().query(query);
+    return result.length > 0 ? result : null;
+  } catch (err) {
+    console.error("Ошибка при получении списка пользователей:", err);
+    throw err;
   }
 }
 
@@ -86,6 +117,42 @@ async function createBrigadeTables(lesson) {
   }
 }
 
+async function insertIntoBrigadePriority(tg_id, lesson) {
+  const brigades = await getBrigades(lesson.name);
+  const brigade_num = brigades.find((line) => line.tg_id == tg_id).brigade_num;
+  const brigadeTable = await getQueue(lesson.name + "_priorities");
+  let index;
+  if (brigadeTable) {
+    index = brigadeTable.findIndex((br) => br.brigade_num === brigade_num);
+  } else {
+    index = -1;
+  }
+
+  if (index != -1) {
+    console.log(`Бригада c brigade_num = ${brigade_num} уже существует`);
+    return;
+  } else {
+    const brigade = lesson.brigadeData;
+    console.log(brigade.find((br) => br.brigadeNum === brigade_num));
+
+    const data = [
+      brigade_num,
+      brigade.find((br) => br.brigadeNum === brigade_num).members.join(", "),
+      "Зелёный",
+    ];
+    const qry = `INSERT INTO ${lesson.name}_priorities (brigade_num, members, priority) VALUES (?, ?, ?)`;
+    try {
+      const [result] = await pool.promise().query(qry, data);
+      console.log(
+        "Пользователь добавлен в таблицу приоритетов для бригады:",
+        result
+      );
+    } catch (err) {
+      console.error("Ошибка при вставке в базу данных:", err);
+    }
+  }
+}
+
 async function insertIntoPriority(tg_id, surname) {
   const data = [tg_id, surname];
   const qry = `INSERT INTO priorities (tg_id, surname) VALUES (?, ?)`;
@@ -100,9 +167,15 @@ async function insertIntoPriority(tg_id, surname) {
   for (const ls of lessons) {
     try {
       if (ls.isPriority) {
-        const prQry = `UPDATE priorities SET ${ls.name}_priority = ? WHERE tg_id = ?`;
-        const [result] = await pool.promise().query(prQry, ["Зелёный", tg_id]);
-        console.log("Приоритеты поставлены:", result);
+        if (ls.isBrigadeType) {
+          await insertIntoBrigadePriority(tg_id, ls);
+        } else {
+          const prQry = `UPDATE priorities SET ${ls.name}_priority = ? WHERE tg_id = ?`;
+          const [result] = await pool
+            .promise()
+            .query(prQry, ["Зелёный", tg_id]);
+          console.log("Приоритеты поставлены:", result);
+        }
       }
     } catch (err) {
       console.error("Ошибка при обновлении приоритета:", err);
@@ -196,28 +269,28 @@ async function getPriorities() {
   }
 }
 
-async function getPriorityForLessonByID(tg_id, lesson) {
-  const columnName = lesson + "_priority";
-  const query = `SELECT ${columnName} FROM priorities WHERE tg_id = ?`;
-
-  try {
-    const [rows] = await pool.promise().query(query, [tg_id]);
-    console.log(rows);
-    return rows.length > 0 ? rows[0][columnName] : null;
-  } catch (err) {
-    console.error(`Ошибка при получении приоритета для ${lesson}:`, err);
-    throw err;
-  }
-}
-
-async function getBrigades(subject) {
-  const query = `SELECT * FROM ${subject}_brigades`;
-  try {
-    const [result] = await pool.promise().query(query);
-    return result.length > 0 ? result : null;
-  } catch (err) {
-    console.error("Ошибка при получении списка пользователей:", err);
-    throw err;
+async function getPriorityForLessonByID(id, lesson) {
+  let query;
+  if (lesson.isBrigadeType) {
+    const brigades = await getBrigades(lesson.name);
+    query = `SELECT priority FROM ${lesson.name}_priorities WHERE brigade_num = ?`;
+    try {
+      const [rows] = await pool.promise().query(query, [id]);
+      return rows.length > 0 ? rows[0]["priority"] : null;
+    } catch (err) {
+      console.error(`Ошибка при получении приоритета для ${lesson.name}:`, err);
+      throw err;
+    }
+  } else {
+    const columnName = lesson.name + "_priority";
+    query = `SELECT ${columnName} FROM priorities WHERE tg_id = ?`;
+    try {
+      const [rows] = await pool.promise().query(query, [id]);
+      return rows.length > 0 ? rows[0][columnName] : null;
+    } catch (err) {
+      console.error(`Ошибка при получении приоритета для ${lesson.name}:`, err);
+      throw err;
+    }
   }
 }
 
@@ -394,15 +467,15 @@ async function addPriorityColumn(lesson) {
 //   }
 // }
 
-// // Очистка таблицы
-// async function clearTable(lesson) {
-//   try {
-//     await pool.promise().query(`TRUNCATE TABLE ${lesson}`);
-//     console.log(`Таблица ${lesson} очищена`);
-//   } catch (err) {
-//     console.error(`Ошибка при очистке таблицы ${lesson}:`, err);
-//   }
-// }
+// Очистка таблицы
+async function clearTable(lesson) {
+  try {
+    await pool.promise().query(`TRUNCATE TABLE ${lesson}`);
+    console.log(`Таблица ${lesson} очищена`);
+  } catch (err) {
+    console.error(`Ошибка при очистке таблицы ${lesson}:`, err);
+  }
+}
 
 module.exports = {
   createUsersTable,
@@ -420,7 +493,7 @@ module.exports = {
   isInUsers,
   getBrigades,
   //   setPriorityBySurname,
-  //   clearTable,
+  clearTable,
   //   isInBZCH,
   //   getBZCHPriorityTable,
   //   setBZCHPriority,

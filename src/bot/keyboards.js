@@ -13,6 +13,7 @@ lessons.forEach((lesson) => {
 });
 queueKeyboard.text("↩️Вернуться в меню", "returnToMenu").row();
 
+// TODO: поправить клавиатуру
 function getReturnKeyboard(condition, lessonType, isQueue) {
   const kprogPriorityKeyBoard = new InlineKeyboard();
 

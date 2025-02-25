@@ -41,7 +41,6 @@ function messageHandler(bot) {
     console.log(getTime() + " " + userInfo.surname + ": " + message);
 
     async function signToTable(lesson) {
-      // TODO: доделать корректную запись для бригад
       let lab = message;
       let labs = inputCheck(lab, lesson.labsCount);
       if (!(ctx.message.text && lab.length < 20 && labs)) {
