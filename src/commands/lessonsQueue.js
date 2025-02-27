@@ -9,6 +9,7 @@ const {
   clearTable,
   getBrigades,
   getPriorityForLessonByID,
+  deleteUserFromTable,
 } = require("../database/database");
 
 const { generateQueueTable } = require("../tables/tables");
@@ -16,8 +17,6 @@ const { returnConfigs } = require("../utils/config");
 const { lessons } = require("../../data/lessons");
 const { getTime } = require("../bot/getTime");
 const { getBrigadeNum } = require("../bot/getBrigadeNum");
-
-// TODO: сделать отображение кнопки приоритетов
 
 function lessonsQueueCommand(bot) {
   async function showQueue(ctx, lesson) {
@@ -106,14 +105,12 @@ function lessonsQueueCommand(bot) {
             let item;
             let priority;
             if (lesson.isBrigadeType) {
-              priority = await getPriorityForLessonByID(sb.brigade_num, lesson);
               item = {
                 brigade_num: sb.brigade_num,
                 labs: sb.labs,
                 ...(lesson.isPriority && { priority: priority }),
               };
             } else {
-              priority = await getPriorityForLessonByID(sb.tg_id, lesson);
               item = {
                 tg_id: sb.tg_id,
                 surname: sb.surname,
@@ -269,8 +266,6 @@ function lessonsQueueCommand(bot) {
     });
   });
 
-  // TODO: поправить удаление с таблицы для бригад
-
   bot.callbackQuery(/deleteFrom:(.+)/, async (ctx) => {
     await ctx.answerCallbackQuery();
 
@@ -302,16 +297,20 @@ function lessonsQueueCommand(bot) {
     await ctx.answerCallbackQuery();
 
     const lessonType = ctx.match[1];
-
-    let queue = await getQueue(lessonType);
     const userInfo = await getInfoById(ctx.from.id.toString());
-    queue = queue.filter((item) => item.tg_id != ctx.from.id);
 
-    if (queue?.length) {
-      insertIntoQueue(queue, lessonType);
-    } else {
-      clearTable(lessonType);
-    }
+    const lesson = lessons.find((ls) => ls.name === lessonType);
+    await deleteUserFromTable(lesson, userInfo.tg_id);
+
+    // let queue = await getQueue(lessonType);
+
+    // queue = queue.filter((item) => item.tg_id != ctx.from.id);
+
+    // if (queue?.length) {
+    //   deleteUserFromTable(, lessonType);
+    // } else {
+    //   clearTable(lessonType);
+    // }
 
     console.log(
       getTime() + " " + userInfo.surname + " удалил себя из таблицы " + ""

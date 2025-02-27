@@ -185,7 +185,7 @@ function messageHandler(bot) {
           " " +
           userInfo.surname +
           " записался в таблицу " +
-          lesson.subjectName +
+          lesson.name +
           ". Лабы: " +
           labs
       );

@@ -42,10 +42,10 @@ const sendMessagesToUsers = async (
 ) => {
   let users;
   if (isEnd) {
-    if (lesson == "BZCH") {
-      users = await getBZCHBrigadesUsers();
-    } else if (lesson == "KProg") {
-      users = await getQueue("KProg");
+    if (lesson.isBrigadeType) {
+      // TODO: получить пользователей из бригад, которые записаны в таблицу
+    } else {
+      // TODO: получить пользователей из таблицы
     }
   } else {
     users = await getAllUsers();
@@ -56,12 +56,16 @@ const sendMessagesToUsers = async (
   const sendPromises = users.map(async (user) => {
     const userId = user.tg_id;
     try {
-      console.log(`Попытка отправки сообщения пользователю ${userId}`);
+      console.log(
+        `Попытка отправки сообщения пользователю ${user.surname} с id ${userId}`
+      );
       await bot.api.sendMessage(userId, message, {
         parse_mode: "MarkdownV2",
         reply_markup: replyMarkup,
       });
-      console.log(`Сообщение успешно отправлено пользователю ${userId}`);
+      console.log(
+        `Сообщение успешно отправлено пользователю ${user.surname} с id ${userId}`
+      );
     } catch (error) {
       console.error(
         `Не удалось отправить сообщение пользователю ${userId}:`,
@@ -74,53 +78,48 @@ const sendMessagesToUsers = async (
   console.log("Сообщения отправлены всем пользователям.");
 };
 
-function sendMessages(bot, dateTime, lesson, type) {
+function sendMessages(bot, dateTime, lessonName, type) {
   const [date, time] = dateTime.split(" ");
   const [year, month, day] = date.split("-").map(Number);
   const [hour, minute] = time.split(":").map(Number);
 
+  let lesson = lessons.find((ls) => ls.name === lessonName);
+
   const jobDate = new Date(year, month - 1, day, hour, minute);
+  const tomorrowDate = new Date(jobDate);
+  tomorrowDate.setDate(jobDate.getDate() + 1);
 
   const lessonType =
-    type === 0 ? "" : type === 1 ? "\\(1 подгруппа\\)" : "\\(2 подгруппа\\)";
-  const message = `*Запись на ${lessons.get(lesson)} ${
-    day + 1
-  }\\.${month} ${lessonType}*\n\n_Нажмите кнопку ниже, чтобы записаться_`;
-  const replyMarkup = createSignButton(lesson);
+    type === 0 || type === 3
+      ? ""
+      : type === 1
+      ? "\\(1 подгруппа\\)"
+      : "\\(2 подгруппа\\)";
+  const message = `*Запись на ${lesson.title} ${tomorrowDate.getDate()}\\.${
+    tomorrowDate.getMonth() + 1
+  } ${lessonType}*\n\n_Нажмите кнопку ниже, чтобы записаться_`;
+  const replyMarkup = createSignButton(lesson.name);
 
   schedule.scheduleJob(jobDate, async () => {
     await configMutex.runExclusive(async () => {
       const config = await readConfig();
 
-      if (lesson === "KProg") {
-        await clearTable("KProg");
-        config.KProgLessonType = type;
-        config.KProgDate = `${day + 1}\\.${month}`;
-        config.isKProgEnd = false;
-      } else if (lesson === "ISP") {
-        await clearTable("ISP");
-        config.ISPLessonType = type;
-        config.ISPDate = `${day + 1}\\.${month}`;
-      } else if (lesson === "PZMA") {
-        await clearTable("PZMA");
-        config.PZMALessonType = type;
-        config.PZMADate = `${day + 1}\\.${month}`;
-      } else if (lesson === "MCHA") {
-        await clearTable("MCHA");
-        config.MCHALessonType = type;
-        config.MCHADate = `${day + 1}\\.${month}`;
-      } else if (lesson === "BZCH") {
-        await clearTable("BZCH");
-        config.BZCHDate = `${day + 1}\\.${month}`;
-        config.isBZCHEnd = false;
+      await clearTable(lesson.name);
+      config[lesson.name + "LessonType"] = type;
+      config[lesson.name + "Date"] = `${tomorrowDate.getDate()}\\.${
+        tomorrowDate.getMonth() + 1
+      }`;
+      if (lesson.isPriority) {
+        config["is" + lesson.name + "End"] = false;
       }
       await writeConfig(config);
 
-      await sendMessagesToUsers(bot, message, replyMarkup, false);
+      await sendMessagesToUsers(bot, message, replyMarkup, false, lesson);
     });
   });
 }
 
+// TODO: сделать
 // Функция для отправки сообщения об окончании занятия по КПрог
 function sendEndMessage(bot, dateTime, lesson) {
   const [date, time] = dateTime.split(" ");

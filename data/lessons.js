@@ -3,7 +3,6 @@ const { MPPiU_brigades } = require("./MPPiU_brigades");
 const { MSiSvIT_brigades } = require("./MSiSvIT_brigades");
 
 // TODO: доделать расписание для всех пар
-// TODO: сделать структуру данных бригад для мсисвит
 
 const lessons = [
   {
@@ -32,6 +31,26 @@ const lessons = [
     hasSubgroupType: true,
     workType: "lab",
     scheduleOfLessons: [
+      {
+        time: "2025-02-28 00:59",
+        type: 0,
+        isSplit: true,
+      },
+      {
+        time: "2025-02-28 01:00",
+        type: 1,
+        isSplit: true,
+      },
+      {
+        time: "2025-02-28 01:01",
+        type: 2,
+        isSplit: true,
+      },
+      {
+        time: "2025-02-28 01:03",
+        type: 0,
+        isSplit: true,
+      },
       {
         time: "2025-02-19 17:00",
         type: 1,

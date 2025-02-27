@@ -258,6 +258,17 @@ async function getAllUsers() {
   }
 }
 
+async function deleteUserFromTable(lesson, tg_id) {
+  const query = `DELETE FROM ${lesson.name} WHERE tg_id = ?`;
+  try {
+    const [result] = await pool.promise().query(query, [tg_id]);
+    console.log(`Пользователь с id ${tg_id} удалён из таблицы ${lesson.name}`);
+  } catch (error) {
+    console.error("Ошибка при удалении пользователя", error);
+    throw error;
+  }
+}
+
 async function getPriorities() {
   const query = "SELECT * FROM priorities";
   try {
@@ -369,7 +380,7 @@ async function insertIntoQueue(options, lesson) {
   try {
     const [result] = await pool.promise().query(qry, data);
     console.log(
-      `Пользователь ${options.surname} добавлен в таблицу ${lesson}. Лабы: ${options.labs}`
+      `Пользователь ${options.surname} добавлен в таблицу ${lesson.name}.`
     );
   } catch (err) {
     console.error("Ошибка при вставке в базу данных:", err);
@@ -503,4 +514,5 @@ module.exports = {
   insertIntoBrigade,
   getPriorities,
   getPriorityForLessonByID,
+  deleteUserFromTable,
 };

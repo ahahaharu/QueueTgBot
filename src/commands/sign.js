@@ -99,7 +99,6 @@ function signCommand(bot) {
     );
     console.log(getTime() + " " + userInfo.surname + " записывается в таблицу");
     ctx.session.step = `waiting_for_${lessonType}Lab`;
-    console.log(ctx.session.step);
   });
 }
 
