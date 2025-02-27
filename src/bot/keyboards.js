@@ -15,29 +15,25 @@ queueKeyboard.text("↩️Вернуться в меню", "returnToMenu").row()
 
 // TODO: поправить клавиатуру
 function getReturnKeyboard(condition, lessonType, isQueue) {
-  const kprogPriorityKeyBoard = new InlineKeyboard();
+  const keyboard = new InlineKeyboard();
+
+  const lesson = lessons.find((ls) => ls.name === lessonType);
 
   if (condition) {
-    kprogPriorityKeyBoard
-      .text("✍️Записаться", `signLesson:${lessonType}`)
-      .row();
+    keyboard.text("✍️Записаться", `signLesson:${lessonType}`).row();
   } else {
-    if (isQueue && lessonType != "BZCH") {
-      kprogPriorityKeyBoard
-        .text("❌Я не приду на пару", `deleteFrom:${lessonType}`)
-        .row();
+    if (isQueue && !lesson.isBrigadeType) {
+      keyboard.text("❌Я не приду на пару", `deleteFrom:${lessonType}`).row();
     }
   }
 
-  if (lessonType === "KProg" || lessonType === "BZCH") {
-    kprogPriorityKeyBoard
-      .text("📝Приоритеты", `priorityInfoFor:${lessonType}`)
-      .row();
+  if (lesson.isPriority) {
+    keyboard.text("📝Приоритеты", `priorityInfoFor:${lessonType}`).row();
   }
 
-  kprogPriorityKeyBoard.text("↩️Вернуться к очередям", "queue").row();
+  keyboard.text("↩️Вернуться к очередям", "queue").row();
 
-  return kprogPriorityKeyBoard;
+  return keyboard;
 }
 
 function confirmDelete(lessonType) {
