@@ -18,6 +18,7 @@ const {
   getBZCHStatus,
   setPriorityStatus,
   getPriorityForLessonByID,
+  setPriorityByBrigadeNum,
 } = require("../database/database");
 
 const {
@@ -26,6 +27,7 @@ const {
   generateQueueTable,
 } = require("../tables/tables");
 const { lessons } = require("../../data/lessons");
+const { getBrigadeNum } = require("../bot/getBrigadeNum");
 
 function priorityCommand(bot) {
   bot.callbackQuery(/priorityInfoFor:(.+)/, async (ctx) => {
@@ -123,26 +125,37 @@ function priorityCommand(bot) {
 
     const action = ctx.match[1];
     const subject = ctx.match[2];
+    const lesson = lessons.find((ls) => ls.name === subject);
 
     let priority;
     let message;
 
     const userInfo = await getInfoById(ctx.from.id.toString());
+    let brigade_num;
 
-    if (subject == "BZCH") {
-      if (await getBZCHStatus(userInfo.brigade_id)) {
+    if (lesson.isBrigadeType) {
+      const queue = await getQueue(subject);
+      brigade_num = await getBrigadeNum(lesson.name, userInfo.tg_id);
+      const line = queue.find((l) => l.brigade_num == brigade_num);
+      if (line.isPriorityGiven) {
         await ctx.callbackQuery.message.editText(
           "Один из членов вашей бригады уже поставил приоритет",
           {
             parse_mode: "MarkdownV2",
-            reply_markup: getReturnKeyboard(false, "bzch"),
+            reply_markup: getReturnKeyboard(false, lesson.name),
           }
         );
         return;
-      } else {
-        await setPriorityStatus(userInfo.brigade_id, true);
       }
+      await setPriorityStatus(brigade_num, true, lesson.name);
     }
+
+    // if (subject == "BZCH") {
+    //   if (await getBZCHStatus(userInfo.brigade_id)) {
+    //   } else {
+    //     await setPriorityStatus(userInfo.brigade_id, true);
+    //   }
+    // }
 
     if (action === "passed") {
       priority = "Зелёный";
@@ -155,11 +168,16 @@ function priorityCommand(bot) {
       message = `*☹️ Очень жаль, что вы не успели\\.*\nНа следующей паре вы сможете сдать лабораторную работу одним\\(\\-ой\\) из первых\n\n_🟥 Вам выдан красный приоритет_`;
     }
 
-    if (subject == "KProg") {
-      await setPriority(userInfo.tg_id, priority);
+    if (lesson.isBrigadeType) {
+      await setPriorityByBrigadeNum(brigade_num, priority, lesson.name);
     } else {
-      await setBZCHPriority(userInfo.brigade_id, priority);
+      await setPriority(userInfo.tg_id, priority, lesson.name);
     }
+    // if (subject == "KProg") {
+    //   await setPriority(userInfo.tg_id, priority);
+    // } else {
+    //   await setBZCHPriority(userInfo.brigade_id, priority);
+    // }
 
     await ctx.callbackQuery.message.editText(message, {
       parse_mode: "MarkdownV2",

@@ -5,6 +5,7 @@ const {
   clearTable,
   setBZCHPriority,
   setPriorityStatus,
+  setPriorityByBrigadeNum,
 } = require("../database/database");
 const schedule = require("node-schedule");
 const {
@@ -17,20 +18,6 @@ const { readConfig, writeConfig } = require("../utils/config");
 const Mutex = require("async-mutex").Mutex;
 const configMutex = new Mutex();
 
-const getBZCHBrigadesUsers = async () => {
-  const data = await getQueue("BZCH");
-  const users = await getAllUsers();
-  const brigadeUsers = new Array();
-  for (let brigade of data) {
-    for (let user of users) {
-      if (user.brigade_id == brigade.brigade_id) {
-        brigadeUsers.push(user);
-      }
-    }
-  }
-  return brigadeUsers;
-};
-
 const sendMessagesToUsers = async (
   bot,
   message,
@@ -41,9 +28,19 @@ const sendMessagesToUsers = async (
   let users;
   if (isEnd) {
     if (lesson.isBrigadeType) {
-      // TODO: получить пользователей из бригад, которые записаны в таблицу
+      const queue = await getQueue(lesson.name);
+      const lesson_brigades = await getQueue(`${lesson.name}_brigades`);
+      const usersInBrigades = [];
+      for (let brigade of queue) {
+        usersInBrigades.push(
+          lesson_brigades.filter(
+            (line) => line.brigade_num === brigade.brigade_num
+          )
+        );
+      }
+      users = usersInBrigades.flat();
     } else {
-      // TODO: получить пользователей из таблицы
+      users = await getQueue(lesson.name);
     }
   } else {
     users = await getAllUsers();
@@ -117,42 +114,64 @@ function sendMessages(bot, dateTime, lessonName, type) {
   });
 }
 
-// TODO: сделать
 // Функция для отправки сообщения об окончании занятия по КПрог
-function sendEndMessage(bot, dateTime, lesson) {
+function sendEndMessage(bot, dateTime, lessonName) {
   const [date, time] = dateTime.split(" ");
   const [year, month, day] = date.split("-").map(Number);
   const [hour, minute] = time.split(":").map(Number);
 
   const jobDate = new Date(year, month - 1, day, hour, minute);
+  const lesson = lessons.find((ls) => ls.name === lessonName);
 
-  const message = `*Пара по ${lesson} закончилась*\n\nСдали ли вы лабораторную работу?`;
+  const message = `*Пара по ${lesson.title} закончилась*\n\nСдали ли вы лабораторную работу?`;
   let replyMarkup;
 
   schedule.scheduleJob(jobDate, async () => {
     const config = await readConfig();
-    let data;
-    if (lesson === "КПрог") {
-      config.isKProgEnd = true;
-      data = await getQueue("KProg");
-      for (let user of data) {
-        await setPriority(user.tg_id, "Зелёный");
-      }
-      replyMarkup = createStatusKeyboard("KProg");
-      await sendMessagesToUsers(bot, message, replyMarkup, true, "KProg");
-    } else {
-      config.isBZCHEnd = true;
-      data = await getQueue("BZCH");
+    let data = await getQueue(lessonName);
+    if (lesson.isBrigadeType) {
+      const lesson_brigades = await getQueue(`${lessonName}_brigades`);
+      const usersInBrigades = [];
       for (let brigade of data) {
-        await setBZCHPriority(brigade.brigade_id, "Зелёный");
-        await setPriorityStatus(brigade.brigade_id, false);
+        usersInBrigades.push(
+          lesson_brigades.filter(
+            (user) => user.brigade_num === brigade.brigade_num
+          )
+        );
       }
-      replyMarkup = createStatusKeyboard("BZCH");
-
-      await sendMessagesToUsers(bot, message, replyMarkup, true, "BZCH");
+      data = usersInBrigades.flat();
+    }
+    config[`is${lessonName}End`] = true;
+    for (let user of data) {
+      if (lesson.isBrigadeType) {
+        await setPriorityByBrigadeNum(user.brigade_num, "Зелёный", lessonName);
+      } else {
+        await setPriority(user.tg_id, "Зелёный", lessonName);
+      }
     }
 
     await writeConfig(config);
+
+    replyMarkup = createStatusKeyboard(lessonName);
+    await sendMessagesToUsers(bot, message, replyMarkup, true, lesson);
+
+    // if (lesson === "КПрог") {
+    //   config.isKProgEnd = true;
+    //   data = await getQueue("KProg");
+    //   for (let user of data) {
+    //     await setPriority(user.tg_id, "Зелёный");
+    //   }
+
+    //   config.isBZCHEnd = true;
+    //   data = await getQueue("BZCH");
+    //   for (let brigade of data) {
+    //     await setBZCHPriority(brigade.brigade_id, "Зелёный");
+    //     await setPriorityStatus(brigade.brigade_id, false);
+    //   }
+    //   replyMarkup = createStatusKeyboard("BZCH");
+
+    //   await sendMessagesToUsers(bot, message, replyMarkup, true, "BZCH");
+    // }
   });
 }
 

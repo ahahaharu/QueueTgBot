@@ -171,7 +171,7 @@ function adminMenuCommand(bot) {
         "Не удалось найти фамилию или номер бригады. Попробуйте ещё раз."
       );
     }
-    ctx.session.step = null; // Завершаем процесс
+    ctx.session.step = null;
   });
 }
 

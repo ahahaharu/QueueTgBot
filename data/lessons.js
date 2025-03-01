@@ -17,7 +17,7 @@ const lessons = [
     hasSubgroupType: true,
     workType: "lab",
     scheduleOfLessons: [],
-    scheduleOfEnd: [],
+    scheduleOfEnd: ["2025-03-01 21:32"],
   },
   {
     name: "ISP",
@@ -268,7 +268,7 @@ const lessons = [
     hasSubgroupType: false,
     workType: "pz",
     scheduleOfLessons: [],
-    scheduleOfEnd: [],
+    scheduleOfEnd: ["2025-03-01 21:48"],
   },
   {
     name: "MSiSvIT",

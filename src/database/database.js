@@ -383,7 +383,7 @@ async function insertIntoQueue(options, lesson) {
   let data;
   let qry;
   if (lesson.isBrigadeType) {
-    data = [options.brigade_num, options.labs, true];
+    data = [options.brigade_num, options.labs, false];
     qry = `INSERT INTO ${lesson.name} (brigade_num, labs, isPriorityGiven) VALUES (?, ?, ?)`;
   } else {
     data = [options.tg_id, options.surname, options.labs, options.subgroup];
@@ -428,18 +428,17 @@ async function addPriorityColumn(lesson) {
 }
 
 // // Установка приоритета пользователя по tg_id
-// async function setPriority(id, priority) {
-//   try {
-//     const updateQuery = "UPDATE Users SET priority = ? WHERE tg_id = ?";
-//     await pool.promise().query(updateQuery, [priority, id]);
-//     config = await readConfig();
-//     const updateKProgQuery = "UPDATE KProg SET priority = ? WHERE tg_id = ?";
-//     await pool.promise().query(updateKProgQuery, [priority, id]);
-//     console.log(`Priority для пользователя с id ${id} обновлён на ${priority}`);
-//   } catch (err) {
-//     console.error("Ошибка при обновлении приоритета:", err);
-//   }
-// }
+async function setPriority(id, priority, lessonName) {
+  try {
+    const updateQuery = `UPDATE priorities SET ${lessonName}_priority = ? WHERE tg_id = ?`;
+    await pool.promise().query(updateQuery, [priority, id]);
+    console.log(
+      `Priority для пользователя с id ${id} обновлён на ${priority} в таблице ${lessonName}`
+    );
+  } catch (err) {
+    console.error("Ошибка при обновлении приоритета:", err);
+  }
+}
 
 // async function setBZCHPriority(id, priority) {
 //   try {
@@ -459,20 +458,19 @@ async function addPriorityColumn(lesson) {
 //   }
 // }
 
-// async function setPriorityStatus(id, status) {
-//   try {
-//     const updateQuery =
-//       "UPDATE BZCH SET isPriorityGiven = ? WHERE brigade_id = ?";
-//     await pool.promise().query(updateQuery, [status, id]);
-//     config = await readConfig();
+async function setPriorityStatus(id, status, lessonName) {
+  try {
+    const updateQuery = `UPDATE ${lessonName} SET isPriorityGiven = ? WHERE brigade_num = ?`;
+    await pool.promise().query(updateQuery, [status, id]);
+    config = await readConfig();
 
-//     console.log(
-//       `Статус приоритета для бригады с id ${id} обновлён на ${status}`
-//     );
-//   } catch (err) {
-//     console.error("Ошибка при обновлении приоритета:", err);
-//   }
-// }
+    console.log(
+      `Статус приоритета для бригады с id ${id} обновлён на ${status} в таблице ${lessonName}`
+    );
+  } catch (err) {
+    console.error("Ошибка при обновлении приоритета:", err);
+  }
+}
 
 async function setPriorityBySurname(surname, priority, lessonName) {
   try {
@@ -523,7 +521,7 @@ module.exports = {
   getAllUsers,
   insertIntoQueue,
   getQueue,
-  //   setPriority,
+  setPriority,
   isInUsers,
   getBrigades,
   setPriorityBySurname,
@@ -531,7 +529,7 @@ module.exports = {
   //   isInBZCH,
   //   getBZCHPriorityTable,
   //   setBZCHPriority,
-  //   setPriorityStatus,
+  setPriorityStatus,
   //   getBZCHStatus,
   isInQueue,
   insertIntoBrigade,
