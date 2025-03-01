@@ -70,7 +70,7 @@ function doWithTable(lesson) {
         `Поставить приоритет ${
           lesson.isBrigadeType ? "бригаде" : "пользователю"
         }`,
-        `deleteUserIn:${lesson.name}`
+        `setPr:${lesson.name}`
       )
       .row();
   }
@@ -132,6 +132,19 @@ const adminKeyboard = new InlineKeyboard()
   .text("Отправить сообщение всем", "sendMsg")
   .row();
 
+function returnPriorityKeyboard(subject) {
+  const priorityKeyboard = new InlineKeyboard()
+    .text("🟥 Красный", `setRedPriorityFor:${subject}`)
+    .row()
+    .text("🟨 Жёлтый", `setYellowPriorityFor:${subject}`)
+    .row()
+    .text("🟩 Зелёный", `setGreenPriorityFor:${subject}`)
+    .row()
+    .text("🟪 Санкции", `setPurplePriorityFor:${subject}`)
+    .row();
+  return priorityKeyboard;
+}
+
 const setPriorityKeyboard = new InlineKeyboard()
   .text("🟥 Красный", "setRedPriority")
   .row()
@@ -162,4 +175,5 @@ module.exports = {
   returnToLessonQueue,
   createMenuKeyboard,
   returnToAdminQueue,
+  returnPriorityKeyboard,
 };

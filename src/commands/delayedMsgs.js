@@ -17,8 +17,6 @@ const { readConfig, writeConfig } = require("../utils/config");
 const Mutex = require("async-mutex").Mutex;
 const configMutex = new Mutex();
 
-// TODO: сделать
-
 const getBZCHBrigadesUsers = async () => {
   const data = await getQueue("BZCH");
   const users = await getAllUsers();

@@ -5,6 +5,7 @@ const {
   returnToLessonQueue,
   getReturnKeyboard,
   returnToAdminQueue,
+  returnPriorityKeyboard,
 } = require("../bot/keyboards");
 
 const {
@@ -241,6 +242,9 @@ function messageHandler(bot) {
 
     const match = ctx.session.step.match(/^waiting_for_(\w+)Lab$/);
     const matchToDelete = ctx.session.step.match(/^waiting_for_(\w+)ToDelete$/);
+    const matchPriority = ctx.session.step.match(
+      /^waiting_for_(\w+)prioritySurname$/
+    );
     if (match) {
       const subject = match[1];
       const lesson = lessons.find((l) => l.name === subject);
@@ -299,15 +303,15 @@ function messageHandler(bot) {
     //   };
     //   await signToTable(options);
     // } else
-    else if (ctx.session.step === "waiting_for_prioritySurname") {
+    else if (matchPriority) {
       let surname = ctx.message.text;
-
+      const subject = matchPriority[1];
       let isUserRegistered = await isInUsers(surname);
       if (isUserRegistered) {
         ctx.session.surname = surname;
         ctx.session.step = "waiting_for_priority";
         await ctx.reply("Какой приоритет выставить?", {
-          reply_markup: setPriorityKeyboard,
+          reply_markup: returnPriorityKeyboard(subject),
         });
       } else {
         await ctx.reply(

@@ -474,22 +474,19 @@ async function addPriorityColumn(lesson) {
 //   }
 // }
 
-// async function setPriorityBySurname(surname, priority) {
-//   try {
-//     const updateQuery = "UPDATE Users SET priority = ? WHERE surname = ?";
-//     await pool.promise().query(updateQuery, [priority, surname]);
-//     config = await readConfig();
+async function setPriorityBySurname(surname, priority, lessonName) {
+  try {
+    const updateQuery = `UPDATE priorities SET ${lessonName}_priority = ? WHERE surname = ?`;
+    await pool.promise().query(updateQuery, [priority, surname]);
+    config = await readConfig();
 
-//     const updateKProgQuery = "UPDATE KProg SET priority = ? WHERE surname = ?";
-//     await pool.promise().query(updateKProgQuery, [priority, surname]);
-
-//     console.log(
-//       `Priority для пользователя с фамилией ${surname} обновлён на ${priority}`
-//     );
-//   } catch (err) {
-//     console.error("Ошибка при обновлении приоритета по фамилии:", err);
-//   }
-// }
+    console.log(
+      `Priority для пользователя с фамилией ${surname} обновлён на ${priority}`
+    );
+  } catch (err) {
+    console.error("Ошибка при обновлении приоритета по фамилии:", err);
+  }
+}
 
 // Очистка таблицы
 async function clearTable(lesson) {
@@ -516,7 +513,7 @@ module.exports = {
   //   setPriority,
   isInUsers,
   getBrigades,
-  //   setPriorityBySurname,
+  setPriorityBySurname,
   clearTable,
   //   isInBZCH,
   //   getBZCHPriorityTable,

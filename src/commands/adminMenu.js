@@ -18,8 +18,6 @@ const {
 const { readConfig } = require("../utils/config");
 const { lessons } = require("../../data/lessons");
 
-// TODO: сделать удобную админ панель
-
 function adminMenuCommand(bot) {
   bot.callbackQuery("adminmenu", async (ctx) => {
     await ctx.reply("Меню", {
@@ -27,8 +25,12 @@ function adminMenuCommand(bot) {
     });
   });
 
-  bot.callbackQuery("setPr", async (ctx) => {
+  bot.callbackQuery(/setPr:(.+)/, async (ctx) => {
     await ctx.answerCallbackQuery();
+
+    const subject = ctx.match[1];
+    const lesson = lessons.find((ls) => ls.name === subject);
+
     await ctx.callbackQuery.message.editText(
       "Введите фамилию студента, которому нужно поменять приоритет:",
       {
@@ -36,7 +38,7 @@ function adminMenuCommand(bot) {
       }
     );
 
-    ctx.session.step = "waiting_for_prioritySurname";
+    ctx.session.step = `waiting_for_${subject}prioritySurname`;
   });
 
   bot.callbackQuery("sendMsg", async (ctx) => {
@@ -135,8 +137,9 @@ function adminMenuCommand(bot) {
     ctx.session.step = `waiting_for_brigadeToDelete`;
   });
 
-  bot.callbackQuery(/set(.*)Priority/, async (ctx) => {
+  bot.callbackQuery(/set(.*)PriorityFor:(.+)/, async (ctx) => {
     const priority = ctx.match[1]; // Получаем цвет из callback данных
+    const subject = ctx.match[2];
 
     const priorities = {
       Red: "Красный",
@@ -146,62 +149,17 @@ function adminMenuCommand(bot) {
     };
     const surname = ctx.session.surname;
     if (surname) {
-      await setPriorityBySurname(surname, priorities[priority]); // Устанавливаем приоритет
+      await setPriorityBySurname(surname, priorities[priority], subject); // Устанавливаем приоритет
       await ctx.editMessageText(
-        `Приоритет пользователя ${surname} изменён на ${priorities[priority]}`,
-        {
-          reply_markup: getReturnKeyboard(false, "KProg"),
-        }
+        `Приоритет пользователя ${surname} изменён на ${priorities[priority]}`
+        // {
+        //   reply_markup: getReturnKeyboardFor(false, "KProg"),
+        // }
       );
     } else {
       await ctx.reply("Не удалось найти фамилию. Попробуйте ещё раз.");
     }
     ctx.session.step = null; // Завершаем процесс
-  });
-
-  bot.callbackQuery("updateKProg", async (ctx) => {
-    await ctx.answerCallbackQuery();
-
-    const subjectQueue = getQueue("KProg");
-
-    const queue = [
-      [[], [], []],
-      [[], [], []],
-    ];
-    let priorityIndex;
-    let subgroupIndex, userSubgpoup;
-    const config = await readConfig();
-    const lessonType = config.KProgLessonType;
-
-    if (lessonType == 0) {
-      queue.pop();
-      queue.flat(1);
-    }
-
-    priorityIndex = new Map();
-    priorityIndex.set("Красный", 0);
-    priorityIndex.set("Жёлтый", 1);
-    priorityIndex.set("Зелёный", 2);
-    priorityIndex.set("Санкции", 2);
-
-    if (subjectQueue?.length) {
-      subjectQueue.forEach((item) => {
-        if (lessonType == 0) {
-          subgroupIndex = 0;
-        } else {
-          subgroupIndex = item.subgroup - 1;
-        }
-        queue[subgroupIndex][priorityIndex.get(item.priority)].push(item);
-      });
-    }
-
-    queue.flat(2);
-    insertIntoQueue(queue, "KProg");
-    await ctx.callbackQuery.message.editText(`Таблица КПрог обновлена`, {
-      reply_markup: getReturnKeyboard(false, "KProg"),
-    });
-
-    console.log("Таблица КПрог обновлена");
   });
 }
 
