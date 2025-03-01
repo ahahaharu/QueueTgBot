@@ -3,6 +3,8 @@ const { inputCheck } = require("../bot/inputCheck");
 const {
   setPriorityKeyboard,
   returnToLessonQueue,
+  getReturnKeyboard,
+  returnToAdminQueue,
 } = require("../bot/keyboards");
 
 const {
@@ -14,6 +16,7 @@ const {
   isInBZCH,
   getBZCHPriorityTable,
   deleteUserFromTable,
+  deleteBrigadeFromTable,
 } = require("../database/database");
 
 const { sendMessageForAll } = require("./delayedMsgs");
@@ -200,13 +203,21 @@ function messageHandler(bot) {
       const lesson = lessons.find((ls) => ls.name === subject);
 
       let queue = await getQueue(subject);
-
-      const user = queue.find((item) => item.surname == surname);
-      if (!user) {
+      let item;
+      if (lesson.isBrigadeType) {
+        item = queue.find((line) => line.brigade_num == surname);
+      } else {
+        item = queue.find((line) => line.surname == surname);
+      }
+      if (!item) {
         await ctx.reply("Такого пользователя нет в таблице");
         return;
       }
-      await deleteUserFromTable(lesson, user.tg_id);
+      if (lesson.isBrigadeType) {
+        await deleteBrigadeFromTable(lesson, item.brigade_num);
+      } else {
+        await deleteUserFromTable(lesson, item.tg_id);
+      }
       // queue = queue.filter((item) => item.surname !== surname);
 
       // if (queue?.length) {
@@ -215,7 +226,15 @@ function messageHandler(bot) {
       //   clearTable(subject);
       // }
 
-      await ctx.reply("Пользователь удалён из таблицы");
+      await ctx.reply(
+        `${
+          lesson.isBrigadeType ? "Бригада удалена" : "Пользователь удалён"
+        } из таблицы`,
+        {
+          parse_mode: "MarkdownV2",
+          reply_markup: returnToAdminQueue(lesson.name),
+        }
+      );
 
       ctx.session.step = null;
     }

@@ -21,14 +21,10 @@ const { lessons } = require("../../data/lessons");
 // TODO: сделать удобную админ панель
 
 function adminMenuCommand(bot) {
-  bot.command("adminmenu", async (ctx) => {
-    if (ctx.from.id === 755901230) {
-      await ctx.reply("Меню", {
-        reply_markup: adminKeyboard,
-      });
-    } else {
-      await ctx.reply("У вас нет прав на эту команду 🤓☝️");
-    }
+  bot.callbackQuery("adminmenu", async (ctx) => {
+    await ctx.reply("Меню", {
+      reply_markup: adminKeyboard,
+    });
   });
 
   bot.callbackQuery("setPr", async (ctx) => {
@@ -78,7 +74,6 @@ function adminMenuCommand(bot) {
 
     const subject = ctx.match[1];
     const lesson = lessons.find((ls) => ls.name === subject);
-
     let status = "";
     const queue = await getQueue(lesson.name);
 
@@ -120,8 +115,12 @@ function adminMenuCommand(bot) {
     await ctx.answerCallbackQuery();
     const tableName = ctx.match[1];
 
+    const lesson = lessons.find((ls) => ls.name === tableName);
+
     await ctx.callbackQuery.message.editText(
-      `Напишите фамилию пользователя, которого нужно удалить:`
+      `Напишите ${
+        lesson.isBrigadeType ? "номер бригады" : "фамилию пользователя"
+      }, ${lesson.isBrigadeType ? "которую" : "котрого"} нужно удалить:`
     );
     ctx.session.step = `waiting_for_${tableName}ToDelete`;
   });

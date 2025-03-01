@@ -1,6 +1,18 @@
 const { InlineKeyboard } = require("grammy");
 const { lessons } = require("../../data/lessons");
 
+function createMenuKeyboard(id) {
+  const menuKeyboard = new InlineKeyboard()
+    .text("👤 Профиль", "profile")
+    .row()
+    .text("📒 Очереди", "queue")
+    .row();
+  if (id === 755901230) {
+    menuKeyboard.text("🔧 Админ меню", "adminmenu").row();
+  }
+  return menuKeyboard;
+}
+
 const menuKeyboard = new InlineKeyboard()
   .text("👤 Профиль", "profile")
   .row()
@@ -68,6 +80,14 @@ function doWithTable(lesson) {
     .text("Вернуться к таблицам", `queueToChange`)
     .row();
   return doWithKeyboard;
+}
+
+function returnToAdminQueue(subject) {
+  const returnKeyboard = new InlineKeyboard().text(
+    "Вернуться в таблицу",
+    `change:${subject}`
+  );
+  return returnKeyboard;
 }
 
 const selectQueueKeyboard = new InlineKeyboard();
@@ -140,4 +160,6 @@ module.exports = {
   doWithTable,
   confirmDelete,
   returnToLessonQueue,
+  createMenuKeyboard,
+  returnToAdminQueue,
 };

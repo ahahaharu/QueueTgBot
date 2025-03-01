@@ -41,7 +41,7 @@ function signCommand(bot) {
     if (lesson.isBrigadeType) {
       const queue = await getQueue(lesson.name);
       workType = "ПЗ";
-      const brigade_num = getBrigadeNum(userInfo.tg_id);
+      const brigade_num = getBrigadeNum(lesson.name, userInfo.tg_id);
       let index;
       if (queue?.length) {
         index = queue.findIndex((item) => item.brigade_num == brigade_num);

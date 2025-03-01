@@ -269,6 +269,19 @@ async function deleteUserFromTable(lesson, tg_id) {
   }
 }
 
+async function deleteBrigadeFromTable(lesson, brigade_num) {
+  const query = `DELETE FROM ${lesson.name} WHERE brigade_num = ?`;
+  try {
+    const [result] = await pool.promise().query(query, [brigade_num]);
+    console.log(
+      `Бригада с brigade_num ${brigade_num} удалена из таблицы ${lesson.name}`
+    );
+  } catch (error) {
+    console.error("Ошибка при удалении пользователя", error);
+    throw error;
+  }
+}
+
 async function getPriorities() {
   const query = "SELECT * FROM priorities";
   try {
@@ -515,4 +528,5 @@ module.exports = {
   getPriorities,
   getPriorityForLessonByID,
   deleteUserFromTable,
+  deleteBrigadeFromTable,
 };
