@@ -69,12 +69,23 @@ function menuCommand(bot) {
   });
 
   bot.callbackQuery("queue", async (ctx) => {
-    if (ctx.session.QueuePhotoMessageId) {
+    if (ctx.session.QueuePhotoMessageId || ctx.session.QueuePhotoMessageIds) {
       try {
-        await ctx.api.deleteMessage(
-          ctx.chat.id,
-          ctx.session.QueuePhotoMessageId
-        );
+        if (ctx.session.QueuePhotoMessageIds) {
+          await ctx.api.deleteMessage(
+            ctx.chat.id,
+            ctx.session.QueuePhotoMessageIds[0]
+          );
+          await ctx.api.deleteMessage(
+            ctx.chat.id,
+            ctx.session.QueuePhotoMessageIds[1]
+          );
+        } else {
+          await ctx.api.deleteMessage(
+            ctx.chat.id,
+            ctx.session.QueuePhotoMessageId
+          );
+        }
       } catch (error) {
         if (error.message.includes("message can't be deleted for everyone")) {
           console.log("Сообщение уже удалено или не может быть удалено.");
@@ -83,6 +94,7 @@ function menuCommand(bot) {
         }
       }
       ctx.session.QueuePhotoMessageId = undefined;
+      ctx.session.QueuePhotoMessageIds = undefined;
     }
 
     await ctx.answerCallbackQuery();

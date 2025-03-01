@@ -36,12 +36,23 @@ function priorityCommand(bot) {
     const subject = ctx.match[1];
     const lesson = lessons.find((ls) => ls.name === subject);
 
-    if (ctx.session.QueuePhotoMessageId) {
+    if (ctx.session.QueuePhotoMessageId || ctx.session.QueuePhotoMessageIds) {
       try {
-        await ctx.api.deleteMessage(
-          ctx.chat.id,
-          ctx.session.QueuePhotoMessageId
-        );
+        if (ctx.session.QueuePhotoMessageIds) {
+          await ctx.api.deleteMessage(
+            ctx.chat.id,
+            ctx.session.QueuePhotoMessageIds[0]
+          );
+          await ctx.api.deleteMessage(
+            ctx.chat.id,
+            ctx.session.QueuePhotoMessageIds[1]
+          );
+        } else {
+          await ctx.api.deleteMessage(
+            ctx.chat.id,
+            ctx.session.QueuePhotoMessageId
+          );
+        }
       } catch (error) {
         if (error.message.includes("message can't be deleted for everyone")) {
           console.log("Сообщение уже удалено или не может быть удалено.");
@@ -49,7 +60,8 @@ function priorityCommand(bot) {
           console.error("Произошла другая ошибка:", error);
         }
       }
-      ctx.session.QueuePhotoMessageId = undefined; // Сбрасываем ID
+      ctx.session.QueuePhotoMessageId = undefined;
+      ctx.session.QueuePhotoMessageIds = undefined;
     }
     try {
       await ctx.deleteMessage();

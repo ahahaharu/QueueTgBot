@@ -17,6 +17,7 @@ const { returnConfigs } = require("../utils/config");
 const { lessons } = require("../../data/lessons");
 const { getTime } = require("../bot/getTime");
 const { getBrigadeNum } = require("../bot/getBrigadeNum");
+const sortQueue = require("../utils/sortQueue");
 
 function lessonsQueueCommand(bot) {
   async function showQueue(ctx, lesson) {
@@ -46,13 +47,6 @@ function lessonsQueueCommand(bot) {
 
     let status = "";
 
-    const priorityIndex = {
-      Красный: 0,
-      Жёлтый: 1,
-      Зелёный: 2,
-      Санкции: 2,
-    };
-
     const subjectQueue = await getQueue(lesson.name);
     const userInfo = await getInfoById(ctx.from.id.toString());
     let condition = false;
@@ -70,110 +64,15 @@ function lessonsQueueCommand(bot) {
           : "\\(2 подгруппа\\)";
     }
     status = `${configs.get(lesson.name).date} ${lessonType}\n\n`;
-    let queue = [];
+
     if (subjectQueue?.length) {
       let index;
-      if (type === 0) {
-        if (lesson.isPriority) {
-          queue.push([], [], []);
 
-          for (const sb of subjectQueue) {
-            let item;
-            let priority;
-            if (lesson.isBrigadeType) {
-              priority = await getPriorityForLessonByID(sb.brigade_num, lesson);
-              item = {
-                brigade_num: sb.brigade_num,
-                labs: sb.labs,
-                ...(lesson.isPriority && { priority: priority }),
-              };
-            } else {
-              priority = await getPriorityForLessonByID(sb.tg_id, lesson);
-              item = {
-                tg_id: sb.tg_id,
-                surname: sb.surname,
-                labs: sb.labs,
-                subgroup: sb.subgroup,
-                ...(lesson.isPriority && { priority: priority }),
-              };
-            }
-            queue[priorityIndex[priority]].push(item);
-          }
-          queue = queue.flat();
-        } else {
-          for (const sb of subjectQueue) {
-            let item;
-            let priority;
-            if (lesson.isBrigadeType) {
-              item = {
-                brigade_num: sb.brigade_num,
-                labs: sb.labs,
-                ...(lesson.isPriority && { priority: priority }),
-              };
-            } else {
-              item = {
-                tg_id: sb.tg_id,
-                surname: sb.surname,
-                labs: sb.labs,
-                subgroup: sb.subgroup,
-                ...(lesson.isPriority && { priority: priority }),
-              };
-            }
-            queue.push(item);
-          }
-        }
-      } else {
-        queue.push([], []);
-        if (lesson.isPriority) {
-          queue[0].push([], [], []);
-          queue[1].push([], [], []);
-
-          for (const sb of subjectQueue) {
-            let item;
-            let priority;
-            if (lesson.isBrigadeType) {
-              priority = await getPriorityForLessonByID(sb.brigade_num, lesson);
-              item = {
-                brigade_num: sb.brigade_num,
-                labs: sb.labs,
-                ...(lesson.isPriority && { priority: priority }),
-              };
-            } else {
-              priority = await getPriorityForLessonByID(sb.tg_id, lesson);
-              item = {
-                tg_id: sb.tg_id,
-                surname: sb.surname,
-                labs: sb.labs,
-                subgroup: sb.subgroup,
-                ...(lesson.isPriority && { priority: priority }),
-              };
-            }
-            queue[sb.subgroup - 1][priorityIndex[priority]].push(item);
-          }
-          queue[0] = queue[0].flat();
-          queue[1] = queue[1].flat();
-        } else {
-          subjectQueue.forEach((sb) => {
-            const item = {
-              tg_id: sb.tg_id,
-              surname: sb.surname,
-              labs: sb.labs,
-              subgroup: sb.subgroup,
-              ...(lesson.isPriority && { priority: priority }),
-            };
-
-            queue[sb.subgroup - 1].push(item);
-          });
-        }
-        if (type != 3) {
-          queue = queue.flat();
-        }
-      }
+      const queue = await sortQueue(subjectQueue, lesson, type);
 
       if (type === 3) {
-        console.log(queue[0]);
         index = queue[0].findIndex((item) => item.tg_id == ctx.from.id);
-        if (index <= 0) {
+        if (index < 0) {
           index = queue[1].findIndex((item) => item.tg_id == ctx.from.id);
         }
       } else if (lesson.isBrigadeType) {
@@ -243,13 +142,16 @@ function lessonsQueueCommand(bot) {
           });
         }
         photoMessage = await ctx.replyWithMediaGroup(photosArray);
+        ctx.session.QueuePhotoMessageIds = photoMessage.map(
+          (message) => message.message_id
+        );
       } else {
         await generateQueueTable(queue, lesson);
         photoMessage = await ctx.replyWithPhoto(
           new InputFile(`./src/tables/${lesson.name}Table.png`)
         );
+        ctx.session.QueuePhotoMessageId = photoMessage.message_id;
       }
-      ctx.session.QueuePhotoMessageId = photoMessage.message_id;
     } else {
       status += `_В таблице ещё никого нет_`;
       condition = true;

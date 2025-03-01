@@ -16,8 +16,66 @@ const lessons = [
     canSplit: true,
     hasSubgroupType: true,
     workType: "lab",
-    scheduleOfLessons: [],
-    scheduleOfEnd: ["2025-03-01 21:32"],
+    scheduleOfLessons: [
+      {
+        time: "2025-03-03 17:15",
+        type: 0,
+      },
+      {
+        time: "2025-03-12 17:15",
+        type: 3,
+      },
+      {
+        time: "2025-03-26 17:15",
+        type: 3,
+      },
+      {
+        time: "2025-03-31 17:15",
+        type: 0,
+      },
+      {
+        time: "2025-04-09 17:15",
+        type: 3,
+      },
+      {
+        time: "2025-04-23 17:15",
+        type: 3,
+      },
+      {
+        time: "2025-04-28 17:15",
+        type: 0,
+      },
+      {
+        time: "2025-05-07 17:15",
+        type: 3,
+      },
+      {
+        time: "2025-05-21 17:15",
+        type: 3,
+      },
+      {
+        time: "2025-05-26 17:15",
+        type: 0,
+      },
+      {
+        time: "2025-06-04 17:15",
+        type: 3,
+      },
+    ],
+    scheduleOfEnd: [
+      "2025-03-01 22:14",
+      "2025-03-04 15:20",
+      "2025-03-13 18:45",
+      "2025-03-27 18:45",
+      "2025-04-01 15:20",
+      "2025-04-10 18:45",
+      "2025-04-24 18:45",
+      "2025-04-29 15:20",
+      "2025-05-08 18:45",
+      "2025-05-22 18:45",
+      "2025-05-27 15:20",
+      "2025-06-05 18:45",
+    ],
   },
   {
     name: "ISP",
@@ -32,184 +90,92 @@ const lessons = [
     workType: "lab",
     scheduleOfLessons: [
       {
-        time: "2025-02-28 00:59",
-        type: 0,
-        isSplit: true,
-      },
-      {
-        time: "2025-02-28 01:00",
-        type: 1,
-        isSplit: true,
-      },
-      {
-        time: "2025-02-28 01:01",
-        type: 2,
-        isSplit: true,
-      },
-      {
-        time: "2025-02-28 01:03",
-        type: 0,
-        isSplit: true,
-      },
-      {
-        time: "2025-02-19 17:00",
-        type: 1,
-        isSplit: true,
-      },
-      {
-        time: "2025-02-19 17:00",
-        type: 2,
-        isSplit: true,
-      },
-      {
-        time: "2025-02-24 17:00",
-        type: 0,
-        isSplit: false,
-      },
-      {
-        time: "2025-02-27 17:00",
-        type: 2,
-        isSplit: false,
+        time: "2025-03-1 21:57",
+        type: 3,
       },
       {
         time: "2025-03-05 17:00",
-        type: 1,
-        isSplit: true,
-      },
-      {
-        time: "2025-03-05 17:00",
-        type: 2,
-        isSplit: true,
+        type: 3,
       },
       {
         time: "2025-03-10 17:00",
         type: 0,
-        isSplit: false,
       },
       {
         time: "2025-03-13 17:00",
         type: 1,
-        isSplit: false,
       },
       {
         time: "2025-03-19 17:00",
-        type: 1,
-        isSplit: true,
-      },
-      {
-        time: "2025-03-19 17:00",
-        type: 2,
-        isSplit: true,
+        type: 3,
       },
       {
         time: "2025-03-24 17:00",
         type: 0,
-        isSplit: false,
       },
       {
         time: "2025-03-27 17:00",
         type: 2,
-        isSplit: false,
       },
       {
         time: "2025-04-02 17:00",
-        type: 1,
-        isSplit: true,
-      },
-      {
-        time: "2025-04-02 17:00",
-        type: 2,
-        isSplit: true,
+        type: 3,
       },
       {
         time: "2025-04-07 17:00",
         type: 0,
-        isSplit: false,
       },
       {
         time: "2025-04-10 17:00",
         type: 1,
-        isSplit: false,
       },
       {
         time: "2025-04-16 17:00",
         type: 1,
-        isSplit: true,
-      },
-      {
-        time: "2025-04-16 17:00",
-        type: 2,
-        isSplit: true,
       },
       {
         time: "2025-04-21 17:00",
         type: 0,
-        isSplit: false,
       },
       {
         time: "2025-04-24 17:00",
         type: 2,
-        isSplit: false,
       },
       {
         time: "2025-04-30 17:00",
-        type: 1,
-        isSplit: true,
-      },
-      {
-        time: "2025-04-30 17:00",
-        type: 2,
-        isSplit: true,
+        type: 3,
       },
       {
         time: "2025-05-05 17:00",
         type: 0,
-        isSplit: false,
       },
       {
         time: "2025-05-08 17:00",
         type: 1,
-        isSplit: false,
       },
       {
         time: "2025-05-14 17:00",
-        type: 1,
-        isSplit: true,
-      },
-      {
-        time: "2025-05-14 17:00",
-        type: 2,
-        isSplit: true,
+        type: 3,
       },
       {
         time: "2025-05-19 17:00",
         type: 0,
-        isSplit: false,
       },
       {
         time: "2025-05-22 17:00",
         type: 2,
-        isSplit: false,
       },
       {
         time: "2025-05-28 17:00",
-        type: 1,
-        isSplit: true,
-      },
-      {
-        time: "2025-05-28 17:00",
-        type: 2,
-        isSplit: true,
+        type: 3,
       },
       {
         time: "2025-06-02 17:00",
         type: 0,
-        isSplit: false,
       },
       {
         time: "2025-06-05 17:00",
-        type: 2,
-        isSplit: false,
+        type: 1,
       },
     ],
     scheduleOfEnd: [],
@@ -225,8 +191,81 @@ const lessons = [
     canSplit: true,
     hasSubgroupType: true,
     workType: "lab",
-    scheduleOfLessons: [],
-    scheduleOfEnd: [],
+    scheduleOfLessons: [
+      {
+        time: "2025-03-06 17:15",
+        type: 0,
+      },
+      {
+        time: "2025-03-12 17:15",
+        type: 3,
+      },
+      {
+        time: "2025-03-20 17:15",
+        type: 0,
+      },
+      {
+        time: "2025-03-26 17:15",
+        type: 3,
+      },
+      {
+        time: "2025-04-03 17:15",
+        type: 0,
+      },
+      {
+        time: "2025-04-09 17:15",
+        type: 3,
+      },
+      {
+        time: "2025-04-17 17:15",
+        type: 0,
+      },
+      {
+        time: "2025-04-23 17:15",
+        type: 3,
+      },
+      {
+        time: "2025-05-01 17:15",
+        type: 0,
+      },
+      {
+        time: "2025-05-07 17:15",
+        type: 3,
+      },
+      {
+        time: "2025-05-15 17:15",
+        type: 0,
+      },
+      {
+        time: "2025-05-21 17:15",
+        type: 3,
+      },
+      {
+        time: "2025-05-29 17:15",
+        type: 0,
+      },
+      {
+        time: "2025-06-04 17:15",
+        type: 3,
+      },
+    ],
+    scheduleOfEnd: [
+      "2025-03-01 22:14",
+      "2025-03-07 17:10",
+      "2025-03-13 18:45",
+      "2025-03-21 17:10",
+      "2025-03-27 18:45",
+      "2025-04-04 17:10",
+      "2025-04-10 18:45",
+      "2025-04-18 17:10",
+      "2025-04-24 18:45",
+      "2025-05-02 17:10",
+      "2025-06-08 18:45",
+      "2025-05-16 17:10",
+      "2025-05-22 18:45",
+      "2025-05-30 17:10",
+      "2025-06-05 18:45",
+    ],
   },
   {
     name: "MCHA",
