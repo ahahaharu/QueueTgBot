@@ -306,20 +306,37 @@ function messageHandler(bot) {
     else if (matchPriority) {
       let surname = ctx.message.text;
       const subject = matchPriority[1];
-      let isUserRegistered = await isInUsers(surname);
-      if (isUserRegistered) {
+      const lesson = lessons.find((ls) => ls.name === subject);
+      let isRegistered;
+      if (lesson.isBrigadeType) {
+        if (+surname > 0 && +surname <= lesson.brigadeData.length) {
+          isRegistered = true;
+        } else {
+          await ctx.reply(
+            "❌ *Бригады с таким номер не существует\\!* Введите корректный номер:",
+            {
+              parse_mode: "MarkdownV2",
+            }
+          );
+        }
+      } else {
+        isRegistered = await isInUsers(surname);
+        if (!isRegistered) {
+          await ctx.reply(
+            "❌ *Такого студента нет в группе\\!* Введите корректную фамилию:",
+            {
+              parse_mode: "MarkdownV2",
+            }
+          );
+        }
+      }
+
+      if (isRegistered) {
         ctx.session.surname = surname;
         ctx.session.step = "waiting_for_priority";
         await ctx.reply("Какой приоритет выставить?", {
           reply_markup: returnPriorityKeyboard(subject),
         });
-      } else {
-        await ctx.reply(
-          "❌ *Такого студента нет в группе\\!* Введите корректную фамилию:",
-          {
-            parse_mode: "MarkdownV2",
-          }
-        );
       }
 
       ctx.session.step = null;

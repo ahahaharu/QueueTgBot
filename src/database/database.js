@@ -488,6 +488,19 @@ async function setPriorityBySurname(surname, priority, lessonName) {
   }
 }
 
+async function setPriorityByBrigadeNum(brigade_num, priority, lessonName) {
+  try {
+    const updateQuery = `UPDATE ${lessonName}_priorities SET priority = ? WHERE brigade_num = ?`;
+    await pool.promise().query(updateQuery, [priority, brigade_num]);
+    config = await readConfig();
+
+    console.log(
+      `Priority для бригады с номером ${brigade_num} обновлён на ${priority}`
+    );
+  } catch (err) {
+    console.error("Ошибка при обновлении приоритета по номеру бригады:", err);
+  }
+}
 // Очистка таблицы
 async function clearTable(lesson) {
   try {
@@ -526,4 +539,5 @@ module.exports = {
   getPriorityForLessonByID,
   deleteUserFromTable,
   deleteBrigadeFromTable,
+  setPriorityByBrigadeNum,
 };

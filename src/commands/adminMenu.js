@@ -14,6 +14,7 @@ const {
   getQueue,
   clearTable,
   insertIntoQueue,
+  setPriorityByBrigadeNum,
 } = require("../database/database");
 const { readConfig } = require("../utils/config");
 const { lessons } = require("../../data/lessons");
@@ -32,7 +33,11 @@ function adminMenuCommand(bot) {
     const lesson = lessons.find((ls) => ls.name === subject);
 
     await ctx.callbackQuery.message.editText(
-      "Введите фамилию студента, которому нужно поменять приоритет:",
+      `Введите ${
+        lesson.isBrigadeType ? "номер бригады" : "фамилию студента"
+      }, ${
+        lesson.isBrigadeType ? "которой" : "которому"
+      } нужно поменять приоритет:`,
       {
         parse_mode: "MarkdownV2",
       }
@@ -140,6 +145,7 @@ function adminMenuCommand(bot) {
   bot.callbackQuery(/set(.*)PriorityFor:(.+)/, async (ctx) => {
     const priority = ctx.match[1]; // Получаем цвет из callback данных
     const subject = ctx.match[2];
+    const lesson = lessons.find((ls) => ls.name === subject);
 
     const priorities = {
       Red: "Красный",
@@ -149,15 +155,21 @@ function adminMenuCommand(bot) {
     };
     const surname = ctx.session.surname;
     if (surname) {
-      await setPriorityBySurname(surname, priorities[priority], subject); // Устанавливаем приоритет
+      if (lesson.isBrigadeType) {
+        await setPriorityByBrigadeNum(+surname, priorities[priority], subject);
+      } else {
+        await setPriorityBySurname(surname, priorities[priority], subject);
+      }
       await ctx.editMessageText(
-        `Приоритет пользователя ${surname} изменён на ${priorities[priority]}`
+        `Приоритет изменён на ${priorities[priority]}`
         // {
         //   reply_markup: getReturnKeyboardFor(false, "KProg"),
         // }
       );
     } else {
-      await ctx.reply("Не удалось найти фамилию. Попробуйте ещё раз.");
+      await ctx.reply(
+        "Не удалось найти фамилию или номер бригады. Попробуйте ещё раз."
+      );
     }
     ctx.session.step = null; // Завершаем процесс
   });
