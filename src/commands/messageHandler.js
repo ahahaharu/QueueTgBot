@@ -13,6 +13,7 @@ const {
   clearTable,
   isInBZCH,
   getBZCHPriorityTable,
+  deleteUserFromTable,
 } = require("../database/database");
 
 const { sendMessageForAll } = require("./delayedMsgs");
@@ -196,20 +197,23 @@ function messageHandler(bot) {
     async function deleteInTable(subject) {
       let surname = message;
 
+      const lesson = lessons.find((ls) => ls.name === subject);
+
       let queue = await getQueue(subject);
 
-      const index = queue.findIndex((item) => item.surname == surname);
-      if (index === -1) {
+      const user = queue.find((item) => item.surname == surname);
+      if (!user) {
         await ctx.reply("Такого пользователя нет в таблице");
         return;
       }
-      queue = queue.filter((item) => item.surname !== surname);
+      await deleteUserFromTable(lesson, user.tg_id);
+      // queue = queue.filter((item) => item.surname !== surname);
 
-      if (queue?.length) {
-        insertIntoQueue(queue, subject);
-      } else {
-        clearTable(subject);
-      }
+      // if (queue?.length) {
+      //   insertIntoQueue(queue, subject);
+      // } else {
+      //   clearTable(subject);
+      // }
 
       await ctx.reply("Пользователь удалён из таблицы");
 
@@ -217,10 +221,14 @@ function messageHandler(bot) {
     }
 
     const match = ctx.session.step.match(/^waiting_for_(\w+)Lab$/);
+    const matchToDelete = ctx.session.step.match(/^waiting_for_(\w+)ToDelete$/);
     if (match) {
       const subject = match[1];
       const lesson = lessons.find((l) => l.name === subject);
       await signToTable(lesson);
+    } else if (matchToDelete) {
+      const subject = matchToDelete[1];
+      deleteInTable(subject);
     }
 
     // if (ctx.session.step === "waiting_for_KProgLab") {
@@ -298,14 +306,6 @@ function messageHandler(bot) {
       await sendMessageForAll(bot, text);
 
       ctx.session.step = null;
-    } else if (ctx.session.step === "waiting_for_KProgToDelete") {
-      deleteInTable("KProg");
-    } else if (ctx.session.step === "waiting_for_ISPToDelete") {
-      deleteInTable("ISP");
-    } else if (ctx.session.step === "waiting_for_PZMAToDelete") {
-      deleteInTable("PZMA");
-    } else if (ctx.session.step === "waiting_for_MCHAToDelete") {
-      deleteInTable("MCHA");
     } else if (ctx.session.step === "waiting_for_brigadeToDelete") {
       let brigade = message;
 

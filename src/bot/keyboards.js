@@ -45,26 +45,38 @@ function confirmDelete(lessonType) {
 }
 
 function doWithTable(lesson) {
-  return new InlineKeyboard()
-    .text("Удалить пользователя из таблицы", `deleteUserIn:${lesson}`)
-    .row()
-    .text("Очистить таблицу", `clear:${lesson}`)
+  const doWithKeyboard = new InlineKeyboard()
+    .text(
+      `Удалить ${lesson.isBrigadeType ? "бригаду" : "пользователя"} из таблицы`,
+      `deleteUserIn:${lesson.name}`
+    )
     .row();
+
+  if (lesson.isPriority) {
+    doWithKeyboard
+      .text(
+        `Поставить приоритет ${
+          lesson.isBrigadeType ? "бригаде" : "пользователю"
+        }`,
+        `deleteUserIn:${lesson.name}`
+      )
+      .row();
+  }
+  doWithKeyboard
+    .text("Очистить таблицу", `clear:${lesson.name}`)
+    .row()
+    .text("Вернуться к таблицам", `queueToChange`)
+    .row();
+  return doWithKeyboard;
 }
 
-const selectQueueKeyboard = new InlineKeyboard()
-  .text("💻КПрог", "changeKprog")
-  .row()
-  .text("🖥ИСП", "changeIsp")
-  .row()
-  .text("📈ПЗМА", "changePzma")
-  .row()
-  .text("👴🏻МЧА", "changeMcha")
-  .row()
-  .text("🌡БЖЧ", "changeBzch")
-  .row()
-  .text("↩️Вернуться в меню", "adminmenu")
-  .row();
+const selectQueueKeyboard = new InlineKeyboard();
+lessons.forEach((lesson) => {
+  selectQueueKeyboard
+    .text(`${lesson.emoji}${lesson.title}`, `change:${lesson.name}`)
+    .row();
+});
+selectQueueKeyboard.text("↩️Вернуться в админ меню", "adminmenu").row();
 
 const returnToMenuKeyboard = new InlineKeyboard().text(
   "↩️Вернуться в меню",
@@ -95,15 +107,9 @@ function createStatusKeyboard(subject) {
 }
 
 const adminKeyboard = new InlineKeyboard()
-  .text("Поставить приоритет", "setPr")
-  .row()
   .text("Изменить таблицу", "queueToChange")
   .row()
   .text("Отправить сообщение всем", "sendMsg")
-  .row()
-  .text("Удалить бригаду из таблицы", "deleteBrigade")
-  .row()
-  .text("Обновить таблицу КПрог", "updateKProg")
   .row();
 
 const setPriorityKeyboard = new InlineKeyboard()
