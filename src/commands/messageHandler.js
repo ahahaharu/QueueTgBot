@@ -240,9 +240,11 @@ function messageHandler(bot) {
       ctx.session.step = null;
     }
 
-    const match = ctx.session.step.match(/^waiting_for_(\w+)Lab$/);
-    const matchToDelete = ctx.session.step.match(/^waiting_for_(\w+)ToDelete$/);
-    const matchPriority = ctx.session.step.match(
+    const match = ctx.session.step?.match(/^waiting_for_(\w+)Lab$/);
+    const matchToDelete = ctx.session.step?.match(
+      /^waiting_for_(\w+)ToDelete$/
+    );
+    const matchPriority = ctx.session.step?.match(
       /^waiting_for_(\w+)prioritySurname$/
     );
     if (match) {
