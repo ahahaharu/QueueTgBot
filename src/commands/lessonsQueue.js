@@ -55,7 +55,7 @@ function lessonsQueueCommand(bot) {
     let lessonType;
 
     const type = configs.get(lesson.name).lessonType;
-    let isEnd = lesson.isPriority ? configs[`is${lesson.name}End`] : null;
+    let isEnd = lesson.isPriority ? configs.get(lesson.name).isEnd : null;
 
     if (!lesson.hasSubgroupType) {
       lessonType = "";
