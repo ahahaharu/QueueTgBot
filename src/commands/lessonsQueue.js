@@ -18,6 +18,7 @@ const { lessons } = require("../../data/lessons");
 const { getTime } = require("../bot/getTime");
 const { getBrigadeNum } = require("../bot/getBrigadeNum");
 const sortQueue = require("../utils/sortQueue");
+const { loadQueues } = require("../utils/queuesInFile");
 
 function lessonsQueueCommand(bot) {
   async function showQueue(ctx, lesson) {
@@ -52,7 +53,10 @@ function lessonsQueueCommand(bot) {
     let condition = false;
     let configs = await returnConfigs();
     let lessonType;
+
     const type = configs.get(lesson.name).lessonType;
+    let isEnd = lesson.isPriority ? configs[`is${lesson.name}End`] : null;
+
     if (!lesson.hasSubgroupType) {
       lessonType = "";
     } else {
@@ -67,8 +71,17 @@ function lessonsQueueCommand(bot) {
 
     if (subjectQueue?.length) {
       let index;
-
-      const queue = await sortQueue(subjectQueue, lesson, type);
+      let queue;
+      if (isEnd) {
+        const queues = loadQueues();
+        queue = queues[`${lesson.name}Queue`];
+        for (const user of queue) {
+          const id = lesson.isBrigadeType ? user.brigade_num : user.tg_id;
+          user.priority = await getPriorityForLessonByID(id, lesson);
+        }
+      } else {
+        queue = await sortQueue(subjectQueue, lesson, type);
+      }
 
       if (type === 3) {
         index = queue[0].findIndex((item) => item.tg_id == ctx.from.id);

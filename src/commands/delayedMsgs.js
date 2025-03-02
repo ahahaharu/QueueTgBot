@@ -14,7 +14,9 @@ const {
   createStatusKeyboard,
 } = require("../bot/keyboards");
 const { lessons } = require("../../data/lessons");
-const { readConfig, writeConfig } = require("../utils/config");
+const { readConfig, writeConfig, returnConfigs } = require("../utils/config");
+const sortQueue = require("../utils/sortQueue");
+const { updateQueue } = require("../utils/queuesInFile");
 const Mutex = require("async-mutex").Mutex;
 const configMutex = new Mutex();
 
@@ -114,6 +116,7 @@ function sendMessages(bot, dateTime, lessonName, type) {
   });
 }
 
+// TODO: сделать так, чтобы сохранялась последняя очередь, чтобы корректно расставились приоритеты
 // Функция для отправки сообщения об окончании занятия по КПрог
 function sendEndMessage(bot, dateTime, lessonName) {
   const [date, time] = dateTime.split(" ");
@@ -129,6 +132,10 @@ function sendEndMessage(bot, dateTime, lessonName) {
   schedule.scheduleJob(jobDate, async () => {
     const config = await readConfig();
     let data = await getQueue(lessonName);
+    let configs = await returnConfigs();
+    const type = configs.get(lesson.name).lessonType;
+    const queue = await sortQueue(data, lesson, type);
+    updateQueue(`${lesson.name}Queue`, queue);
     if (lesson.isBrigadeType) {
       const lesson_brigades = await getQueue(`${lessonName}_brigades`);
       const usersInBrigades = [];
