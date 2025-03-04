@@ -2,8 +2,6 @@ const {} = require("../src/bot/keyboards");
 const { MPPiU_brigades } = require("./MPPiU_brigades");
 const { MSiSvIT_brigades } = require("./MSiSvIT_brigades");
 
-// TODO: доделать расписание для всех пар
-
 const lessons = [
   {
     name: "IGI",
@@ -423,7 +421,7 @@ const lessons = [
     workType: "pz",
     scheduleOfLessons: [
       {
-        time: "2025-03-03 01:04",
+        time: "2025-03-04 17:15",
         type: 0,
       },
       {

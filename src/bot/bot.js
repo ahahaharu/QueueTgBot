@@ -10,6 +10,8 @@ const {
 const { createConfig } = require("../utils/createConfig");
 const { createDBTables } = require("../database/createDBTables");
 
+// TODO: почистить ненужные команды и добавить проверку на регистрацию для каждой команды (?)
+
 process.on("uncaughtException", (error) => {
   console.error("Произошло необработанное исключение:", error);
 });

@@ -116,8 +116,6 @@ function sendMessages(bot, dateTime, lessonName, type) {
   });
 }
 
-// TODO: сделать так, чтобы сохранялась последняя очередь, чтобы корректно расставились приоритеты
-// Функция для отправки сообщения об окончании занятия по КПрог
 function sendEndMessage(bot, dateTime, lessonName) {
   const [date, time] = dateTime.split(" ");
   const [year, month, day] = date.split("-").map(Number);
