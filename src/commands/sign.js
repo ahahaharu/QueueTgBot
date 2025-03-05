@@ -40,11 +40,14 @@ function signCommand(bot) {
 
     if (lesson.isBrigadeType) {
       const queue = await getQueue(lesson.name);
+      console.log("queue: " + queue);
       workType = "ПЗ";
-      const brigade_num = getBrigadeNum(lesson.name, userInfo.tg_id);
+      const brigade_num = await getBrigadeNum(lesson.name, userInfo.tg_id);
+      console.log("brigade num: " + brigade_num);
       let index;
       if (queue?.length) {
         index = queue.findIndex((item) => item.brigade_num == brigade_num);
+        console.log(index);
       } else {
         index = -1;
       }

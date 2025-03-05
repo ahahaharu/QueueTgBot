@@ -5,11 +5,11 @@ async function statusCheck(ctx) {
   if (step && step.startsWith("waiting_for_")) {
     const lessonKey = step.replace("waiting_for_", "");
 
-    const lessonName = lessons.get(lessonKey);
+    const lesson = lessons.find((ls) => ls.name === lessonKey);
 
     if (lessonName) {
       await ctx.reply(
-        `Идёт запись на ${lessonName}! \nПожалуйста, окончите запись, чтобы пользоваться другими командами.`,
+        `Идёт запись на ${lesson.title}! \nПожалуйста, окончите запись, чтобы пользоваться другими командами.`,
         { parse_mode: "MarkdownV2" }
       );
       return true;

@@ -421,6 +421,10 @@ const lessons = [
     workType: "pz",
     scheduleOfLessons: [
       {
+        time: "2025-03-05 09:10",
+        type: 0,
+      },
+      {
         time: "2025-03-04 17:15",
         type: 0,
       },
