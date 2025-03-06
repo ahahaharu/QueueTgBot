@@ -137,8 +137,8 @@ function lessonsQueueCommand(bot) {
 
       let photoMessage;
       if (type === 3) {
-        await generateQueueTable(queue[0], lesson, 1);
-        await generateQueueTable(queue[1], lesson, 2);
+        // await generateQueueTable(queue[0], lesson, 1, null, 1);
+        // await generateQueueTable(queue[1], lesson, 2, null, 2);
         const photosArray = [];
         if (queue[0].length != 0) {
           await generateQueueTable(queue[0], lesson, 1);

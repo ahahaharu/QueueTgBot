@@ -24,7 +24,7 @@ async function generateQueueTable(data, lesson, splitNum, isPriority) {
   let subjectName = lesson.title;
   let tableText = isPriority
     ? `Таблица приоритетов на ${subjectName}`
-    : `Очередь ${subjectName}`;
+    : `Очередь ${subjectName} ${splitNum ? splitNum + " подгруппа" : ""}`;
   let secondColumn;
   if (isPriority) {
     secondColumn = "Приоритет";
