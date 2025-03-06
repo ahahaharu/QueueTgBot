@@ -13,7 +13,7 @@ students.set("sxisdthh", {
 students.set("pushechnik13", {
   name: "Констанстин",
   surname: "Валиуллин",
-  subgroup: 2,
+  subgroup: 1,
 });
 students.set("panigirik", {
   name: "Захар",
