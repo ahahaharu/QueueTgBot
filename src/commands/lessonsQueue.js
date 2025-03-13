@@ -75,9 +75,20 @@ function lessonsQueueCommand(bot) {
       if (isEnd) {
         const queues = loadQueues();
         queue = queues[`${lesson.name}Queue`];
-        for (const user of queue) {
-          const id = lesson.isBrigadeType ? user.brigade_num : user.tg_id;
-          user.priority = await getPriorityForLessonByID(id, lesson);
+        if (type === 3) {
+          for (const user of queue[0]) {
+            const id = lesson.isBrigadeType ? user.brigade_num : user.tg_id;
+            user.priority = await getPriorityForLessonByID(id, lesson);
+          }
+          for (const user of queue[1]) {
+            const id = lesson.isBrigadeType ? user.brigade_num : user.tg_id;
+            user.priority = await getPriorityForLessonByID(id, lesson);
+          }
+        } else {
+          for (const user of queue) {
+            const id = lesson.isBrigadeType ? user.brigade_num : user.tg_id;
+            user.priority = await getPriorityForLessonByID(id, lesson);
+          }
         }
       } else {
         queue = await sortQueue(subjectQueue, lesson, type);
