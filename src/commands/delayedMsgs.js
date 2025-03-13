@@ -150,6 +150,7 @@ function sendEndMessage(bot, dateTime, lessonName) {
     for (let user of data) {
       if (lesson.isBrigadeType) {
         await setPriorityByBrigadeNum(user.brigade_num, "Зелёный", lessonName);
+        await setPriorityStatus(user.brigade_num, false, lesson.name);
       } else {
         await setPriority(user.tg_id, "Зелёный", lessonName);
       }

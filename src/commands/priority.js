@@ -144,7 +144,6 @@ function priorityCommand(bot) {
 
     const userInfo = await getInfoById(ctx.from.id.toString());
     let brigade_num;
-
     if (lesson.isBrigadeType) {
       const queue = await getQueue(subject);
       brigade_num = await getBrigadeNum(lesson.name, userInfo.tg_id);
