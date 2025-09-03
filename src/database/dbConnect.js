@@ -1,4 +1,5 @@
-const mysql = require("mysql2");
+const mysql = require('mysql2');
+const fs = require('fs');
 
 const pool = mysql.createPool({
   port: process.env.DB_PORT,
@@ -9,14 +10,17 @@ const pool = mysql.createPool({
   waitForConnections: true,
   connectionLimit: 20,
   queueLimit: 0,
+  ssl: {
+    ca: fs.readFileSync(__dirname + '/ca.crt'),
+  },
 });
 
 pool.getConnection((err, connection) => {
   if (err) {
-    console.error("Ошибка подключения к базе данных:", err);
+    console.error('Ошибка подключения к базе данных:', err);
     return;
   }
-  console.log("Подключено к базе данных через пул соединений!");
+  console.log('Подключено к базе данных через пул соединений!');
   connection.release();
 });
 

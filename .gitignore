@@ -4,3 +4,4 @@
 .env
 src/tables/*.png
 config.json
+ca.crt
