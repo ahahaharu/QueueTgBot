@@ -303,92 +303,57 @@
   ],
   "AWSQueue": [
     {
-      "tg_id": "934459014",
-      "surname": "Козлова",
+      "tg_id": "609643900",
+      "surname": "Стецурин",
       "labs": "1",
       "subgroup": 1,
-      "priority": "Красный"
-    },
-    {
-      "tg_id": "5570776522",
-      "surname": "Кузьмич",
-      "labs": "1",
-      "subgroup": 1,
-      "priority": "Красный"
-    },
-    {
-      "tg_id": "2145451298",
-      "surname": "Гордашук",
-      "labs": "1",
-      "subgroup": 1,
-      "priority": "Красный"
+      "priority": "Зелёный"
     },
     {
       "tg_id": "712497086",
       "surname": "Свидинский",
       "labs": "1",
       "subgroup": 1,
-      "priority": "Красный"
+      "priority": "Зелёный"
     },
     {
-      "tg_id": "427686261",
-      "surname": "Литвинова",
+      "tg_id": "1295167963",
+      "surname": "Антонова",
       "labs": "1",
-      "subgroup": 2,
-      "priority": "Красный"
-    },
-    {
-      "tg_id": "1950785425",
-      "surname": "Чуешов",
-      "labs": "1",
-      "subgroup": 2,
-      "priority": "Красный"
-    },
-    {
-      "tg_id": "1252771332",
-      "surname": "Гусенцова",
-      "labs": "1",
-      "subgroup": 2,
-      "priority": "Красный"
-    },
-    {
-      "tg_id": "609643900",
-      "surname": "Стецурин",
-      "labs": "2",
       "subgroup": 1,
+      "priority": "Зелёный"
+    },
+    {
+      "tg_id": "1206184911",
+      "surname": "Войно",
+      "labs": "1",
+      "subgroup": 1,
+      "priority": "Зелёный"
+    },
+    {
+      "tg_id": "741319050",
+      "surname": "Лебедева",
+      "labs": "1",
+      "subgroup": 2,
       "priority": "Зелёный"
     },
     {
       "tg_id": "853143435",
       "surname": "Шавейко",
-      "labs": "2",
-      "subgroup": 2,
-      "priority": "Зелёный"
-    },
-    {
-      "tg_id": "1321665763",
-      "surname": "Васьковский",
-      "labs": "2",
-      "subgroup": 2,
-      "priority": "Зелёный"
-    },
-    {
-      "tg_id": "755901230",
-      "surname": "Богданович",
-      "labs": "2",
-      "subgroup": 1,
-      "priority": "Зелёный"
-    },
-    {
-      "tg_id": "2029286397",
-      "surname": "Щеперко",
       "labs": "1",
-      "subgroup": 1,
+      "subgroup": 2,
       "priority": "Зелёный"
     },
     {
-      "tg_id": "1158276184",
-      "surname": "Ковальчук",
+      "tg_id": "498892374",
+      "surname": "Специан",
+      "labs": "1",
+      "subgroup": 2,
+      "priority": "Зелёный"
+    },
+    {
+      "tg_id": "934459014",
+      "surname": "Козлова",
       "labs": "1",
       "subgroup": 1,
       "priority": "Зелёный"
@@ -401,31 +366,45 @@
       "priority": "Зелёный"
     },
     {
-      "tg_id": "1295167963",
-      "surname": "Антонова",
-      "labs": "2",
-      "subgroup": 1,
-      "priority": "Зелёный"
-    },
-    {
-      "tg_id": "498892374",
-      "surname": "Специан",
+      "tg_id": "1252771332",
+      "surname": "Гусенцова",
       "labs": "1",
       "subgroup": 2,
       "priority": "Зелёный"
     },
     {
-      "tg_id": "741319050",
-      "surname": "Лебедева",
-      "labs": "2",
+      "tg_id": "1321665763",
+      "surname": "Васьковский",
+      "labs": "1",
       "subgroup": 2,
       "priority": "Зелёный"
     },
     {
-      "tg_id": "6424727222",
-      "surname": "Валиуллин",
+      "tg_id": "5570776522",
+      "surname": "Кузьмич",
       "labs": "1",
       "subgroup": 1,
+      "priority": "Зелёный"
+    },
+    {
+      "tg_id": "2145451298",
+      "surname": "Гордашук",
+      "labs": "1",
+      "subgroup": 1,
+      "priority": "Зелёный"
+    },
+    {
+      "tg_id": "931366989",
+      "surname": "Левшуков",
+      "labs": "1",
+      "subgroup": 2,
+      "priority": "Зелёный"
+    },
+    {
+      "tg_id": "512444319",
+      "surname": "Данилов",
+      "labs": "1",
+      "subgroup": 2,
       "priority": "Зелёный"
     },
     {
@@ -436,11 +415,318 @@
       "priority": "Зелёный"
     },
     {
-      "tg_id": "931366989",
-      "surname": "Левшуков",
-      "labs": "2",
+      "tg_id": "897800976",
+      "surname": "Шилов",
+      "labs": "1",
+      "subgroup": 1,
+      "priority": "Зелёный"
+    },
+    {
+      "tg_id": "755901230",
+      "surname": "Богданович",
+      "labs": "1",
+      "subgroup": 1,
+      "priority": "Зелёный"
+    },
+    {
+      "tg_id": "6424727222",
+      "surname": "Валиуллин",
+      "labs": "1",
+      "subgroup": 1,
+      "priority": "Зелёный"
+    },
+    {
+      "tg_id": "2146040874",
+      "surname": "Сильчук",
+      "labs": "1",
+      "subgroup": 2,
+      "priority": "Зелёный"
+    },
+    {
+      "tg_id": "1950785425",
+      "surname": "Чуешов",
+      "labs": "1",
+      "subgroup": 2,
+      "priority": "Зелёный"
+    },
+    {
+      "tg_id": "660392796",
+      "surname": "Крень",
+      "labs": "1",
       "subgroup": 2,
       "priority": "Зелёный"
     }
+  ],
+  "OSiSPQueue": [
+    [],
+    [
+      {
+        "tg_id": "741319050",
+        "surname": "Лебедева",
+        "labs": "1",
+        "subgroup": 2,
+        "priority": "Жёлтый"
+      },
+      {
+        "tg_id": "931366989",
+        "surname": "Левшуков",
+        "labs": "1",
+        "subgroup": 2,
+        "priority": "Жёлтый"
+      },
+      {
+        "tg_id": "1321665763",
+        "surname": "Васьковский",
+        "labs": "1",
+        "subgroup": 2,
+        "priority": "Жёлтый"
+      },
+      {
+        "tg_id": "760772230",
+        "surname": "Новак",
+        "labs": "1",
+        "subgroup": 2,
+        "priority": "Зелёный"
+      },
+      {
+        "tg_id": "498892374",
+        "surname": "Специан",
+        "labs": "1",
+        "subgroup": 2,
+        "priority": "Зелёный"
+      },
+      {
+        "tg_id": "1950785425",
+        "surname": "Чуешов",
+        "labs": "1",
+        "subgroup": 2,
+        "priority": "Зелёный"
+      },
+      {
+        "tg_id": "1312868641",
+        "surname": "Синяков",
+        "labs": "1",
+        "subgroup": 2,
+        "priority": "Зелёный"
+      },
+      {
+        "tg_id": "1252771332",
+        "surname": "Гусенцова",
+        "labs": "1",
+        "subgroup": 2,
+        "priority": "Зелёный"
+      }
+    ]
+  ],
+  "STRWEBQueue": [
+    {
+      "tg_id": "609643900",
+      "surname": "Стецурин",
+      "labs": "1",
+      "subgroup": 1,
+      "priority": "Жёлтый"
+    },
+    {
+      "tg_id": "1206184911",
+      "surname": "Войно",
+      "labs": "1",
+      "subgroup": 1,
+      "priority": "Зелёный"
+    },
+    {
+      "tg_id": "2145451298",
+      "surname": "Гордашук",
+      "labs": "1",
+      "subgroup": 1,
+      "priority": "Зелёный"
+    },
+    {
+      "tg_id": "712497086",
+      "surname": "Свидинский",
+      "labs": "1",
+      "subgroup": 1,
+      "priority": "Зелёный"
+    }
+  ],
+  "MDiSUBDQueue": [
+    [
+      {
+        "tg_id": "5350819139",
+        "surname": "Гринко",
+        "labs": "1",
+        "subgroup": 1,
+        "priority": "Красный"
+      },
+      {
+        "tg_id": "2145451298",
+        "surname": "Гордашук",
+        "labs": "1",
+        "subgroup": 1,
+        "priority": "Жёлтый"
+      },
+      {
+        "tg_id": "5570776522",
+        "surname": "Кузьмич",
+        "labs": "1",
+        "subgroup": 1,
+        "priority": "Жёлтый"
+      },
+      {
+        "tg_id": "755901230",
+        "surname": "Богданович",
+        "labs": "1",
+        "subgroup": 1,
+        "priority": "Жёлтый"
+      },
+      {
+        "tg_id": "609643900",
+        "surname": "Стецурин",
+        "labs": "1",
+        "subgroup": 1,
+        "priority": "Жёлтый"
+      },
+      {
+        "tg_id": "1295167963",
+        "surname": "Антонова",
+        "labs": "1",
+        "subgroup": 1,
+        "priority": "Жёлтый"
+      },
+      {
+        "tg_id": "934459014",
+        "surname": "Козлова",
+        "labs": "1",
+        "subgroup": 1,
+        "priority": "Жёлтый"
+      },
+      {
+        "tg_id": "1158276184",
+        "surname": "Ковальчук",
+        "labs": "1",
+        "subgroup": 1,
+        "priority": "Жёлтый"
+      },
+      {
+        "tg_id": "2029286397",
+        "surname": "Щеперко",
+        "labs": "1",
+        "subgroup": 1,
+        "priority": "Зелёный"
+      },
+      {
+        "tg_id": "1835065771",
+        "surname": "Ермак",
+        "labs": "1",
+        "subgroup": 1,
+        "priority": "Зелёный"
+      }
+    ],
+    [
+      {
+        "tg_id": "1207141968",
+        "surname": "Сильченко",
+        "labs": "1",
+        "subgroup": 2,
+        "priority": "Жёлтый"
+      },
+      {
+        "tg_id": "1252771332",
+        "surname": "Гусенцова",
+        "labs": "1",
+        "subgroup": 2,
+        "priority": "Жёлтый"
+      },
+      {
+        "tg_id": "741319050",
+        "surname": "Лебедева",
+        "labs": "1",
+        "subgroup": 2,
+        "priority": "Жёлтый"
+      },
+      {
+        "tg_id": "853143435",
+        "surname": "Шавейко",
+        "labs": "1",
+        "subgroup": 2,
+        "priority": "Жёлтый"
+      },
+      {
+        "tg_id": "427686261",
+        "surname": "Литвинова",
+        "labs": "1",
+        "subgroup": 2,
+        "priority": "Жёлтый"
+      },
+      {
+        "tg_id": "931366989",
+        "surname": "Левшуков",
+        "labs": "1",
+        "subgroup": 2,
+        "priority": "Жёлтый"
+      },
+      {
+        "tg_id": "2146040874",
+        "surname": "Сильчук",
+        "labs": "1",
+        "subgroup": 2,
+        "priority": "Жёлтый"
+      },
+      {
+        "tg_id": "1321665763",
+        "surname": "Васьковский",
+        "labs": "2",
+        "subgroup": 2,
+        "priority": "Жёлтый"
+      },
+      {
+        "tg_id": "1312868641",
+        "surname": "Синяков",
+        "labs": "2",
+        "subgroup": 2,
+        "priority": "Жёлтый"
+      },
+      {
+        "tg_id": "660392796",
+        "surname": "Крень",
+        "labs": "1",
+        "subgroup": 2,
+        "priority": "Жёлтый"
+      },
+      {
+        "tg_id": "760772230",
+        "surname": "Новак",
+        "labs": "1",
+        "subgroup": 2,
+        "priority": "Зелёный"
+      },
+      {
+        "tg_id": "512444319",
+        "surname": "Данилов",
+        "labs": "2",
+        "subgroup": 2,
+        "priority": "Зелёный"
+      },
+      {
+        "tg_id": "498892374",
+        "surname": "Специан",
+        "labs": "1",
+        "subgroup": 2,
+        "priority": "Зелёный"
+      },
+      {
+        "tg_id": "1066854696",
+        "surname": "Коваленко",
+        "labs": "1",
+        "subgroup": 2,
+        "priority": "Зелёный"
+      },
+      {
+        "tg_id": "797599722",
+        "surname": "Черноокая",
+        "labs": "1",
+        "subgroup": 2,
+        "priority": "Зелёный"
+      }
+    ]
   ]
 }

@@ -25,7 +25,7 @@ students.set('argonchic', {
   surname: 'Войно',
   subgroup: 1,
 });
-students.set('wkhikaru', {
+students.set('kkkon444', {
   name: 'Ростислав',
   surname: 'Гаевский',
   subgroup: 1,
