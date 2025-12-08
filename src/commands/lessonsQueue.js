@@ -1,6 +1,6 @@
-const { InputFile } = require("grammy");
+const { InputFile } = require('grammy');
 
-const { getReturnKeyboard, confirmDelete } = require("../bot/keyboards");
+const { getReturnKeyboard, confirmDelete } = require('../bot/keyboards');
 
 const {
   getQueue,
@@ -10,15 +10,15 @@ const {
   getBrigades,
   getPriorityForLessonByID,
   deleteUserFromTable,
-} = require("../database/database");
+} = require('../database/database');
 
-const { generateQueueTable } = require("../tables/tables");
-const { returnConfigs } = require("../utils/config");
-const { lessons } = require("../../data/lessons");
-const { getTime } = require("../bot/getTime");
-const { getBrigadeNum } = require("../bot/getBrigadeNum");
-const sortQueue = require("../utils/sortQueue");
-const { loadQueues } = require("../utils/queuesInFile");
+const { generateQueueTable } = require('../tables/tables');
+const { returnConfigs } = require('../utils/config');
+const { lessons } = require('../../data/lessons');
+const { getTime } = require('../bot/getTime');
+const { getBrigadeNum } = require('../bot/getBrigadeNum');
+const sortQueue = require('../utils/sortQueue');
+const { loadQueues } = require('../utils/queuesInFile');
 
 function lessonsQueueCommand(bot) {
   async function showQueue(ctx, lesson) {
@@ -29,9 +29,9 @@ function lessonsQueueCommand(bot) {
         await ctx.api.deleteMessage(ctx.chat.id, ctx.session.photoMessageId);
       } catch (error) {
         if (error.message.includes("message can't be deleted for everyone")) {
-          console.log("Сообщение уже удалено или не может быть удалено.");
+          console.log('Сообщение уже удалено или не может быть удалено.');
         } else {
-          console.error("Произошла другая ошибка:", error);
+          console.error('Произошла другая ошибка:', error);
         }
       }
       ctx.session.photoMessageId = undefined;
@@ -40,13 +40,13 @@ function lessonsQueueCommand(bot) {
       await ctx.deleteMessage();
     } catch (error) {
       if (error.message.includes("message can't be deleted for everyone")) {
-        console.log("Сообщение уже удалено или не может быть удалено.");
+        console.log('Сообщение уже удалено или не может быть удалено.');
       } else {
-        console.error("Произошла другая ошибка:", error);
+        console.error('Произошла другая ошибка:', error);
       }
     }
 
-    let status = "";
+    let status = '';
 
     const subjectQueue = await getQueue(lesson.name);
     const userInfo = await getInfoById(ctx.from.id.toString());
@@ -58,14 +58,14 @@ function lessonsQueueCommand(bot) {
     let isEnd = lesson.isPriority ? configs.get(lesson.name).isEnd : null;
 
     if (!lesson.hasSubgroupType) {
-      lessonType = "";
+      lessonType = '';
     } else {
       lessonType =
         type === 0 || type === 3
-          ? ""
+          ? ''
           : type === 1
-          ? "\\(1 подгруппа\\)"
-          : "\\(2 подгруппа\\)";
+          ? '\\(1 подгруппа\\)'
+          : '\\(2 подгруппа\\)';
     }
     status = `${configs.get(lesson.name).date} ${lessonType}\n\n`;
 
@@ -108,60 +108,38 @@ function lessonsQueueCommand(bot) {
 
       if (index !== -1) {
         let type;
-        // if (subject === "BZCH") {
-        //
-        // } else {
-
-        // }
 
         if (lesson.isBrigadeType) {
-          type = "Ваша бригада записана таблицу\\! ";
+          type = 'Ваша бригада записана таблицу\\! ';
         } else {
-          type = "Вы записаны в таблицу\\! ";
+          type = 'Вы записаны в таблицу\\! ';
         }
 
-        status += type + "Ваше место в очереди: " + (+index + 1);
+        status += type + 'Ваше место в очереди: ' + (+index + 1);
         condition = false;
       } else {
-        // if (subject === "BZCH") {
-        //   status += "Ваша бригада ещё не записалась в таблицу";
-        // } else {
-
-        // }
-
         if (lesson.isBrigadeType) {
-          status += "Ваша бригада ещё не записалась в таблицу";
+          status += 'Ваша бригада ещё не записалась в таблицу';
         } else {
-          status += "Вы ещё не записались в таблицу";
+          status += 'Вы ещё не записались в таблицу';
         }
         condition = true;
       }
 
-      //   if (subject === "BZCH") {
-      //
-      //     index = queue.findIndex(
-      //       (item) => item.brigade_id == userInfo.brigade_id
-      //     );
-      //   } else {
-
-      //   }
-
       let photoMessage;
       if (type === 3) {
-        // await generateQueueTable(queue[0], lesson, 1, null, 1);
-        // await generateQueueTable(queue[1], lesson, 2, null, 2);
         const photosArray = [];
         if (queue[0].length != 0) {
           await generateQueueTable(queue[0], lesson, 1);
           photosArray.push({
-            type: "photo",
+            type: 'photo',
             media: new InputFile(`./src/tables/${lesson.name}Table1.png`),
           });
         }
         if (queue[1].length != 0) {
           await generateQueueTable(queue[1], lesson, 2);
           photosArray.push({
-            type: "photo",
+            type: 'photo',
             media: new InputFile(`./src/tables/${lesson.name}Table2.png`),
           });
         }
@@ -181,7 +159,7 @@ function lessonsQueueCommand(bot) {
       condition = true;
     }
     await ctx.reply(`${lesson.emoji} *Очередь на ${lesson.title}* ` + status, {
-      parse_mode: "MarkdownV2",
+      parse_mode: 'MarkdownV2',
       reply_markup: getReturnKeyboard(condition, lesson.name, true),
     });
   }
@@ -203,9 +181,9 @@ function lessonsQueueCommand(bot) {
         );
       } catch (error) {
         if (error.message.includes("message can't be deleted for everyone")) {
-          console.log("Сообщение уже удалено или не может быть удалено.");
+          console.log('Сообщение уже удалено или не может быть удалено.');
         } else {
-          console.error("Произошла другая ошибка:", error);
+          console.error('Произошла другая ошибка:', error);
         }
       }
       ctx.session.QueuePhotoMessageId = undefined;
@@ -214,7 +192,7 @@ function lessonsQueueCommand(bot) {
     const lessonType = ctx.match[1];
 
     await ctx.callbackQuery.message.editText(`*Удалить вас с таблицы?*`, {
-      parse_mode: "MarkdownV2",
+      parse_mode: 'MarkdownV2',
       reply_markup: confirmDelete(lessonType),
     });
   });
@@ -228,21 +206,11 @@ function lessonsQueueCommand(bot) {
     const lesson = lessons.find((ls) => ls.name === lessonType);
     await deleteUserFromTable(lesson, userInfo.tg_id);
 
-    // let queue = await getQueue(lessonType);
-
-    // queue = queue.filter((item) => item.tg_id != ctx.from.id);
-
-    // if (queue?.length) {
-    //   deleteUserFromTable(, lessonType);
-    // } else {
-    //   clearTable(lessonType);
-    // }
-
     console.log(
-      getTime() + " " + userInfo.surname + " удалил себя из таблицы " + ""
+      getTime() + ' ' + userInfo.surname + ' удалил себя из таблицы ' + ''
     );
     await ctx.callbackQuery.message.editText(`*Вы удалены из таблицы*`, {
-      parse_mode: "MarkdownV2",
+      parse_mode: 'MarkdownV2',
       reply_markup: getReturnKeyboard(false, lessonType),
     });
   });
@@ -255,7 +223,7 @@ function lessonsQueueCommand(bot) {
     await ctx.callbackQuery.message.editText(
       `*Вы не были удалены из таблицы*`,
       {
-        parse_mode: "MarkdownV2",
+        parse_mode: 'MarkdownV2',
         reply_markup: getReturnKeyboard(false, lessonType),
       }
     );

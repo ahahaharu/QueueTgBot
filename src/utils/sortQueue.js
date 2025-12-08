@@ -1,4 +1,4 @@
-const { getPriorityForLessonByID } = require("../database/database");
+const { getPriorityForLessonByID } = require('../database/database');
 
 async function sortQueue(subjectQueue, lesson, type) {
   const priorityIndex = {
@@ -8,7 +8,6 @@ async function sortQueue(subjectQueue, lesson, type) {
     Санкции: 2,
   };
 
-  // const subjectQueue = await getQueue(lesson.name);
   let queue = [];
   if (type === 0) {
     if (lesson.isPriority) {
@@ -101,6 +100,9 @@ async function sortQueue(subjectQueue, lesson, type) {
 
         queue[sb.subgroup - 1].push(item);
       });
+      if (type === 2) {
+        queue.reverse();
+      }
     }
     if (type != 3) {
       queue = queue.flat();
