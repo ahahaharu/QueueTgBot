@@ -1,4 +1,4 @@
-const { inputCheck } = require("../bot/inputCheck");
+const { inputCheck } = require('../bot/inputCheck');
 
 const {
   setPriorityKeyboard,
@@ -6,7 +6,7 @@ const {
   getReturnKeyboard,
   returnToAdminQueue,
   returnPriorityKeyboard,
-} = require("../bot/keyboards");
+} = require('../bot/keyboards');
 
 const {
   getInfoById,
@@ -18,13 +18,13 @@ const {
   getBZCHPriorityTable,
   deleteUserFromTable,
   deleteBrigadeFromTable,
-} = require("../database/database");
+} = require('../database/database');
 
-const { sendMessageForAll } = require("./delayedMsgs");
-const { returnConfigs } = require("../utils/config");
-const { lessons } = require("../../data/lessons");
-const { getTime } = require("../bot/getTime");
-const { getBrigadeNum } = require("../bot/getBrigadeNum");
+const { sendMessageForAll } = require('./delayedMsgs');
+const { returnConfigs } = require('../utils/config');
+const { lessons } = require('../../data/lessons');
+const { getTime } = require('../bot/getTime');
+const { getBrigadeNum } = require('../bot/getBrigadeNum');
 
 function returnQueueArray(lesson) {
   const queue = [];
@@ -39,20 +39,18 @@ function returnQueueArray(lesson) {
 }
 
 function messageHandler(bot) {
-  bot.on("message", async (ctx) => {
+  bot.on('message', async (ctx) => {
     let message = ctx.message.text;
     const userInfo = await getInfoById(ctx.from.id.toString());
-
-    console.log(getTime() + " " + userInfo.surname + ": " + message);
 
     async function signToTable(lesson) {
       let lab = message;
       let labs = inputCheck(lab, lesson.labsCount);
       if (!(ctx.message.text && lab.length < 20 && labs)) {
         await ctx.reply(
-          "*Неверное значение\\!* Введите номера лаб верно\\!\n\n_Например\\: 1\\, 2_",
+          '*Неверное значение\\!* Введите номера лаб верно\\!\n\n_Например\\: 1\\, 2_',
           {
-            parse_mode: "MarkdownV2",
+            parse_mode: 'MarkdownV2',
           }
         );
         return;
@@ -187,11 +185,11 @@ function messageHandler(bot) {
 
       console.log(
         getTime() +
-          " " +
+          ' ' +
           userInfo.surname +
-          " записался в таблицу " +
+          ' записался в таблицу ' +
           lesson.name +
-          ". Лабы: " +
+          '. Лабы: ' +
           labs
       );
 
@@ -211,7 +209,7 @@ function messageHandler(bot) {
         item = queue.find((line) => line.surname == surname);
       }
       if (!item) {
-        await ctx.reply("Такого пользователя нет в таблице");
+        await ctx.reply('Такого пользователя нет в таблице');
         return;
       }
       if (lesson.isBrigadeType) {
@@ -229,10 +227,10 @@ function messageHandler(bot) {
 
       await ctx.reply(
         `${
-          lesson.isBrigadeType ? "Бригада удалена" : "Пользователь удалён"
+          lesson.isBrigadeType ? 'Бригада удалена' : 'Пользователь удалён'
         } из таблицы`,
         {
-          parse_mode: "MarkdownV2",
+          parse_mode: 'MarkdownV2',
           reply_markup: returnToAdminQueue(lesson.name),
         }
       );
@@ -315,9 +313,9 @@ function messageHandler(bot) {
           isRegistered = true;
         } else {
           await ctx.reply(
-            "❌ *Бригады с таким номер не существует\\!* Введите корректный номер:",
+            '❌ *Бригады с таким номер не существует\\!* Введите корректный номер:',
             {
-              parse_mode: "MarkdownV2",
+              parse_mode: 'MarkdownV2',
             }
           );
         }
@@ -325,9 +323,9 @@ function messageHandler(bot) {
         isRegistered = await isInUsers(surname);
         if (!isRegistered) {
           await ctx.reply(
-            "❌ *Такого студента нет в группе\\!* Введите корректную фамилию:",
+            '❌ *Такого студента нет в группе\\!* Введите корректную фамилию:',
             {
-              parse_mode: "MarkdownV2",
+              parse_mode: 'MarkdownV2',
             }
           );
         }
@@ -335,43 +333,43 @@ function messageHandler(bot) {
 
       if (isRegistered) {
         ctx.session.surname = surname;
-        ctx.session.step = "waiting_for_priority";
-        await ctx.reply("Какой приоритет выставить?", {
+        ctx.session.step = 'waiting_for_priority';
+        await ctx.reply('Какой приоритет выставить?', {
           reply_markup: returnPriorityKeyboard(subject),
         });
       }
 
       ctx.session.step = null;
-    } else if (ctx.session.step === "waiting_for_adminMessage") {
+    } else if (ctx.session.step === 'waiting_for_adminMessage') {
       let text = ctx.message.text;
 
       await sendMessageForAll(bot, text);
 
       ctx.session.step = null;
-    } else if (ctx.session.step === "waiting_for_brigadeToDelete") {
+    } else if (ctx.session.step === 'waiting_for_brigadeToDelete') {
       let brigade = message;
 
-      let queue = await getQueue("BZCH");
+      let queue = await getQueue('BZCH');
 
       const index = queue.findIndex((item) => item.brigade_id == brigade);
       if (index === -1) {
-        await ctx.reply("Такой бригады нет в таблице");
+        await ctx.reply('Такой бригады нет в таблице');
         return;
       }
       queue = queue.filter((item) => item.brigade_id != brigade);
 
       if (queue?.length) {
-        insertIntoQueue(queue, "BZCH");
+        insertIntoQueue(queue, 'BZCH');
       } else {
-        clearTable("BZCH");
+        clearTable('BZCH');
       }
 
-      await ctx.reply("Бригада удалена из таблицы");
+      await ctx.reply('Бригада удалена из таблицы');
 
       ctx.session.step = null;
     } else {
       await ctx.reply(
-        "❓ Я не понимаю это сообщение. Для начала нажмите /start или перейдите в меню /menu"
+        '❓ Я не понимаю это сообщение. Для начала нажмите /start или перейдите в меню /menu'
       );
     }
   });

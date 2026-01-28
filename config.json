@@ -1,16 +1,1 @@
-{
-  "STRWEBLessonType": 0,
-  "STRWEBDate": "4\\.12",
-  "isSTRWEBEnd": true,
-  "SPPRLessonType": 2,
-  "SPPRDate": "9\\.12",
-  "AWSLessonType": 0,
-  "AWSDate": "3\\.12",
-  "isAWSEnd": true,
-  "OSiSPLessonType": 0,
-  "OSiSPDate": "3\\.12",
-  "isOSiSPEnd": true,
-  "MDiSUBDLessonType": 0,
-  "MDiSUBDDate": "5\\.12",
-  "isMDiSUBDEnd": true
-}
+{}
