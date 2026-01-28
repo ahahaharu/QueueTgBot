@@ -1,1 +1,23 @@
-{}
+{
+    "OEDLessonType": 0,
+    "OEDDate": "28\\.1",
+    "isOEDEnd": false,
+    "MOiULessonType": 0,
+    "MOiUDate": "28\\.1",
+    "isMOiUEnd": false,
+    "MTranLessonType": 0,
+    "MTranDate": "28\\.1",
+    "isMTranEnd": false,
+    "PrMPLessonType": 0,
+    "PrMPDate": "28\\.1",
+    "isPrMPEnd": false,
+    "OSiSPLessonType": 0,
+    "OSiSPDate": "29\\.1",
+    "isOSiSPEnd": false,
+    "MDiSUBDLessonType": 0,
+    "MDiSUBDDate": "28\\.1",
+    "isMDiSUBDEnd": false,
+    "ISOBLessonType": 0,
+    "ISOBDate": "28\\.1",
+    "isISOBEnd": false
+}
