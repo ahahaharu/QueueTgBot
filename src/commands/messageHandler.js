@@ -43,6 +43,8 @@ function messageHandler(bot) {
     let message = ctx.message.text;
     const userInfo = await getInfoById(ctx.from.id.toString());
 
+    console.log(getTime() + ' ' + userInfo.surname + ': ' + message);
+
     async function signToTable(lesson) {
       let lab = message;
       let labs = inputCheck(lab, lesson.labsCount);
