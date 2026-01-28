@@ -40,10 +40,18 @@ function returnQueueArray(lesson) {
 
 function messageHandler(bot) {
   bot.on('message', async (ctx) => {
-    let message = ctx.message.text;
+    if (!ctx.from || !ctx.message?.text) return;
+
     const userInfo = await getInfoById(ctx.from.id.toString());
 
-    console.log(getTime() + ' ' + userInfo.surname + ': ' + message);
+    if (!userInfo) {
+      console.log(
+        `Сообщение от неизвестного пользователя ${ctx.from.id}, игнорирую.`
+      );
+      return;
+    }
+
+    console.log(getTime() + ' ' + userInfo.surname + ': ' + ctx.message.text);
 
     async function signToTable(lesson) {
       let lab = message;
