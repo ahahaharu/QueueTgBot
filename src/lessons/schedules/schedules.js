@@ -1,8 +1,8 @@
 const {
   sendScheduledMessages,
   sendEndScheduledMessages,
-} = require("./scheduleUtils");
-const { lessons } = require("../../../data/lessons");
+} = require('./scheduleUtils');
+const { lessons } = require('../../../data/lessons');
 
 function setSchedules(bot) {
   lessons.forEach((lesson) => {

@@ -6,18 +6,18 @@ const {
   setBZCHPriority,
   setPriorityStatus,
   setPriorityByBrigadeNum,
-} = require("../database/database");
-const schedule = require("node-schedule");
+} = require('../database/database');
+const schedule = require('node-schedule');
 const {
   createSignButton,
   kprogStatusKeyboard,
   createStatusKeyboard,
-} = require("../bot/keyboards");
-const { lessons } = require("../../data/lessons");
-const { readConfig, writeConfig, returnConfigs } = require("../utils/config");
-const sortQueue = require("../utils/sortQueue");
-const { updateQueue } = require("../utils/queuesInFile");
-const Mutex = require("async-mutex").Mutex;
+} = require('../bot/keyboards');
+const { lessons } = require('../../data/lessons');
+const { readConfig, writeConfig, returnConfigs } = require('../utils/config');
+const sortQueue = require('../utils/sortQueue');
+const { updateQueue } = require('../utils/queuesInFile');
+const Mutex = require('async-mutex').Mutex;
 const configMutex = new Mutex();
 
 const sendMessagesToUsers = async (
@@ -57,7 +57,7 @@ const sendMessagesToUsers = async (
         `Попытка отправки сообщения пользователю ${user.surname} с id ${userId}`
       );
       await bot.api.sendMessage(userId, message, {
-        parse_mode: "MarkdownV2",
+        parse_mode: 'MarkdownV2',
         reply_markup: replyMarkup,
       });
       console.log(
@@ -72,26 +72,31 @@ const sendMessagesToUsers = async (
   });
 
   await Promise.all(sendPromises);
-  console.log("Сообщения отправлены всем пользователям.");
+  console.log('Сообщения отправлены всем пользователям.');
 };
 
 function sendMessages(bot, dateTime, lessonName, type) {
-  const [date, time] = dateTime.split(" ");
-  const [year, month, day] = date.split("-").map(Number);
-  const [hour, minute] = time.split(":").map(Number);
+  const [date, time] = dateTime.split(' ');
+  const [year, month, day] = date.split('-').map(Number);
+  const [hour, minute] = time.split(':').map(Number);
 
   let lesson = lessons.find((ls) => ls.name === lessonName);
 
   const jobDate = new Date(year, month - 1, day, hour, minute);
+
+  console.log(`[DEBUG] Настройка: ${lessonName}`);
+  console.log(`[DEBUG] Сервер думает, что сейчас: ${new Date().toString()}`);
+  console.log(`[DEBUG] Пытаюсь запланировать на: ${jobDate.toString()}`);
+
   const tomorrowDate = new Date(jobDate);
   tomorrowDate.setDate(jobDate.getDate() + 1);
 
   const lessonType =
     type === 0 || type === 3
-      ? ""
+      ? ''
       : type === 1
-      ? "\\(1 подгруппа\\)"
-      : "\\(2 подгруппа\\)";
+      ? '\\(1 подгруппа\\)'
+      : '\\(2 подгруппа\\)';
   const message = `*Запись на ${lesson.title} ${tomorrowDate.getDate()}\\.${
     tomorrowDate.getMonth() + 1
   } ${lessonType}*\n\n_Нажмите кнопку ниже, чтобы записаться_`;
@@ -102,12 +107,12 @@ function sendMessages(bot, dateTime, lessonName, type) {
       const config = await readConfig();
 
       await clearTable(lesson.name);
-      config[lesson.name + "LessonType"] = type;
-      config[lesson.name + "Date"] = `${tomorrowDate.getDate()}\\.${
+      config[lesson.name + 'LessonType'] = type;
+      config[lesson.name + 'Date'] = `${tomorrowDate.getDate()}\\.${
         tomorrowDate.getMonth() + 1
       }`;
       if (lesson.isPriority) {
-        config["is" + lesson.name + "End"] = false;
+        config['is' + lesson.name + 'End'] = false;
       }
       await writeConfig(config);
 
@@ -117,9 +122,9 @@ function sendMessages(bot, dateTime, lessonName, type) {
 }
 
 function sendEndMessage(bot, dateTime, lessonName) {
-  const [date, time] = dateTime.split(" ");
-  const [year, month, day] = date.split("-").map(Number);
-  const [hour, minute] = time.split(":").map(Number);
+  const [date, time] = dateTime.split(' ');
+  const [year, month, day] = date.split('-').map(Number);
+  const [hour, minute] = time.split(':').map(Number);
 
   const jobDate = new Date(year, month - 1, day, hour, minute);
   const lesson = lessons.find((ls) => ls.name === lessonName);
@@ -149,10 +154,10 @@ function sendEndMessage(bot, dateTime, lessonName) {
     config[`is${lessonName}End`] = true;
     for (let user of data) {
       if (lesson.isBrigadeType) {
-        await setPriorityByBrigadeNum(user.brigade_num, "Зелёный", lessonName);
+        await setPriorityByBrigadeNum(user.brigade_num, 'Зелёный', lessonName);
         await setPriorityStatus(user.brigade_num, false, lesson.name);
       } else {
-        await setPriority(user.tg_id, "Зелёный", lessonName);
+        await setPriority(user.tg_id, 'Зелёный', lessonName);
       }
     }
 
