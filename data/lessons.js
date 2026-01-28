@@ -457,7 +457,7 @@ const lessons = [
     workType: 'lab',
     scheduleOfLessons: [
       {
-        time: '2026-01-28 19:49',
+        time: '2026-01-28 20:09',
         type: 0,
       },
       {
