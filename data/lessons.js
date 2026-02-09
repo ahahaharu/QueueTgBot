@@ -10,7 +10,7 @@ const lessons = [
     isBrigadeType: false,
     brigadeData: null,
     canSplit: true,
-    hasSubgroupType: false,
+    hasSubgroupType: true,
     workType: 'lab',
     scheduleOfLessons: [
       {
@@ -100,7 +100,7 @@ const lessons = [
     isBrigadeType: false,
     brigadeData: null,
     canSplit: true,
-    hasSubgroupType: false,
+    hasSubgroupType: true,
     workType: 'lab',
     scheduleOfLessons: [
       {
@@ -191,7 +191,7 @@ const lessons = [
     isBrigadeType: false,
     brigadeData: null,
     canSplit: false,
-    hasSubgroupType: false,
+    hasSubgroupType: true,
     workType: 'lab',
     scheduleOfLessons: [
       {
@@ -322,7 +322,7 @@ const lessons = [
     isBrigadeType: false,
     brigadeData: null,
     canSplit: false,
-    hasSubgroupType: false,
+    hasSubgroupType: true,
     workType: 'lab',
     scheduleOfLessons: [
       {
@@ -453,7 +453,7 @@ const lessons = [
     isBrigadeType: false,
     brigadeData: null,
     canSplit: false,
-    hasSubgroupType: false,
+    hasSubgroupType: true,
     workType: 'lab',
     scheduleOfLessons: [
       {
@@ -469,7 +469,7 @@ const lessons = [
         type: 2,
       },
       {
-        time: '2026-02-25 17:00',
+        time: '2026-02-17 17:00',
         type: 0,
       },
       {
@@ -481,7 +481,7 @@ const lessons = [
         type: 2,
       },
       {
-        time: '2026-03-25 17:00',
+        time: '2026-03-17 17:00',
         type: 0,
       },
       {
@@ -493,7 +493,7 @@ const lessons = [
         type: 2,
       },
       {
-        time: '2026-04-22 17:00',
+        time: '2026-04-14 17:00',
         type: 0,
       },
       {
@@ -509,13 +509,13 @@ const lessons = [
       '2026-01-29 22:00',
       '2026-01-30 18:30',
       '2026-02-13 18:30',
-      '2026-02-26 22:00',
+      '2026-02-18 16:55',
       '2026-02-27 18:30',
       '2026-03-13 18:30',
-      '2026-03-26 22:00',
+      '2026-03-18 16:55',
       '2026-03-27 18:30',
       '2026-04-10 18:30',
-      '2026-04-23 22:00',
+      '2026-04-15 22:00',
       '2026-04-24 18:30',
       '2026-05-08 18:30',
     ],
@@ -529,7 +529,7 @@ const lessons = [
     isBrigadeType: false,
     brigadeData: null,
     canSplit: true,
-    hasSubgroupType: false,
+    hasSubgroupType: true,
     workType: 'lab',
     scheduleOfLessons: [
       {
@@ -620,7 +620,7 @@ const lessons = [
     isBrigadeType: false,
     brigadeData: null,
     canSplit: true,
-    hasSubgroupType: false,
+    hasSubgroupType: true,
     workType: 'lab',
     scheduleOfLessons: [
       {
