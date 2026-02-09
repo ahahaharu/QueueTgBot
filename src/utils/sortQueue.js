@@ -86,6 +86,9 @@ async function sortQueue(subjectQueue, lesson, type) {
         }
         queue[sb.subgroup - 1][priorityIndex[priority]].push(item);
       }
+      if (type === 2) {
+        queue.reverse();
+      }
       queue[0] = queue[0].flat();
       queue[1] = queue[1].flat();
     } else {
