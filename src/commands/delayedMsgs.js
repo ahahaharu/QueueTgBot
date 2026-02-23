@@ -102,6 +102,24 @@ function sendMessages(bot, dateTime, lessonName, type) {
   } ${lessonType}*\n\n_Нажмите кнопку ниже, чтобы записаться_`;
   const replyMarkup = createSignButton(lesson.name);
 
+  // schedule.scheduleJob(jobDate, async () => {
+  //   await configMutex.runExclusive(async () => {
+  //     const config = await readConfig();
+
+  //     await clearTable(lesson.name);
+  //     config[lesson.name + 'LessonType'] = type;
+  //     config[lesson.name + 'Date'] = `${tomorrowDate.getDate()}\\.${
+  //       tomorrowDate.getMonth() + 1
+  //     }`;
+  //     if (lesson.isPriority) {
+  //       config['is' + lesson.name + 'End'] = false;
+  //     }
+  //     await writeConfig(config);
+
+  //     await sendMessagesToUsers(bot, message, replyMarkup, false, lesson);
+  //   });
+  // });
+
   schedule.scheduleJob(jobDate, async () => {
     await configMutex.runExclusive(async () => {
       const config = await readConfig();
@@ -114,10 +132,10 @@ function sendMessages(bot, dateTime, lessonName, type) {
       if (lesson.isPriority) {
         config['is' + lesson.name + 'End'] = false;
       }
-      await writeConfig(config);
 
-      await sendMessagesToUsers(bot, message, replyMarkup, false, lesson);
+      await writeConfig(config);
     });
+    await sendMessagesToUsers(bot, message, replyMarkup, false, lesson);
   });
 }
 
@@ -130,61 +148,117 @@ function sendEndMessage(bot, dateTime, lessonName) {
   const lesson = lessons.find((ls) => ls.name === lessonName);
 
   const message = `*Пара по ${lesson.title} закончилась*\n\nСдали ли вы лабораторную работу?`;
-  let replyMarkup;
 
   schedule.scheduleJob(jobDate, async () => {
-    const config = await readConfig();
-    let data = await getQueue(lessonName);
-    let configs = await returnConfigs();
-    const type = configs.get(lesson.name).lessonType;
-    const queue = await sortQueue(data, lesson, type);
-    updateQueue(`${lesson.name}Queue`, queue);
-    if (lesson.isBrigadeType) {
-      const lesson_brigades = await getQueue(`${lessonName}_brigades`);
-      const usersInBrigades = [];
-      for (let brigade of data) {
-        usersInBrigades.push(
-          lesson_brigades.filter(
-            (user) => user.brigade_num === brigade.brigade_num
-          )
-        );
-      }
-      data = usersInBrigades.flat();
-    }
-    config[`is${lessonName}End`] = true;
-    for (let user of data) {
+    await configMutex.runExclusive(async () => {
+      const config = await readConfig();
+      let data = await getQueue(lessonName);
+      let configs = await returnConfigs();
+      const type = configs.get(lesson.name).lessonType;
+
+      const queue = await sortQueue(data, lesson, type);
+      updateQueue(`${lesson.name}Queue`, queue);
+
       if (lesson.isBrigadeType) {
-        await setPriorityByBrigadeNum(user.brigade_num, 'Зелёный', lessonName);
-        await setPriorityStatus(user.brigade_num, false, lesson.name);
-      } else {
-        await setPriority(user.tg_id, 'Зелёный', lessonName);
+        const lesson_brigades = await getQueue(`${lessonName}_brigades`);
+        const usersInBrigades = [];
+        for (let brigade of data) {
+          usersInBrigades.push(
+            lesson_brigades.filter(
+              (user) => user.brigade_num === brigade.brigade_num
+            )
+          );
+        }
+        data = usersInBrigades.flat();
       }
-    }
 
-    await writeConfig(config);
+      config[`is${lessonName}End`] = true;
 
-    replyMarkup = createStatusKeyboard(lessonName);
+      for (let user of data) {
+        if (lesson.isBrigadeType) {
+          await setPriorityByBrigadeNum(
+            user.brigade_num,
+            'Зелёный',
+            lessonName
+          );
+          await setPriorityStatus(user.brigade_num, false, lesson.name);
+        } else {
+          await setPriority(user.tg_id, 'Зелёный', lessonName);
+        }
+      }
+
+      await writeConfig(config);
+    });
+
+    const replyMarkup = createStatusKeyboard(lessonName);
     await sendMessagesToUsers(bot, message, replyMarkup, true, lesson);
-
-    // if (lesson === "КПрог") {
-    //   config.isKProgEnd = true;
-    //   data = await getQueue("KProg");
-    //   for (let user of data) {
-    //     await setPriority(user.tg_id, "Зелёный");
-    //   }
-
-    //   config.isBZCHEnd = true;
-    //   data = await getQueue("BZCH");
-    //   for (let brigade of data) {
-    //     await setBZCHPriority(brigade.brigade_id, "Зелёный");
-    //     await setPriorityStatus(brigade.brigade_id, false);
-    //   }
-    //   replyMarkup = createStatusKeyboard("BZCH");
-
-    //   await sendMessagesToUsers(bot, message, replyMarkup, true, "BZCH");
-    // }
   });
 }
+
+// function sendEndMessage(bot, dateTime, lessonName) {
+//   const [date, time] = dateTime.split(' ');
+//   const [year, month, day] = date.split('-').map(Number);
+//   const [hour, minute] = time.split(':').map(Number);
+
+//   const jobDate = new Date(year, month - 1, day, hour, minute);
+//   const lesson = lessons.find((ls) => ls.name === lessonName);
+
+//   const message = `*Пара по ${lesson.title} закончилась*\n\nСдали ли вы лабораторную работу?`;
+//   let replyMarkup;
+
+//   schedule.scheduleJob(jobDate, async () => {
+//     const config = await readConfig();
+//     let data = await getQueue(lessonName);
+//     let configs = await returnConfigs();
+//     const type = configs.get(lesson.name).lessonType;
+//     const queue = await sortQueue(data, lesson, type);
+//     updateQueue(`${lesson.name}Queue`, queue);
+//     if (lesson.isBrigadeType) {
+//       const lesson_brigades = await getQueue(`${lessonName}_brigades`);
+//       const usersInBrigades = [];
+//       for (let brigade of data) {
+//         usersInBrigades.push(
+//           lesson_brigades.filter(
+//             (user) => user.brigade_num === brigade.brigade_num
+//           )
+//         );
+//       }
+//       data = usersInBrigades.flat();
+//     }
+//     config[`is${lessonName}End`] = true;
+//     for (let user of data) {
+//       if (lesson.isBrigadeType) {
+//         await setPriorityByBrigadeNum(user.brigade_num, 'Зелёный', lessonName);
+//         await setPriorityStatus(user.brigade_num, false, lesson.name);
+//       } else {
+//         await setPriority(user.tg_id, 'Зелёный', lessonName);
+//       }
+//     }
+
+//     await writeConfig(config);
+
+//     replyMarkup = createStatusKeyboard(lessonName);
+//     await sendMessagesToUsers(bot, message, replyMarkup, true, lesson);
+
+//     // if (lesson === "КПрог") {
+//     //   config.isKProgEnd = true;
+//     //   data = await getQueue("KProg");
+//     //   for (let user of data) {
+//     //     await setPriority(user.tg_id, "Зелёный");
+//     //   }
+
+//     //   config.isBZCHEnd = true;
+//     //   data = await getQueue("BZCH");
+//     //   for (let brigade of data) {
+//     //     await setBZCHPriority(brigade.brigade_id, "Зелёный");
+//     //     await setPriorityStatus(brigade.brigade_id, false);
+//     //   }
+//     //   replyMarkup = createStatusKeyboard("BZCH");
+
+//     //   await sendMessagesToUsers(bot, message, replyMarkup, true, "BZCH");
+//     // }
+//   });
+// }
 
 async function sendMessageForAll(bot, message) {
   const data = await getAllUsers();
