@@ -12,7 +12,7 @@
   "dependencies": {
     "@grammyjs/hydrate": "^1.4.1",
     "async-mutex": "^0.5.0",
-    "canvas": "^2.11.2",
+    "canvas": "^3.2.3",
     "crypto": "^1.0.1",
     "dotenv": "^16.4.5",
     "grammy": "^1.30.0",
